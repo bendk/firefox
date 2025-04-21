@@ -4136,7 +4136,7 @@ export class SuggestStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             40, // uniffi_suggest_fn_method_suggeststore_any_dismissed_suggestions
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -4152,7 +4152,7 @@ export class SuggestStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             41, // uniffi_suggest_fn_method_suggeststore_clear
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -4168,7 +4168,7 @@ export class SuggestStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             42, // uniffi_suggest_fn_method_suggeststore_clear_dismissed_suggestions
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -4192,7 +4192,7 @@ export class SuggestStore {
         FfiConverterString.checkType(key);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             43, // uniffi_suggest_fn_method_suggeststore_dismiss_by_key
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterString.lower(key),
         )
         return handleRustResult(
@@ -4213,7 +4213,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestion.checkType(suggestion);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             44, // uniffi_suggest_fn_method_suggeststore_dismiss_by_suggestion
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestion.lower(suggestion),
         )
         return handleRustResult(
@@ -4237,7 +4237,7 @@ export class SuggestStore {
         FfiConverterString.checkType(suggestionUrl);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             45, // uniffi_suggest_fn_method_suggeststore_dismiss_suggestion
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterString.lower(suggestionUrl),
         )
         return handleRustResult(
@@ -4258,7 +4258,7 @@ export class SuggestStore {
         FfiConverterTypeGeoname.checkType(geoname);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             46, // uniffi_suggest_fn_method_suggeststore_fetch_geoname_alternates
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeGeoname.lower(geoname),
         )
         return handleRustResult(
@@ -4284,7 +4284,7 @@ export class SuggestStore {
         FfiConverterOptionalSequenceTypeGeoname.checkType(filter);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             47, // uniffi_suggest_fn_method_suggeststore_fetch_geonames
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterString.lower(query),
             FfiConverterBoolean.lower(matchNamePrefix),
             FfiConverterOptionalSequenceTypeGeoname.lower(filter),
@@ -4303,7 +4303,7 @@ export class SuggestStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             48, // uniffi_suggest_fn_method_suggeststore_fetch_global_config
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -4321,7 +4321,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestionProvider.checkType(provider);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             49, // uniffi_suggest_fn_method_suggeststore_fetch_provider_config
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestionProvider.lower(provider),
         )
         return handleRustResult(
@@ -4340,7 +4340,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestIngestionConstraints.checkType(constraints);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             50, // uniffi_suggest_fn_method_suggeststore_ingest
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestIngestionConstraints.lower(constraints),
         )
         return handleRustResult(
@@ -4363,7 +4363,7 @@ export class SuggestStore {
         FfiConverterOptionalTypeInterruptKind.checkType(kind);
         const result = UniFFIScaffolding.callSync(
             51, // uniffi_suggest_fn_method_suggeststore_interrupt
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterOptionalTypeInterruptKind.lower(kind),
         )
         return handleRustResult(
@@ -4387,7 +4387,7 @@ export class SuggestStore {
         FfiConverterString.checkType(key);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             52, // uniffi_suggest_fn_method_suggeststore_is_dismissed_by_key
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterString.lower(key),
         )
         return handleRustResult(
@@ -4410,7 +4410,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestion.checkType(suggestion);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             53, // uniffi_suggest_fn_method_suggeststore_is_dismissed_by_suggestion
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestion.lower(suggestion),
         )
         return handleRustResult(
@@ -4429,7 +4429,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestionQuery.checkType(query);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             54, // uniffi_suggest_fn_method_suggeststore_query
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestionQuery.lower(query),
         )
         return handleRustResult(
@@ -4448,7 +4448,7 @@ export class SuggestStore {
         FfiConverterTypeSuggestionQuery.checkType(query);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             55, // uniffi_suggest_fn_method_suggeststore_query_with_metrics
-            FfiConverterTypeSuggestStore.lower(this),
+            FfiConverterTypeSuggestStore.lowerReceiver(this),
             FfiConverterTypeSuggestionQuery.lower(query),
         )
         return handleRustResult(
@@ -4476,6 +4476,11 @@ export class FfiConverterTypeSuggestStore extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(7));
     }
@@ -4488,6 +4493,7 @@ export class FfiConverterTypeSuggestStore extends FfiConverter {
         return 8;
     }
 }
+
 import {
   FfiConverterTypeRemoteSettingsServer,
 } from "./RustRemoteSettings.sys.mjs";
@@ -4539,7 +4545,7 @@ export class SuggestStoreBuilder {
        
         const result = UniFFIScaffolding.callSync(
             57, // uniffi_suggest_fn_method_suggeststorebuilder_build
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -4557,7 +4563,7 @@ export class SuggestStoreBuilder {
         FfiConverterString.checkType(path);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             58, // uniffi_suggest_fn_method_suggeststorebuilder_cache_path
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterString.lower(path),
         )
         return handleRustResult(
@@ -4576,7 +4582,7 @@ export class SuggestStoreBuilder {
         FfiConverterString.checkType(path);
         const result = UniFFIScaffolding.callSync(
             59, // uniffi_suggest_fn_method_suggeststorebuilder_data_path
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterString.lower(path),
         )
         return handleRustResult(
@@ -4601,7 +4607,7 @@ export class SuggestStoreBuilder {
         FfiConverterOptionalString.checkType(entryPoint);
         const result = UniFFIScaffolding.callSync(
             60, // uniffi_suggest_fn_method_suggeststorebuilder_load_extension
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterString.lower(library),
             FfiConverterOptionalString.lower(entryPoint),
         )
@@ -4621,7 +4627,7 @@ export class SuggestStoreBuilder {
         FfiConverterString.checkType(bucketName);
         const result = UniFFIScaffolding.callSync(
             61, // uniffi_suggest_fn_method_suggeststorebuilder_remote_settings_bucket_name
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterString.lower(bucketName),
         )
         return handleRustResult(
@@ -4640,7 +4646,7 @@ export class SuggestStoreBuilder {
         FfiConverterTypeRemoteSettingsServer.checkType(server);
         const result = UniFFIScaffolding.callSync(
             62, // uniffi_suggest_fn_method_suggeststorebuilder_remote_settings_server
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterTypeRemoteSettingsServer.lower(server),
         )
         return handleRustResult(
@@ -4659,7 +4665,7 @@ export class SuggestStoreBuilder {
         FfiConverterTypeRemoteSettingsService.checkType(rsService);
         const result = UniFFIScaffolding.callSync(
             63, // uniffi_suggest_fn_method_suggeststorebuilder_remote_settings_service
-            FfiConverterTypeSuggestStoreBuilder.lower(this),
+            FfiConverterTypeSuggestStoreBuilder.lowerReceiver(this),
             FfiConverterTypeRemoteSettingsService.lower(rsService),
         )
         return handleRustResult(
@@ -4687,6 +4693,11 @@ export class FfiConverterTypeSuggestStoreBuilder extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(8));
     }
@@ -4699,3 +4710,4 @@ export class FfiConverterTypeSuggestStoreBuilder extends FfiConverter {
         return 8;
     }
 }
+

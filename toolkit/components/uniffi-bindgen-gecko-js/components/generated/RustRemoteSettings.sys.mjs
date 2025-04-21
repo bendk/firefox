@@ -1922,7 +1922,7 @@ export class RemoteSettings {
         FfiConverterString.checkType(path);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             19, // uniffi_remote_settings_fn_method_remotesettings_download_attachment_to_path
-            FfiConverterTypeRemoteSettings.lower(this),
+            FfiConverterTypeRemoteSettings.lowerReceiver(this),
             FfiConverterString.lower(attachmentId),
             FfiConverterString.lower(path),
         )
@@ -1940,7 +1940,7 @@ export class RemoteSettings {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             20, // uniffi_remote_settings_fn_method_remotesettings_get_records
-            FfiConverterTypeRemoteSettings.lower(this),
+            FfiConverterTypeRemoteSettings.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -1959,7 +1959,7 @@ export class RemoteSettings {
         FfiConverterUInt64.checkType(timestamp);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             21, // uniffi_remote_settings_fn_method_remotesettings_get_records_since
-            FfiConverterTypeRemoteSettings.lower(this),
+            FfiConverterTypeRemoteSettings.lowerReceiver(this),
             FfiConverterUInt64.lower(timestamp),
         )
         return handleRustResult(
@@ -1987,6 +1987,11 @@ export class FfiConverterTypeRemoteSettings extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(3));
     }
@@ -1999,6 +2004,7 @@ export class FfiConverterTypeRemoteSettings extends FfiConverter {
         return 8;
     }
 }
+
 // Export the FFIConverter object to make external types work.
 export class FfiConverterBytes extends FfiConverterArrayBuffer {
     static read(dataStream) {
@@ -2172,7 +2178,7 @@ export class RemoteSettingsClient {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             22, // uniffi_remote_settings_fn_method_remotesettingsclient_collection_name
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -2198,7 +2204,7 @@ export class RemoteSettingsClient {
         FfiConverterTypeRemoteSettingsRecord.checkType(record);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             23, // uniffi_remote_settings_fn_method_remotesettingsclient_get_attachment
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
             FfiConverterTypeRemoteSettingsRecord.lower(record),
         )
         return handleRustResult(
@@ -2232,7 +2238,7 @@ export class RemoteSettingsClient {
         FfiConverterBoolean.checkType(syncIfEmpty);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             24, // uniffi_remote_settings_fn_method_remotesettingsclient_get_records
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
             FfiConverterBoolean.lower(syncIfEmpty),
         )
         return handleRustResult(
@@ -2254,7 +2260,7 @@ export class RemoteSettingsClient {
         FfiConverterBoolean.checkType(syncIfEmpty);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             25, // uniffi_remote_settings_fn_method_remotesettingsclient_get_records_map
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
             FfiConverterBoolean.lower(syncIfEmpty),
         )
         return handleRustResult(
@@ -2271,7 +2277,7 @@ export class RemoteSettingsClient {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             26, // uniffi_remote_settings_fn_method_remotesettingsclient_shutdown
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -2287,7 +2293,7 @@ export class RemoteSettingsClient {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             27, // uniffi_remote_settings_fn_method_remotesettingsclient_sync
-            FfiConverterTypeRemoteSettingsClient.lower(this),
+            FfiConverterTypeRemoteSettingsClient.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -2314,6 +2320,11 @@ export class FfiConverterTypeRemoteSettingsClient extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(4));
     }
@@ -2326,6 +2337,7 @@ export class FfiConverterTypeRemoteSettingsClient extends FfiConverter {
         return 8;
     }
 }
+
 // Export the FFIConverter object to make external types work.
 export class FfiConverterSequenceString extends FfiConverterArrayBuffer {
     static read(dataStream) {
@@ -2418,7 +2430,7 @@ export class RemoteSettingsService {
         FfiConverterString.checkType(collectionName);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             29, // uniffi_remote_settings_fn_method_remotesettingsservice_make_client
-            FfiConverterTypeRemoteSettingsService.lower(this),
+            FfiConverterTypeRemoteSettingsService.lowerReceiver(this),
             FfiConverterString.lower(collectionName),
         )
         return handleRustResult(
@@ -2435,7 +2447,7 @@ export class RemoteSettingsService {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             30, // uniffi_remote_settings_fn_method_remotesettingsservice_sync
-            FfiConverterTypeRemoteSettingsService.lower(this),
+            FfiConverterTypeRemoteSettingsService.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -2459,7 +2471,7 @@ export class RemoteSettingsService {
         FfiConverterTypeRemoteSettingsConfig2.checkType(config);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             31, // uniffi_remote_settings_fn_method_remotesettingsservice_update_config
-            FfiConverterTypeRemoteSettingsService.lower(this),
+            FfiConverterTypeRemoteSettingsService.lowerReceiver(this),
             FfiConverterTypeRemoteSettingsConfig2.lower(config),
         )
         return handleRustResult(
@@ -2487,6 +2499,11 @@ export class FfiConverterTypeRemoteSettingsService extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(5));
     }
@@ -2499,6 +2516,7 @@ export class FfiConverterTypeRemoteSettingsService extends FfiConverter {
         return 8;
     }
 }
+
 // Export the FFIConverter object to make external types work.
 export class FfiConverterUInt8 extends FfiConverter {
     static checkType(value) {

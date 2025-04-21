@@ -889,27 +889,57 @@ extern "C" {
   void ffi_uniffi_bindings_tests_rust_future_free_void(uint64_t);
   void* uniffi_uniffi_bindings_tests_fn_clone_asyncinterface(void*, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_free_asyncinterface(void*, RustCallStatus*);
+  void* uniffi_uniffi_bindings_tests_fn_clone_asynctesttraitinterface(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_free_asynctesttraitinterface(void*, RustCallStatus*);
   void* uniffi_uniffi_bindings_tests_fn_clone_complexmethods(void*, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_free_complexmethods(void*, RustCallStatus*);
   void* uniffi_uniffi_bindings_tests_fn_clone_testinterface(void*, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_free_testinterface(void*, RustCallStatus*);
+  void* uniffi_uniffi_bindings_tests_fn_clone_testtraitinterface(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_free_testtraitinterface(void*, RustCallStatus*);
   struct ForeignFutureResultvoid {
     RustCallStatus call_status;
   };
   typedef void (*ForeignFutureCompletevoid)(uint64_t, ForeignFutureResultvoid);
-  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod0)(uint64_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceAsyncTestTraitInterfaceMethod0)(uint64_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
   struct ForeignFutureResultu32 {
     uint32_t return_value;
     RustCallStatus call_status;
   };
   typedef void (*ForeignFutureCompleteu32)(uint64_t, ForeignFutureResultu32);
-  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod1)(uint64_t, ForeignFutureCompleteu32, uint64_t, ForeignFuture*);
-  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod2)(uint64_t, uint32_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceAsyncTestTraitInterfaceMethod1)(uint64_t, ForeignFutureCompleteu32, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceAsyncTestTraitInterfaceMethod2)(uint64_t, uint32_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
   struct ForeignFutureResultrust_buffer {
     RustBuffer return_value;
     RustCallStatus call_status;
   };
   typedef void (*ForeignFutureCompleterust_buffer)(uint64_t, ForeignFutureResultrust_buffer);
+  typedef void (*CallbackInterfaceAsyncTestTraitInterfaceMethod3)(uint64_t, RustBuffer, ForeignFutureCompleterust_buffer, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceFreeuniffi_bindings_tests_AsyncTestTraitInterface)(uint64_t);
+  struct VTableCallbackInterfaceAsyncTestTraitInterface {
+    CallbackInterfaceAsyncTestTraitInterfaceMethod0 noop;
+    CallbackInterfaceAsyncTestTraitInterfaceMethod1 get_value;
+    CallbackInterfaceAsyncTestTraitInterfaceMethod2 set_value;
+    CallbackInterfaceAsyncTestTraitInterfaceMethod3 throw_if_equal;
+    CallbackInterfaceFreeuniffi_bindings_tests_AsyncTestTraitInterface uniffi_free;
+  };
+  void uniffi_uniffi_bindings_tests_fn_init_callback_vtable_asynctesttraitinterface(VTableCallbackInterfaceAsyncTestTraitInterface*);
+  typedef void (*CallbackInterfaceTestTraitInterfaceMethod0)(uint64_t, void*, RustCallStatus*);
+  typedef void (*CallbackInterfaceTestTraitInterfaceMethod1)(uint64_t, uint32_t*, RustCallStatus*);
+  typedef void (*CallbackInterfaceTestTraitInterfaceMethod2)(uint64_t, uint32_t, void*, RustCallStatus*);
+  typedef void (*CallbackInterfaceTestTraitInterfaceMethod3)(uint64_t, RustBuffer, RustBuffer*, RustCallStatus*);
+  typedef void (*CallbackInterfaceFreeuniffi_bindings_tests_TestTraitInterface)(uint64_t);
+  struct VTableCallbackInterfaceTestTraitInterface {
+    CallbackInterfaceTestTraitInterfaceMethod0 noop;
+    CallbackInterfaceTestTraitInterfaceMethod1 get_value;
+    CallbackInterfaceTestTraitInterfaceMethod2 set_value;
+    CallbackInterfaceTestTraitInterfaceMethod3 throw_if_equal;
+    CallbackInterfaceFreeuniffi_bindings_tests_TestTraitInterface uniffi_free;
+  };
+  void uniffi_uniffi_bindings_tests_fn_init_callback_vtable_testtraitinterface(VTableCallbackInterfaceTestTraitInterface*);
+  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod0)(uint64_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod1)(uint64_t, ForeignFutureCompleteu32, uint64_t, ForeignFuture*);
+  typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod2)(uint64_t, uint32_t, ForeignFutureCompletevoid, uint64_t, ForeignFuture*);
   typedef void (*CallbackInterfaceTestAsyncCallbackInterfaceMethod3)(uint64_t, RustBuffer, ForeignFutureCompleterust_buffer, uint64_t, ForeignFuture*);
   typedef void (*CallbackInterfaceFreeuniffi_bindings_tests_TestAsyncCallbackInterface)(uint64_t);
   struct VTableCallbackInterfaceTestAsyncCallbackInterface {
@@ -949,10 +979,16 @@ extern "C" {
   uint64_t uniffi_uniffi_bindings_tests_fn_func_async_roundtrip_vec(RustBuffer);
   uint64_t uniffi_uniffi_bindings_tests_fn_func_async_throw_error();
   void* uniffi_uniffi_bindings_tests_fn_func_clone_interface(void*, RustCallStatus*);
+  void* uniffi_uniffi_bindings_tests_fn_func_create_async_test_trait_interface(uint32_t, RustCallStatus*);
+  void* uniffi_uniffi_bindings_tests_fn_func_create_test_trait_interface(uint32_t, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_func_func_with_default(RustBuffer, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_func_func_with_error(uint32_t, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_func_func_with_flat_error(uint32_t, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_func_func_with_multi_word_arg(RustBuffer, RustCallStatus*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_get_value(void*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_noop(void*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_set_value(void*, uint32_t);
+  uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_throw_if_equal(void*, RustBuffer);
   uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_test_async_callback_interface_get_value(uint64_t);
   uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_test_async_callback_interface_noop(uint64_t);
   uint64_t uniffi_uniffi_bindings_tests_fn_func_invoke_test_async_callback_interface_set_value(uint64_t, uint32_t);
@@ -961,6 +997,10 @@ extern "C" {
   void uniffi_uniffi_bindings_tests_fn_func_invoke_test_callback_interface_noop(uint64_t, RustCallStatus*);
   void uniffi_uniffi_bindings_tests_fn_func_invoke_test_callback_interface_set_value(uint64_t, uint32_t, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_func_invoke_test_callback_interface_throw_if_equal(uint64_t, RustBuffer, RustCallStatus*);
+  uint32_t uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_get_value(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_noop(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_set_value(void*, uint32_t, RustCallStatus*);
+  RustBuffer uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_throw_if_equal(void*, RustBuffer, RustCallStatus*);
   int8_t uniffi_uniffi_bindings_tests_fn_func_roundtrip_bool(int8_t, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_func_roundtrip_complex_compound(RustBuffer, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_func_roundtrip_complex_enum(RustBuffer, RustCallStatus*);
@@ -988,12 +1028,20 @@ extern "C" {
   void uniffi_uniffi_bindings_tests_fn_func_test_func(RustCallStatus*);
   void* uniffi_uniffi_bindings_tests_fn_constructor_asyncinterface_new(RustBuffer, RustCallStatus*);
   uint64_t uniffi_uniffi_bindings_tests_fn_method_asyncinterface_name(void*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_noop(void*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_get_value(void*);
+  uint64_t uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_set_value(void*, uint32_t);
+  uint64_t uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_throw_if_equal(void*, RustBuffer);
   void* uniffi_uniffi_bindings_tests_fn_constructor_complexmethods_new(RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_method_complexmethods_method_with_default(void*, RustBuffer, RustCallStatus*);
   RustBuffer uniffi_uniffi_bindings_tests_fn_method_complexmethods_method_with_multi_word_arg(void*, RustBuffer, RustCallStatus*);
   void* uniffi_uniffi_bindings_tests_fn_constructor_testinterface_new(uint32_t, RustCallStatus*);
   uint32_t uniffi_uniffi_bindings_tests_fn_method_testinterface_get_value(void*, RustCallStatus*);
   uint32_t uniffi_uniffi_bindings_tests_fn_method_testinterface_ref_count(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_noop(void*, RustCallStatus*);
+  uint32_t uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_get_value(void*, RustCallStatus*);
+  void uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_set_value(void*, uint32_t, RustCallStatus*);
+  RustBuffer uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_throw_if_equal(void*, RustBuffer, RustCallStatus*);
   uint32_t ffi_uniffi_bindings_tests_uniffi_contract_version();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_async_roundtrip_f32();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_async_roundtrip_f64();
@@ -1011,10 +1059,16 @@ extern "C" {
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_async_roundtrip_vec();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_async_throw_error();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_clone_interface();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_create_async_test_trait_interface();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_create_test_trait_interface();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_func_with_default();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_func_with_error();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_func_with_flat_error();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_func_with_multi_word_arg();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_async_test_trait_interface_get_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_async_test_trait_interface_noop();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_async_test_trait_interface_set_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_async_test_trait_interface_throw_if_equal();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_async_callback_interface_get_value();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_async_callback_interface_noop();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_async_callback_interface_set_value();
@@ -1023,6 +1077,10 @@ extern "C" {
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_callback_interface_noop();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_callback_interface_set_value();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_callback_interface_throw_if_equal();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_trait_interface_get_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_trait_interface_noop();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_trait_interface_set_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_func_invoke_test_trait_interface_throw_if_equal();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_roundtrip_bool();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_roundtrip_complex_compound();
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_roundtrip_complex_enum();
@@ -1050,12 +1108,20 @@ extern "C" {
   uint16_t uniffi_uniffi_bindings_tests_checksum_func_test_func();
   uint16_t uniffi_uniffi_bindings_tests_checksum_constructor_asyncinterface_new();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_asyncinterface_name();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_asynctesttraitinterface_noop();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_asynctesttraitinterface_get_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_asynctesttraitinterface_set_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_asynctesttraitinterface_throw_if_equal();
   uint16_t uniffi_uniffi_bindings_tests_checksum_constructor_complexmethods_new();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_complexmethods_method_with_default();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_complexmethods_method_with_multi_word_arg();
   uint16_t uniffi_uniffi_bindings_tests_checksum_constructor_testinterface_new();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_testinterface_get_value();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_testinterface_ref_count();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_testtraitinterface_noop();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_testtraitinterface_get_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_testtraitinterface_set_value();
+  uint16_t uniffi_uniffi_bindings_tests_checksum_method_testtraitinterface_throw_if_equal();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_testasynccallbackinterface_noop();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_testasynccallbackinterface_get_value();
   uint16_t uniffi_uniffi_bindings_tests_checksum_method_testasynccallbackinterface_set_value();
@@ -1144,7 +1210,6 @@ const static mozilla::uniffi::UniFFIPointerType kContextIdContextIdComponentPoin
   uniffi_context_id_fn_clone_contextidcomponent,
   uniffi_context_id_fn_free_contextidcomponent,
 };
-
 class FfiValueObjectHandleContextIdContextIdComponent {
  private:
   void* mValue = nullptr;
@@ -1157,7 +1222,7 @@ class FfiValueObjectHandleContextIdContextIdComponent {
   FfiValueObjectHandleContextIdContextIdComponent(const FfiValueObjectHandleContextIdContextIdComponent&) = delete;
   FfiValueObjectHandleContextIdContextIdComponent& operator=(const FfiValueObjectHandleContextIdContextIdComponent&) = delete;
 
-    FfiValueObjectHandleContextIdContextIdComponent& operator=(FfiValueObjectHandleContextIdContextIdComponent&& aOther) {
+  FfiValueObjectHandleContextIdContextIdComponent& operator=(FfiValueObjectHandleContextIdContextIdComponent&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1177,6 +1242,13 @@ class FfiValueObjectHandleContextIdContextIdComponent {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1217,7 +1289,6 @@ const static mozilla::uniffi::UniFFIPointerType kRelevancyRelevancyStorePointerT
   uniffi_relevancy_fn_clone_relevancystore,
   uniffi_relevancy_fn_free_relevancystore,
 };
-
 class FfiValueObjectHandleRelevancyRelevancyStore {
  private:
   void* mValue = nullptr;
@@ -1230,7 +1301,7 @@ class FfiValueObjectHandleRelevancyRelevancyStore {
   FfiValueObjectHandleRelevancyRelevancyStore(const FfiValueObjectHandleRelevancyRelevancyStore&) = delete;
   FfiValueObjectHandleRelevancyRelevancyStore& operator=(const FfiValueObjectHandleRelevancyRelevancyStore&) = delete;
 
-    FfiValueObjectHandleRelevancyRelevancyStore& operator=(FfiValueObjectHandleRelevancyRelevancyStore&& aOther) {
+  FfiValueObjectHandleRelevancyRelevancyStore& operator=(FfiValueObjectHandleRelevancyRelevancyStore&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1250,6 +1321,13 @@ class FfiValueObjectHandleRelevancyRelevancyStore {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1290,7 +1368,6 @@ const static mozilla::uniffi::UniFFIPointerType kRemoteSettingsRemoteSettingsPoi
   uniffi_remote_settings_fn_clone_remotesettings,
   uniffi_remote_settings_fn_free_remotesettings,
 };
-
 class FfiValueObjectHandleRemoteSettingsRemoteSettings {
  private:
   void* mValue = nullptr;
@@ -1303,7 +1380,7 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettings {
   FfiValueObjectHandleRemoteSettingsRemoteSettings(const FfiValueObjectHandleRemoteSettingsRemoteSettings&) = delete;
   FfiValueObjectHandleRemoteSettingsRemoteSettings& operator=(const FfiValueObjectHandleRemoteSettingsRemoteSettings&) = delete;
 
-    FfiValueObjectHandleRemoteSettingsRemoteSettings& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettings&& aOther) {
+  FfiValueObjectHandleRemoteSettingsRemoteSettings& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettings&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1323,6 +1400,13 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettings {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1363,7 +1447,6 @@ const static mozilla::uniffi::UniFFIPointerType kRemoteSettingsRemoteSettingsCli
   uniffi_remote_settings_fn_clone_remotesettingsclient,
   uniffi_remote_settings_fn_free_remotesettingsclient,
 };
-
 class FfiValueObjectHandleRemoteSettingsRemoteSettingsClient {
  private:
   void* mValue = nullptr;
@@ -1376,7 +1459,7 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettingsClient {
   FfiValueObjectHandleRemoteSettingsRemoteSettingsClient(const FfiValueObjectHandleRemoteSettingsRemoteSettingsClient&) = delete;
   FfiValueObjectHandleRemoteSettingsRemoteSettingsClient& operator=(const FfiValueObjectHandleRemoteSettingsRemoteSettingsClient&) = delete;
 
-    FfiValueObjectHandleRemoteSettingsRemoteSettingsClient& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettingsClient&& aOther) {
+  FfiValueObjectHandleRemoteSettingsRemoteSettingsClient& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettingsClient&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1396,6 +1479,13 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettingsClient {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1436,7 +1526,6 @@ const static mozilla::uniffi::UniFFIPointerType kRemoteSettingsRemoteSettingsSer
   uniffi_remote_settings_fn_clone_remotesettingsservice,
   uniffi_remote_settings_fn_free_remotesettingsservice,
 };
-
 class FfiValueObjectHandleRemoteSettingsRemoteSettingsService {
  private:
   void* mValue = nullptr;
@@ -1449,7 +1538,7 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettingsService {
   FfiValueObjectHandleRemoteSettingsRemoteSettingsService(const FfiValueObjectHandleRemoteSettingsRemoteSettingsService&) = delete;
   FfiValueObjectHandleRemoteSettingsRemoteSettingsService& operator=(const FfiValueObjectHandleRemoteSettingsRemoteSettingsService&) = delete;
 
-    FfiValueObjectHandleRemoteSettingsRemoteSettingsService& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettingsService&& aOther) {
+  FfiValueObjectHandleRemoteSettingsRemoteSettingsService& operator=(FfiValueObjectHandleRemoteSettingsRemoteSettingsService&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1469,6 +1558,13 @@ class FfiValueObjectHandleRemoteSettingsRemoteSettingsService {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1509,7 +1605,6 @@ const static mozilla::uniffi::UniFFIPointerType kSearchSearchEngineSelectorPoint
   uniffi_search_fn_clone_searchengineselector,
   uniffi_search_fn_free_searchengineselector,
 };
-
 class FfiValueObjectHandleSearchSearchEngineSelector {
  private:
   void* mValue = nullptr;
@@ -1522,7 +1617,7 @@ class FfiValueObjectHandleSearchSearchEngineSelector {
   FfiValueObjectHandleSearchSearchEngineSelector(const FfiValueObjectHandleSearchSearchEngineSelector&) = delete;
   FfiValueObjectHandleSearchSearchEngineSelector& operator=(const FfiValueObjectHandleSearchSearchEngineSelector&) = delete;
 
-    FfiValueObjectHandleSearchSearchEngineSelector& operator=(FfiValueObjectHandleSearchSearchEngineSelector&& aOther) {
+  FfiValueObjectHandleSearchSearchEngineSelector& operator=(FfiValueObjectHandleSearchSearchEngineSelector&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1542,6 +1637,13 @@ class FfiValueObjectHandleSearchSearchEngineSelector {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1582,7 +1684,6 @@ const static mozilla::uniffi::UniFFIPointerType kSuggestSuggestStorePointerType 
   uniffi_suggest_fn_clone_suggeststore,
   uniffi_suggest_fn_free_suggeststore,
 };
-
 class FfiValueObjectHandleSuggestSuggestStore {
  private:
   void* mValue = nullptr;
@@ -1595,7 +1696,7 @@ class FfiValueObjectHandleSuggestSuggestStore {
   FfiValueObjectHandleSuggestSuggestStore(const FfiValueObjectHandleSuggestSuggestStore&) = delete;
   FfiValueObjectHandleSuggestSuggestStore& operator=(const FfiValueObjectHandleSuggestSuggestStore&) = delete;
 
-    FfiValueObjectHandleSuggestSuggestStore& operator=(FfiValueObjectHandleSuggestSuggestStore&& aOther) {
+  FfiValueObjectHandleSuggestSuggestStore& operator=(FfiValueObjectHandleSuggestSuggestStore&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1615,6 +1716,13 @@ class FfiValueObjectHandleSuggestSuggestStore {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1655,7 +1763,6 @@ const static mozilla::uniffi::UniFFIPointerType kSuggestSuggestStoreBuilderPoint
   uniffi_suggest_fn_clone_suggeststorebuilder,
   uniffi_suggest_fn_free_suggeststorebuilder,
 };
-
 class FfiValueObjectHandleSuggestSuggestStoreBuilder {
  private:
   void* mValue = nullptr;
@@ -1668,7 +1775,7 @@ class FfiValueObjectHandleSuggestSuggestStoreBuilder {
   FfiValueObjectHandleSuggestSuggestStoreBuilder(const FfiValueObjectHandleSuggestSuggestStoreBuilder&) = delete;
   FfiValueObjectHandleSuggestSuggestStoreBuilder& operator=(const FfiValueObjectHandleSuggestSuggestStoreBuilder&) = delete;
 
-    FfiValueObjectHandleSuggestSuggestStoreBuilder& operator=(FfiValueObjectHandleSuggestSuggestStoreBuilder&& aOther) {
+  FfiValueObjectHandleSuggestSuggestStoreBuilder& operator=(FfiValueObjectHandleSuggestSuggestStoreBuilder&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1688,6 +1795,13 @@ class FfiValueObjectHandleSuggestSuggestStoreBuilder {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1728,7 +1842,6 @@ const static mozilla::uniffi::UniFFIPointerType kTabsRemoteCommandStorePointerTy
   uniffi_tabs_fn_clone_remotecommandstore,
   uniffi_tabs_fn_free_remotecommandstore,
 };
-
 class FfiValueObjectHandleTabsRemoteCommandStore {
  private:
   void* mValue = nullptr;
@@ -1741,7 +1854,7 @@ class FfiValueObjectHandleTabsRemoteCommandStore {
   FfiValueObjectHandleTabsRemoteCommandStore(const FfiValueObjectHandleTabsRemoteCommandStore&) = delete;
   FfiValueObjectHandleTabsRemoteCommandStore& operator=(const FfiValueObjectHandleTabsRemoteCommandStore&) = delete;
 
-    FfiValueObjectHandleTabsRemoteCommandStore& operator=(FfiValueObjectHandleTabsRemoteCommandStore&& aOther) {
+  FfiValueObjectHandleTabsRemoteCommandStore& operator=(FfiValueObjectHandleTabsRemoteCommandStore&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1761,6 +1874,13 @@ class FfiValueObjectHandleTabsRemoteCommandStore {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1801,7 +1921,6 @@ const static mozilla::uniffi::UniFFIPointerType kTabsTabsBridgedEnginePointerTyp
   uniffi_tabs_fn_clone_tabsbridgedengine,
   uniffi_tabs_fn_free_tabsbridgedengine,
 };
-
 class FfiValueObjectHandleTabsTabsBridgedEngine {
  private:
   void* mValue = nullptr;
@@ -1814,7 +1933,7 @@ class FfiValueObjectHandleTabsTabsBridgedEngine {
   FfiValueObjectHandleTabsTabsBridgedEngine(const FfiValueObjectHandleTabsTabsBridgedEngine&) = delete;
   FfiValueObjectHandleTabsTabsBridgedEngine& operator=(const FfiValueObjectHandleTabsTabsBridgedEngine&) = delete;
 
-    FfiValueObjectHandleTabsTabsBridgedEngine& operator=(FfiValueObjectHandleTabsTabsBridgedEngine&& aOther) {
+  FfiValueObjectHandleTabsTabsBridgedEngine& operator=(FfiValueObjectHandleTabsTabsBridgedEngine&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1834,6 +1953,13 @@ class FfiValueObjectHandleTabsTabsBridgedEngine {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1874,7 +2000,6 @@ const static mozilla::uniffi::UniFFIPointerType kTabsTabsStorePointerType {
   uniffi_tabs_fn_clone_tabsstore,
   uniffi_tabs_fn_free_tabsstore,
 };
-
 class FfiValueObjectHandleTabsTabsStore {
  private:
   void* mValue = nullptr;
@@ -1887,7 +2012,7 @@ class FfiValueObjectHandleTabsTabsStore {
   FfiValueObjectHandleTabsTabsStore(const FfiValueObjectHandleTabsTabsStore&) = delete;
   FfiValueObjectHandleTabsTabsStore& operator=(const FfiValueObjectHandleTabsTabsStore&) = delete;
 
-    FfiValueObjectHandleTabsTabsStore& operator=(FfiValueObjectHandleTabsTabsStore&& aOther) {
+  FfiValueObjectHandleTabsTabsStore& operator=(FfiValueObjectHandleTabsTabsStore&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1907,6 +2032,13 @@ class FfiValueObjectHandleTabsTabsStore {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -1947,7 +2079,6 @@ const static mozilla::uniffi::UniFFIPointerType kWebextstorageWebExtStorageBridg
   uniffi_webext_storage_fn_clone_webextstoragebridgedengine,
   uniffi_webext_storage_fn_free_webextstoragebridgedengine,
 };
-
 class FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine {
  private:
   void* mValue = nullptr;
@@ -1960,7 +2091,7 @@ class FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine {
   FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine(const FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine&) = delete;
   FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine& operator=(const FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine&) = delete;
 
-    FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine& operator=(FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine&& aOther) {
+  FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine& operator=(FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -1980,6 +2111,13 @@ class FfiValueObjectHandleWebextstorageWebExtStorageBridgedEngine {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -2020,7 +2158,6 @@ const static mozilla::uniffi::UniFFIPointerType kWebextstorageWebExtStorageStore
   uniffi_webext_storage_fn_clone_webextstoragestore,
   uniffi_webext_storage_fn_free_webextstoragestore,
 };
-
 class FfiValueObjectHandleWebextstorageWebExtStorageStore {
  private:
   void* mValue = nullptr;
@@ -2033,7 +2170,7 @@ class FfiValueObjectHandleWebextstorageWebExtStorageStore {
   FfiValueObjectHandleWebextstorageWebExtStorageStore(const FfiValueObjectHandleWebextstorageWebExtStorageStore&) = delete;
   FfiValueObjectHandleWebextstorageWebExtStorageStore& operator=(const FfiValueObjectHandleWebextstorageWebExtStorageStore&) = delete;
 
-    FfiValueObjectHandleWebextstorageWebExtStorageStore& operator=(FfiValueObjectHandleWebextstorageWebExtStorageStore&& aOther) {
+  FfiValueObjectHandleWebextstorageWebExtStorageStore& operator=(FfiValueObjectHandleWebextstorageWebExtStorageStore&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -2053,6 +2190,13 @@ class FfiValueObjectHandleWebextstorageWebExtStorageStore {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -2095,7 +2239,6 @@ const static mozilla::uniffi::UniFFIPointerType kUniffiBindingsTestsTestInterfac
   uniffi_uniffi_bindings_tests_fn_clone_testinterface,
   uniffi_uniffi_bindings_tests_fn_free_testinterface,
 };
-
 class FfiValueObjectHandleUniffiBindingsTestsTestInterface {
  private:
   void* mValue = nullptr;
@@ -2108,7 +2251,7 @@ class FfiValueObjectHandleUniffiBindingsTestsTestInterface {
   FfiValueObjectHandleUniffiBindingsTestsTestInterface(const FfiValueObjectHandleUniffiBindingsTestsTestInterface&) = delete;
   FfiValueObjectHandleUniffiBindingsTestsTestInterface& operator=(const FfiValueObjectHandleUniffiBindingsTestsTestInterface&) = delete;
 
-    FfiValueObjectHandleUniffiBindingsTestsTestInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsTestInterface&& aOther) {
+  FfiValueObjectHandleUniffiBindingsTestsTestInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsTestInterface&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -2128,6 +2271,13 @@ class FfiValueObjectHandleUniffiBindingsTestsTestInterface {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -2168,7 +2318,6 @@ const static mozilla::uniffi::UniFFIPointerType kUniffiBindingsTestsAsyncInterfa
   uniffi_uniffi_bindings_tests_fn_clone_asyncinterface,
   uniffi_uniffi_bindings_tests_fn_free_asyncinterface,
 };
-
 class FfiValueObjectHandleUniffiBindingsTestsAsyncInterface {
  private:
   void* mValue = nullptr;
@@ -2181,7 +2330,7 @@ class FfiValueObjectHandleUniffiBindingsTestsAsyncInterface {
   FfiValueObjectHandleUniffiBindingsTestsAsyncInterface(const FfiValueObjectHandleUniffiBindingsTestsAsyncInterface&) = delete;
   FfiValueObjectHandleUniffiBindingsTestsAsyncInterface& operator=(const FfiValueObjectHandleUniffiBindingsTestsAsyncInterface&) = delete;
 
-    FfiValueObjectHandleUniffiBindingsTestsAsyncInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsAsyncInterface&& aOther) {
+  FfiValueObjectHandleUniffiBindingsTestsAsyncInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsAsyncInterface&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -2201,6 +2350,13 @@ class FfiValueObjectHandleUniffiBindingsTestsAsyncInterface {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -2236,12 +2392,130 @@ class FfiValueObjectHandleUniffiBindingsTestsAsyncInterface {
     FreeHandle();
   }
 };
+const static mozilla::uniffi::UniFFIPointerType kUniffiBindingsTestsAsyncTestTraitInterfacePointerType {
+  "uniffi_bindings_tests::AsyncTestTraitInterface"_ns,
+  uniffi_uniffi_bindings_tests_fn_clone_asynctesttraitinterface,
+  uniffi_uniffi_bindings_tests_fn_free_asynctesttraitinterface,
+};
+// Forward declare the free function, which is defined later on in `CallbackInterfaces.cpp`
+extern "C" void callback_free_uniffi_bindings_tests_async_test_trait_interface(uint64_t uniffiHandle);
+
+// Trait interface FFI value class.  This is a hybrid between the one for interfaces and callback
+// interface version
+class FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface {
+ private:
+  // Did we lower a callback interface, rather than lift an object interface?
+  // This is weird, but it's a needed work until something like
+  // https://github.com/mozilla/uniffi-rs/pull/1823 lands.
+  bool mLoweredCallbackInterface = false;
+  // The raw FFI value is a pointer.
+  // For callback interfaces, the uint64_t handle gets casted to a pointer.  Callback interface
+  // handles are incremented by one at a time, so even on a 32-bit system this
+  // shouldn't overflow.
+  void* mValue = nullptr;
+
+ public:
+  FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface() = default;
+  explicit FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface(void* aValue) : mValue(aValue) {}
+
+  // Delete copy constructor and assignment as this type is non-copyable.
+  FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface(const FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface&) = delete;
+  FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface& operator=(const FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface&) = delete;
+
+  FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface&& aOther) {
+    FreeHandle();
+    mValue = aOther.mValue;
+    mLoweredCallbackInterface = aOther.mLoweredCallbackInterface;
+    aOther.mValue = nullptr;
+    aOther.mLoweredCallbackInterface = false;
+    return *this;
+  }
+
+  // Lower treats `aValue` as a callback interface
+  void Lower(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    if (!aValue.IsDouble()) {
+      aError.ThrowTypeError("Bad argument type"_ns);
+      return;
+    }
+    double floatValue = aValue.GetAsDouble();
+    uint64_t intValue = static_cast<uint64_t>(floatValue);
+    if (intValue != floatValue) {
+      aError.ThrowTypeError("Not an integer"_ns);
+      return;
+    }
+    FreeHandle();
+    mValue = reinterpret_cast<void *>(intValue);
+    mLoweredCallbackInterface = true;
+  }
+
+  // LowerReceiver is used for method receivers.  It treats `aValue` as an object pointer.
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    if (!aValue.IsUniFFIPointer()) {
+      aError.ThrowTypeError("Expected UniFFI pointer argument"_ns);
+      return;
+    }
+    dom::UniFFIPointer& value = aValue.GetAsUniFFIPointer();
+    if (!value.IsSamePtrType(&kUniffiBindingsTestsAsyncTestTraitInterfacePointerType)) {
+      aError.ThrowTypeError("Incorrect UniFFI pointer type"_ns);
+      return;
+    }
+    FreeHandle();
+    mValue = value.ClonePtr();
+    mLoweredCallbackInterface = false;
+  }
+
+  // Lift treats `aDest` as a regular interface
+  void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
+            ErrorResult& aError) {
+    aDest->SetAsUniFFIPointer() =
+        dom::UniFFIPointer::Create(mValue, &kUniffiBindingsTestsAsyncTestTraitInterfacePointerType);
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+  }
+
+  void* IntoRust() {
+    auto temp = mValue;
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+    return temp;
+  }
+
+  static FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface FromRust(void* aValue) {
+    return FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface(aValue);
+  }
+
+  void FreeHandle() {
+    // This behavior depends on if we lowered a callback interface handle or lifted an interface
+    // pointer.
+    if (mLoweredCallbackInterface && reinterpret_cast<uintptr_t>(mValue) != 0) {
+                                     printf("FREEING CB %p\n", mValue);
+        callback_free_uniffi_bindings_tests_async_test_trait_interface(reinterpret_cast<uintptr_t>(mValue));
+        mValue = reinterpret_cast<void *>(0);
+    } else if (!mLoweredCallbackInterface && mValue != nullptr) {
+                                     printf("FREEING interface %p\n", mValue);
+      RustCallStatus callStatus{};
+      (uniffi_uniffi_bindings_tests_fn_free_asynctesttraitinterface)(mValue, &callStatus);
+      // No need to check `RustCallStatus`, it's only part of the API to match
+      // other FFI calls.  The free function can never fail.
+    }
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+  }
+
+  ~FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface() {
+    // If the pointer is non-null, this means Lift/IntoRust was never called
+    // because there was some failure along the way. Free the pointer to avoid a
+    // leak
+    FreeHandle();
+  }
+};
 const static mozilla::uniffi::UniFFIPointerType kUniffiBindingsTestsComplexMethodsPointerType {
   "uniffi_bindings_tests::ComplexMethods"_ns,
   uniffi_uniffi_bindings_tests_fn_clone_complexmethods,
   uniffi_uniffi_bindings_tests_fn_free_complexmethods,
 };
-
 class FfiValueObjectHandleUniffiBindingsTestsComplexMethods {
  private:
   void* mValue = nullptr;
@@ -2254,7 +2528,7 @@ class FfiValueObjectHandleUniffiBindingsTestsComplexMethods {
   FfiValueObjectHandleUniffiBindingsTestsComplexMethods(const FfiValueObjectHandleUniffiBindingsTestsComplexMethods&) = delete;
   FfiValueObjectHandleUniffiBindingsTestsComplexMethods& operator=(const FfiValueObjectHandleUniffiBindingsTestsComplexMethods&) = delete;
 
-    FfiValueObjectHandleUniffiBindingsTestsComplexMethods& operator=(FfiValueObjectHandleUniffiBindingsTestsComplexMethods&& aOther) {
+  FfiValueObjectHandleUniffiBindingsTestsComplexMethods& operator=(FfiValueObjectHandleUniffiBindingsTestsComplexMethods&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
     aOther.mValue = nullptr;
@@ -2274,6 +2548,13 @@ class FfiValueObjectHandleUniffiBindingsTestsComplexMethods {
     }
     FreeHandle();
     mValue = value.ClonePtr();
+  }
+
+  // LowerReceiver is used for method receivers.  For non-trait interfaces, it works exactly the
+  // same as `Lower`
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    Lower(aValue, aError);
   }
 
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
@@ -2303,6 +2584,125 @@ class FfiValueObjectHandleUniffiBindingsTestsComplexMethods {
   }
 
   ~FfiValueObjectHandleUniffiBindingsTestsComplexMethods() {
+    // If the pointer is non-null, this means Lift/IntoRust was never called
+    // because there was some failure along the way. Free the pointer to avoid a
+    // leak
+    FreeHandle();
+  }
+};
+const static mozilla::uniffi::UniFFIPointerType kUniffiBindingsTestsTestTraitInterfacePointerType {
+  "uniffi_bindings_tests::TestTraitInterface"_ns,
+  uniffi_uniffi_bindings_tests_fn_clone_testtraitinterface,
+  uniffi_uniffi_bindings_tests_fn_free_testtraitinterface,
+};
+// Forward declare the free function, which is defined later on in `CallbackInterfaces.cpp`
+extern "C" void callback_free_uniffi_bindings_tests_test_trait_interface(uint64_t uniffiHandle);
+
+// Trait interface FFI value class.  This is a hybrid between the one for interfaces and callback
+// interface version
+class FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface {
+ private:
+  // Did we lower a callback interface, rather than lift an object interface?
+  // This is weird, but it's a needed work until something like
+  // https://github.com/mozilla/uniffi-rs/pull/1823 lands.
+  bool mLoweredCallbackInterface = false;
+  // The raw FFI value is a pointer.
+  // For callback interfaces, the uint64_t handle gets casted to a pointer.  Callback interface
+  // handles are incremented by one at a time, so even on a 32-bit system this
+  // shouldn't overflow.
+  void* mValue = nullptr;
+
+ public:
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface() = default;
+  explicit FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface(void* aValue) : mValue(aValue) {}
+
+  // Delete copy constructor and assignment as this type is non-copyable.
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface(const FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface&) = delete;
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface& operator=(const FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface&) = delete;
+
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface& operator=(FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface&& aOther) {
+    FreeHandle();
+    mValue = aOther.mValue;
+    mLoweredCallbackInterface = aOther.mLoweredCallbackInterface;
+    aOther.mValue = nullptr;
+    aOther.mLoweredCallbackInterface = false;
+    return *this;
+  }
+
+  // Lower treats `aValue` as a callback interface
+  void Lower(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    if (!aValue.IsDouble()) {
+      aError.ThrowTypeError("Bad argument type"_ns);
+      return;
+    }
+    double floatValue = aValue.GetAsDouble();
+    uint64_t intValue = static_cast<uint64_t>(floatValue);
+    if (intValue != floatValue) {
+      aError.ThrowTypeError("Not an integer"_ns);
+      return;
+    }
+    FreeHandle();
+    mValue = reinterpret_cast<void *>(intValue);
+    mLoweredCallbackInterface = true;
+  }
+
+  // LowerReceiver is used for method receivers.  It treats `aValue` as an object pointer.
+  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
+             ErrorResult& aError) {
+    if (!aValue.IsUniFFIPointer()) {
+      aError.ThrowTypeError("Expected UniFFI pointer argument"_ns);
+      return;
+    }
+    dom::UniFFIPointer& value = aValue.GetAsUniFFIPointer();
+    if (!value.IsSamePtrType(&kUniffiBindingsTestsTestTraitInterfacePointerType)) {
+      aError.ThrowTypeError("Incorrect UniFFI pointer type"_ns);
+      return;
+    }
+    FreeHandle();
+    mValue = value.ClonePtr();
+    mLoweredCallbackInterface = false;
+  }
+
+  // Lift treats `aDest` as a regular interface
+  void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
+            ErrorResult& aError) {
+    aDest->SetAsUniFFIPointer() =
+        dom::UniFFIPointer::Create(mValue, &kUniffiBindingsTestsTestTraitInterfacePointerType);
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+  }
+
+  void* IntoRust() {
+    auto temp = mValue;
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+    return temp;
+  }
+
+  static FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface FromRust(void* aValue) {
+    return FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface(aValue);
+  }
+
+  void FreeHandle() {
+    // This behavior depends on if we lowered a callback interface handle or lifted an interface
+    // pointer.
+    if (mLoweredCallbackInterface && reinterpret_cast<uintptr_t>(mValue) != 0) {
+                                     printf("FREEING CB %p\n", mValue);
+        callback_free_uniffi_bindings_tests_test_trait_interface(reinterpret_cast<uintptr_t>(mValue));
+        mValue = reinterpret_cast<void *>(0);
+    } else if (!mLoweredCallbackInterface && mValue != nullptr) {
+                                     printf("FREEING interface %p\n", mValue);
+      RustCallStatus callStatus{};
+      (uniffi_uniffi_bindings_tests_fn_free_testtraitinterface)(mValue, &callStatus);
+      // No need to check `RustCallStatus`, it's only part of the API to match
+      // other FFI calls.  The free function can never fail.
+    }
+    mValue = nullptr;
+    mLoweredCallbackInterface = false;
+  }
+
+  ~FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface() {
     // If the pointer is non-null, this means Lift/IntoRust was never called
     // because there was some failure along the way. Free the pointer to avoid a
     // leak
@@ -2378,7 +2778,15 @@ Maybe<already_AddRefed<UniFFIPointer>> ReadPointer(const GlobalObject& aGlobal, 
       break;
     }
     case 16: {
+      type = &kUniffiBindingsTestsAsyncTestTraitInterfacePointerType;
+      break;
+    }
+    case 17: {
       type = &kUniffiBindingsTestsComplexMethodsPointerType;
+      break;
+    }
+    case 18: {
+      type = &kUniffiBindingsTestsTestTraitInterfacePointerType;
       break;
     }
 #endif /* MOZ_UNIFFI_FIXTURES */
@@ -2455,7 +2863,15 @@ bool WritePointer(const GlobalObject& aGlobal, uint64_t aId, const UniFFIPointer
       break;
     }
     case 16: {
+      type = &kUniffiBindingsTestsAsyncTestTraitInterfacePointerType;
+      break;
+    }
+    case 17: {
       type = &kUniffiBindingsTestsComplexMethodsPointerType;
+      break;
+    }
+    case 18: {
+      type = &kUniffiBindingsTestsTestTraitInterfacePointerType;
       break;
     }
 #endif /* MOZ_UNIFFI_FIXTURES */
@@ -2473,8 +2889,6 @@ bool WritePointer(const GlobalObject& aGlobal, uint64_t aId, const UniFFIPointer
 // Callback interface FfiValueClasses
 //
 // These need to come first so they're defined for the scaffolding call code
-
-
 
 
 // Forward declare the free function, which is defined later on in `CallbackInterfaces.cpp`
@@ -2608,8 +3022,6 @@ class FfiValueCallbackInterfaceerrorsupport_ApplicationErrorReporter {
 };
 
 #ifdef MOZ_UNIFFI_FIXTURES
-
-
 
 // Forward declare the free function, which is defined later on in `CallbackInterfaces.cpp`
 extern "C" void callback_free_uniffi_bindings_tests_test_async_callback_interface(uint64_t uniffiHandle);
@@ -2809,7 +3221,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -2836,7 +3248,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -2873,7 +3285,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3022,7 +3434,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3060,7 +3472,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3105,7 +3517,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3145,7 +3557,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3170,7 +3582,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3198,7 +3610,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3242,7 +3654,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3279,7 +3691,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3305,7 +3717,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3372,7 +3784,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3408,7 +3820,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3442,7 +3854,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3480,7 +3892,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3514,7 +3926,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3553,7 +3965,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3592,7 +4004,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3629,7 +4041,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3654,7 +4066,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3720,7 +4132,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3758,7 +4170,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3791,7 +4203,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3848,7 +4260,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3875,7 +4287,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3913,7 +4325,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3944,7 +4356,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -3976,7 +4388,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4090,7 +4502,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4122,7 +4534,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4147,7 +4559,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4173,7 +4585,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4204,7 +4616,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4235,7 +4647,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4267,7 +4679,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4308,7 +4720,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4356,7 +4768,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4390,7 +4802,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4429,7 +4841,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4467,7 +4879,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4499,7 +4911,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4538,7 +4950,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4577,7 +4989,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4616,7 +5028,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4681,7 +5093,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4715,7 +5127,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4754,7 +5166,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4794,7 +5206,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4838,7 +5250,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4877,7 +5289,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4916,7 +5328,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -4956,7 +5368,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5002,7 +5414,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5050,7 +5462,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5085,7 +5497,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5129,7 +5541,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5167,7 +5579,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5201,7 +5613,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5239,7 +5651,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5272,7 +5684,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5302,7 +5714,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5328,7 +5740,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5361,7 +5773,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5393,7 +5805,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5429,7 +5841,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5459,7 +5871,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5485,7 +5897,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5517,7 +5929,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5542,7 +5954,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5601,7 +6013,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5633,7 +6045,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5659,7 +6071,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5692,7 +6104,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5724,7 +6136,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5750,7 +6162,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5781,7 +6193,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5815,7 +6227,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5853,7 +6265,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5886,7 +6298,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5916,7 +6328,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5942,7 +6354,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -5975,7 +6387,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6007,7 +6419,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6043,7 +6455,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6073,7 +6485,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6099,7 +6511,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6131,7 +6543,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6156,7 +6568,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6215,7 +6627,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6249,7 +6661,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6286,7 +6698,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6314,7 +6726,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6359,7 +6771,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6402,7 +6814,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6437,7 +6849,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -6482,7 +6894,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -7152,6 +7564,72 @@ public:
     );
   }
 };
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncCreateAsyncTestTraitInterface : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueInt<uint32_t> mValue{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mValue.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface::FromRust(
+      uniffi_uniffi_bindings_tests_fn_func_create_async_test_trait_interface(
+        mValue.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncCreateTestTraitInterface : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueInt<uint32_t> mValue{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mValue.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface::FromRust(
+      uniffi_uniffi_bindings_tests_fn_func_create_test_trait_interface(
+        mValue.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
 class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithDefault : public UniffiSyncCallHandler {
 private:
   // LowerRustArgs stores the resulting arguments in these fields
@@ -7261,6 +7739,168 @@ public:
   }
 
   virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceGetValue : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceGetValue() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_u32,
+        ffi_uniffi_bindings_tests_rust_future_free_u32
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+  FfiValueInt<uint32_t> mUniffiReturnValue{};
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mInt{};
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_get_value(
+      mInt.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueInt<uint32_t>::FromRust(
+      ffi_uniffi_bindings_tests_rust_future_complete_u32(mFutureHandle, aOutStatus));
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceNoop : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceNoop() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_void,
+        ffi_uniffi_bindings_tests_rust_future_free_void
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mInt{};
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_noop(
+      mInt.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    ffi_uniffi_bindings_tests_rust_future_complete_void(mFutureHandle, aOutStatus);
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceSetValue : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceSetValue() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_void,
+        ffi_uniffi_bindings_tests_rust_future_free_void
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mInt{};
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    FfiValueInt<uint32_t> mValue{};
+    mValue.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_set_value(
+      mInt.IntoRust(),
+      mValue.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    ffi_uniffi_bindings_tests_rust_future_complete_void(mFutureHandle, aOutStatus);
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceThrowIfEqual : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceThrowIfEqual() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_rust_buffer,
+        ffi_uniffi_bindings_tests_rust_future_free_rust_buffer
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+  FfiValueRustBuffer mUniffiReturnValue{};
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mInt{};
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    FfiValueRustBuffer mNumbers{};
+    mNumbers.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_func_invoke_async_test_trait_interface_throw_if_equal(
+      mInt.IntoRust(),
+      mNumbers.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueRustBuffer::FromRust(
+      ffi_uniffi_bindings_tests_rust_future_complete_rust_buffer(mFutureHandle, aOutStatus));
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
     mUniffiReturnValue.Lift(
       aCx,
       &aDest.Construct(),
@@ -7544,6 +8184,134 @@ public:
     mUniffiReturnValue = FfiValueRustBuffer::FromRust(
       uniffi_uniffi_bindings_tests_fn_func_invoke_test_callback_interface_throw_if_equal(
         mCbi.IntoRust(),
+        mNumbers.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceGetValue : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mInt{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueInt<uint32_t> mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueInt<uint32_t>::FromRust(
+      uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_get_value(
+        mInt.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceNoop : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mInt{};
+
+  // MakeRustCall stores the result of the call in these fields
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_noop(
+      mInt.IntoRust(),
+      aOutStatus
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceSetValue : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mInt{};
+  FfiValueInt<uint32_t> mValue{};
+
+  // MakeRustCall stores the result of the call in these fields
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    mValue.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_set_value(
+      mInt.IntoRust(),
+      mValue.IntoRust(),
+      aOutStatus
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceThrowIfEqual : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mInt{};
+  FfiValueRustBuffer mNumbers{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueRustBuffer mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mInt.Lower(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    mNumbers.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueRustBuffer::FromRust(
+      uniffi_uniffi_bindings_tests_fn_func_invoke_test_trait_interface_throw_if_equal(
+        mInt.IntoRust(),
         mNumbers.IntoRust(),
         aOutStatus
       )
@@ -8472,7 +9240,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -8505,7 +9273,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -8578,13 +9346,175 @@ protected:
   // return a future.
   void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
     FfiValueObjectHandleUniffiBindingsTestsAsyncInterface mUniffiPtr{};
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
 
     mFutureHandle = uniffi_uniffi_bindings_tests_fn_method_asyncinterface_name(
       mUniffiPtr.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueRustBuffer::FromRust(
+      ffi_uniffi_bindings_tests_rust_future_complete_rust_buffer(mFutureHandle, aOutStatus));
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceNoop : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceNoop() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_void,
+        ffi_uniffi_bindings_tests_rust_future_free_void
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mUniffiPtr{};
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_noop(
+      mUniffiPtr.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    ffi_uniffi_bindings_tests_rust_future_complete_void(mFutureHandle, aOutStatus);
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceGetValue : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceGetValue() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_u32,
+        ffi_uniffi_bindings_tests_rust_future_free_u32
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+  FfiValueInt<uint32_t> mUniffiReturnValue{};
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mUniffiPtr{};
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_get_value(
+      mUniffiPtr.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueInt<uint32_t>::FromRust(
+      ffi_uniffi_bindings_tests_rust_future_complete_u32(mFutureHandle, aOutStatus));
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceSetValue : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceSetValue() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_void,
+        ffi_uniffi_bindings_tests_rust_future_free_void
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mUniffiPtr{};
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    FfiValueInt<uint32_t> mValue{};
+    mValue.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_set_value(
+      mUniffiPtr.IntoRust(),
+      mValue.IntoRust()
+    );
+  }
+
+  void CallCompleteFn(RustCallStatus* aOutStatus) override {
+    ffi_uniffi_bindings_tests_rust_future_complete_void(mFutureHandle, aOutStatus);
+  }
+
+public:
+  void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceThrowIfEqual : public UniffiAsyncCallHandler {
+public:
+  ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceThrowIfEqual() : UniffiAsyncCallHandler(
+        ffi_uniffi_bindings_tests_rust_future_poll_rust_buffer,
+        ffi_uniffi_bindings_tests_rust_future_free_rust_buffer
+    ) { }
+
+private:
+  // Complete stores the result of the call in mUniffiReturnValue
+  FfiValueRustBuffer mUniffiReturnValue{};
+
+protected:
+  // Convert a sequence of JS arguments and call the scaffolding function.
+  // Always called on the main thread since async Rust calls don't block, they
+  // return a future.
+  void LowerArgsAndMakeRustCall(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    FfiValueObjectHandleUniffiBindingsTestsAsyncTestTraitInterface mUniffiPtr{};
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    FfiValueRustBuffer mNumbers{};
+    mNumbers.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+
+    mFutureHandle = uniffi_uniffi_bindings_tests_fn_method_asynctesttraitinterface_throw_if_equal(
+      mUniffiPtr.IntoRust(),
+      mNumbers.IntoRust()
     );
   }
 
@@ -8640,7 +9570,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -8679,7 +9609,7 @@ private:
 
 public:
   void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
-    mUniffiPtr.Lower(aArgs[0], aError);
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
     if (aError.Failed()) {
       return;
     }
@@ -8694,6 +9624,134 @@ public:
       uniffi_uniffi_bindings_tests_fn_method_complexmethods_method_with_multi_word_arg(
         mUniffiPtr.IntoRust(),
         mTheArgument.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceNoop : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mUniffiPtr{};
+
+  // MakeRustCall stores the result of the call in these fields
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_noop(
+      mUniffiPtr.IntoRust(),
+      aOutStatus
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceGetValue : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mUniffiPtr{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueInt<uint32_t> mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueInt<uint32_t>::FromRust(
+      uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_get_value(
+        mUniffiPtr.IntoRust(),
+        aOutStatus
+      )
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+    mUniffiReturnValue.Lift(
+      aCx,
+      &aDest.Construct(),
+      aError
+    );
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceSetValue : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mUniffiPtr{};
+  FfiValueInt<uint32_t> mValue{};
+
+  // MakeRustCall stores the result of the call in these fields
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    mValue.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_set_value(
+      mUniffiPtr.IntoRust(),
+      mValue.IntoRust(),
+      aOutStatus
+    );
+  }
+
+  virtual void LiftSuccessfulCallResult(JSContext* aCx, dom::Optional<dom::OwningUniFFIScaffoldingValue>& aDest, ErrorResult& aError) override {
+  }
+};
+class ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceThrowIfEqual : public UniffiSyncCallHandler {
+private:
+  // LowerRustArgs stores the resulting arguments in these fields
+  FfiValueObjectHandleUniffiBindingsTestsTestTraitInterface mUniffiPtr{};
+  FfiValueRustBuffer mNumbers{};
+
+  // MakeRustCall stores the result of the call in these fields
+  FfiValueRustBuffer mUniffiReturnValue{};
+
+public:
+  void LowerRustArgs(const dom::Sequence<dom::OwningUniFFIScaffoldingValue>& aArgs, ErrorResult& aError) override {
+    mUniffiPtr.LowerReciever(aArgs[0], aError);
+    if (aError.Failed()) {
+      return;
+    }
+    mNumbers.Lower(aArgs[1], aError);
+    if (aError.Failed()) {
+      return;
+    }
+  }
+
+  void MakeRustCall(RustCallStatus* aOutStatus) override {
+    mUniffiReturnValue = FfiValueRustBuffer::FromRust(
+      uniffi_uniffi_bindings_tests_fn_method_testtraitinterface_throw_if_equal(
+        mUniffiPtr.IntoRust(),
+        mNumbers.IntoRust(),
         aOutStatus
       )
     );
@@ -9180,135 +10238,165 @@ UniquePtr<UniffiSyncCallHandler> GetSyncCallHandler(uint64_t aId) {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncCloneInterface>();
     }
     case 127: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithDefault>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncCreateAsyncTestTraitInterface>();
     }
     case 128: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithError>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncCreateTestTraitInterface>();
     }
     case 129: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithFlatError>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithDefault>();
     }
     case 130: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithError>();
+    }
+    case 131: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithFlatError>();
+    }
+    case 132: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncFuncWithMultiWordArg>();
     }
-    case 135: {
+    case 141: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestCallbackInterfaceGetValue>();
     }
-    case 136: {
+    case 142: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestCallbackInterfaceNoop>();
     }
-    case 137: {
+    case 143: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestCallbackInterfaceSetValue>();
     }
-    case 138: {
+    case 144: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestCallbackInterfaceThrowIfEqual>();
     }
-    case 139: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripBool>();
-    }
-    case 140: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexCompound>();
-    }
-    case 141: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexEnum>();
-    }
-    case 142: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexRec>();
-    }
-    case 143: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripCustomType>();
-    }
-    case 144: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripEnumNoData>();
-    }
     case 145: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripEnumWithData>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceGetValue>();
     }
     case 146: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripF32>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceNoop>();
     }
     case 147: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripF64>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceSetValue>();
     }
     case 148: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripHashMap>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestTraitInterfaceThrowIfEqual>();
     }
     case 149: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI16>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripBool>();
     }
     case 150: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI32>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexCompound>();
     }
     case 151: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI64>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexEnum>();
     }
     case 152: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI8>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripComplexRec>();
     }
     case 153: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripOption>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripCustomType>();
     }
     case 154: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripSimpleRec>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripEnumNoData>();
     }
     case 155: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripString>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripEnumWithData>();
     }
     case 156: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU16>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripF32>();
     }
     case 157: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU32>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripF64>();
     }
     case 158: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU64>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripHashMap>();
     }
     case 159: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU8>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI16>();
     }
     case 160: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripVec>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI32>();
     }
     case 161: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncSumWithManyTypes>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI64>();
     }
     case 162: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncSwapTestInterfaces>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripI8>();
     }
     case 163: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncTestFunc>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripOption>();
     }
     case 164: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorTestinterfaceNew>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripSimpleRec>();
     }
     case 165: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTestinterfaceGetValue>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripString>();
     }
     case 166: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTestinterfaceRefCount>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU16>();
     }
     case 167: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorAsyncinterfaceNew>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU32>();
+    }
+    case 168: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU64>();
     }
     case 169: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorComplexmethodsNew>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripU8>();
     }
     case 170: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodComplexmethodsMethodWithDefault>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncRoundtripVec>();
     }
     case 171: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodComplexmethodsMethodWithMultiWordArg>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncSumWithManyTypes>();
     }
     case 172: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtCustomType>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncSwapTestInterfaces>();
     }
     case 173: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtEnum>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncTestFunc>();
     }
     case 174: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtInterface>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorTestinterfaceNew>();
     }
     case 175: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTestinterfaceGetValue>();
+    }
+    case 176: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTestinterfaceRefCount>();
+    }
+    case 177: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorAsyncinterfaceNew>();
+    }
+    case 183: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnConstructorComplexmethodsNew>();
+    }
+    case 184: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodComplexmethodsMethodWithDefault>();
+    }
+    case 185: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodComplexmethodsMethodWithMultiWordArg>();
+    }
+    case 186: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceNoop>();
+    }
+    case 187: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceGetValue>();
+    }
+    case 188: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceSetValue>();
+    }
+    case 189: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodTesttraitinterfaceThrowIfEqual>();
+    }
+    case 190: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtCustomType>();
+    }
+    case 191: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtEnum>();
+    }
+    case 192: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtInterface>();
+    }
+    case 193: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsExternalTypesFnFuncRoundtripExtRecord>();
     }
 #endif /* MOZ_UNIFFI_FIXTURES */
@@ -9368,20 +10456,44 @@ UniquePtr<UniffiAsyncCallHandler> GetAsyncCallHandler(uint64_t aId) {
     case 125: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncAsyncThrowError>();
     }
-    case 131: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceGetValue>();
-    }
-    case 132: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceNoop>();
-    }
     case 133: {
-      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceSetValue>();
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceGetValue>();
     }
     case 134: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceNoop>();
+    }
+    case 135: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceSetValue>();
+    }
+    case 136: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeAsyncTestTraitInterfaceThrowIfEqual>();
+    }
+    case 137: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceGetValue>();
+    }
+    case 138: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceNoop>();
+    }
+    case 139: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceSetValue>();
+    }
+    case 140: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnFuncInvokeTestAsyncCallbackInterfaceThrowIfEqual>();
     }
-    case 168: {
+    case 178: {
       return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsyncinterfaceName>();
+    }
+    case 179: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceNoop>();
+    }
+    case 180: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceGetValue>();
+    }
+    case 181: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceSetValue>();
+    }
+    case 182: {
+      return MakeUnique<ScaffoldingCallHandlerUniffiUniffiBindingsTestsFnMethodAsynctesttraitinterfaceThrowIfEqual>();
     }
 #endif /* MOZ_UNIFFI_FIXTURES */
 
@@ -10441,6 +11553,496 @@ static VTableCallbackInterfaceTestCallbackInterface kUniffiVtableTestCallbackInt
   callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal,
   callback_free_uniffi_bindings_tests_test_callback_interface
 };
+static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerAsyncTestTraitInterface;
+
+class CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceNoop final : public AsyncCallbackMethodHandlerBaseVoid {
+private:
+  // Rust arguments
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceNoop(
+      uint64_t aUniffiHandle,
+      ForeignFutureCompletevoid aUniffiCompleteCallback,
+      uint64_t aUniffiCallbackData)
+    : AsyncCallbackMethodHandlerBaseVoid(
+        "AsyncTestTraitInterface.callback_interface_uniffi_bindings_tests_async_test_trait_interface_noop",
+        aUniffiHandle,
+        aUniffiCompleteCallback,
+        aUniffiCallbackData
+    )
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  already_AddRefed<dom::Promise>
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return nullptr;
+    }
+
+    // Convert each argument
+    return aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
+  }
+};
+
+extern "C" void callback_interface_uniffi_bindings_tests_async_test_trait_interface_noop(
+  uint64_t aUniffiHandle,
+  ForeignFutureCompletevoid aUniffiForeignFutureCallback,
+  uint64_t aUniffiForeignFutureCallbackData,
+  // This can be used to detected when the future is dropped from the Rust side and cancel the
+  // async task on the foreign side.  However, there's no way to do that in JS, so we just ignore
+  // it.
+  ForeignFuture *aUniffiOutForeignFuture
+) {
+  // Async callback methods can be called from:
+  //   * async Rust functions
+  //   * async-wrapped Rust functions, using something like `futures::block_on`.
+  //
+  // Async callback methods should not be called from sync Rust functions using `futures::block_on`,
+  // since that could deadlock the JS main thread.
+  //
+  // The following assertion checks this.
+  MOZ_ASSERT(!NS_IsMainThread());
+
+  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceNoop>(aUniffiHandle, aUniffiForeignFutureCallback, aUniffiForeignFutureCallbackData);
+  // Now that everything is set up, schedule the call in the JS main thread.
+  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerAsyncTestTraitInterface);
+}
+
+class CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceGetValue final : public AsyncCallbackMethodHandlerBaseUInt32 {
+private:
+  // Rust arguments
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceGetValue(
+      uint64_t aUniffiHandle,
+      ForeignFutureCompleteu32 aUniffiCompleteCallback,
+      uint64_t aUniffiCallbackData)
+    : AsyncCallbackMethodHandlerBaseUInt32(
+        "AsyncTestTraitInterface.callback_interface_uniffi_bindings_tests_async_test_trait_interface_get_value",
+        aUniffiHandle,
+        aUniffiCompleteCallback,
+        aUniffiCallbackData
+    )
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  already_AddRefed<dom::Promise>
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return nullptr;
+    }
+
+    // Convert each argument
+    return aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 1, uniffiArgs, aError);
+  }
+};
+
+extern "C" void callback_interface_uniffi_bindings_tests_async_test_trait_interface_get_value(
+  uint64_t aUniffiHandle,
+  ForeignFutureCompleteu32 aUniffiForeignFutureCallback,
+  uint64_t aUniffiForeignFutureCallbackData,
+  // This can be used to detected when the future is dropped from the Rust side and cancel the
+  // async task on the foreign side.  However, there's no way to do that in JS, so we just ignore
+  // it.
+  ForeignFuture *aUniffiOutForeignFuture
+) {
+  // Async callback methods can be called from:
+  //   * async Rust functions
+  //   * async-wrapped Rust functions, using something like `futures::block_on`.
+  //
+  // Async callback methods should not be called from sync Rust functions using `futures::block_on`,
+  // since that could deadlock the JS main thread.
+  //
+  // The following assertion checks this.
+  MOZ_ASSERT(!NS_IsMainThread());
+
+  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceGetValue>(aUniffiHandle, aUniffiForeignFutureCallback, aUniffiForeignFutureCallbackData);
+  // Now that everything is set up, schedule the call in the JS main thread.
+  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerAsyncTestTraitInterface);
+}
+
+class CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceSetValue final : public AsyncCallbackMethodHandlerBaseVoid {
+private:
+  // Rust arguments
+  FfiValueInt<uint32_t> mValue{};
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceSetValue(
+      uint64_t aUniffiHandle,
+      uint32_t aValue,
+      ForeignFutureCompletevoid aUniffiCompleteCallback,
+      uint64_t aUniffiCallbackData)
+    : AsyncCallbackMethodHandlerBaseVoid(
+        "AsyncTestTraitInterface.callback_interface_uniffi_bindings_tests_async_test_trait_interface_set_value",
+        aUniffiHandle,
+        aUniffiCompleteCallback,
+        aUniffiCallbackData
+    ), mValue(FfiValueInt<uint32_t>::FromRust(aValue))
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  already_AddRefed<dom::Promise>
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return nullptr;
+    }
+
+    // Convert each argument
+    mValue.Lift(
+      aCx,
+      &uniffiArgs[0],
+      aError);
+    if (aError.Failed()) {
+      return nullptr;
+    }
+    return aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 2, uniffiArgs, aError);
+  }
+};
+
+extern "C" void callback_interface_uniffi_bindings_tests_async_test_trait_interface_set_value(
+  uint64_t aUniffiHandle,
+  uint32_t aValue,
+  ForeignFutureCompletevoid aUniffiForeignFutureCallback,
+  uint64_t aUniffiForeignFutureCallbackData,
+  // This can be used to detected when the future is dropped from the Rust side and cancel the
+  // async task on the foreign side.  However, there's no way to do that in JS, so we just ignore
+  // it.
+  ForeignFuture *aUniffiOutForeignFuture
+) {
+  // Async callback methods can be called from:
+  //   * async Rust functions
+  //   * async-wrapped Rust functions, using something like `futures::block_on`.
+  //
+  // Async callback methods should not be called from sync Rust functions using `futures::block_on`,
+  // since that could deadlock the JS main thread.
+  //
+  // The following assertion checks this.
+  MOZ_ASSERT(!NS_IsMainThread());
+
+  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceSetValue>(aUniffiHandle, aValue, aUniffiForeignFutureCallback, aUniffiForeignFutureCallbackData);
+  // Now that everything is set up, schedule the call in the JS main thread.
+  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerAsyncTestTraitInterface);
+}
+
+class CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceThrowIfEqual final : public AsyncCallbackMethodHandlerBaseRustBuffer {
+private:
+  // Rust arguments
+  FfiValueRustBuffer mNumbers{};
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceThrowIfEqual(
+      uint64_t aUniffiHandle,
+      RustBuffer aNumbers,
+      ForeignFutureCompleterust_buffer aUniffiCompleteCallback,
+      uint64_t aUniffiCallbackData)
+    : AsyncCallbackMethodHandlerBaseRustBuffer(
+        "AsyncTestTraitInterface.callback_interface_uniffi_bindings_tests_async_test_trait_interface_throw_if_equal",
+        aUniffiHandle,
+        aUniffiCompleteCallback,
+        aUniffiCallbackData
+    ), mNumbers(FfiValueRustBuffer::FromRust(aNumbers))
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  already_AddRefed<dom::Promise>
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return nullptr;
+    }
+
+    // Convert each argument
+    mNumbers.Lift(
+      aCx,
+      &uniffiArgs[0],
+      aError);
+    if (aError.Failed()) {
+      return nullptr;
+    }
+    return aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 3, uniffiArgs, aError);
+  }
+};
+
+extern "C" void callback_interface_uniffi_bindings_tests_async_test_trait_interface_throw_if_equal(
+  uint64_t aUniffiHandle,
+  RustBuffer aNumbers,
+  ForeignFutureCompleterust_buffer aUniffiForeignFutureCallback,
+  uint64_t aUniffiForeignFutureCallbackData,
+  // This can be used to detected when the future is dropped from the Rust side and cancel the
+  // async task on the foreign side.  However, there's no way to do that in JS, so we just ignore
+  // it.
+  ForeignFuture *aUniffiOutForeignFuture
+) {
+  // Async callback methods can be called from:
+  //   * async Rust functions
+  //   * async-wrapped Rust functions, using something like `futures::block_on`.
+  //
+  // Async callback methods should not be called from sync Rust functions using `futures::block_on`,
+  // since that could deadlock the JS main thread.
+  //
+  // The following assertion checks this.
+  MOZ_ASSERT(!NS_IsMainThread());
+
+  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsAsyncTestTraitInterfaceThrowIfEqual>(aUniffiHandle, aNumbers, aUniffiForeignFutureCallback, aUniffiForeignFutureCallbackData);
+  // Now that everything is set up, schedule the call in the JS main thread.
+  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerAsyncTestTraitInterface);
+}
+
+extern "C" void callback_free_uniffi_bindings_tests_async_test_trait_interface(uint64_t uniffiHandle) {
+  // Callback object handles are keys in a map stored in the JS handler. To
+  // handle the free call, schedule a fire-and-forget JS call to remove the key.
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(MakeUnique<CallbackFreeHandler>("AsyncTestTraitInterface.uniffi_free", uniffiHandle), &gUniffiCallbackHandlerAsyncTestTraitInterface);
+}
+
+static VTableCallbackInterfaceAsyncTestTraitInterface kUniffiVtableAsyncTestTraitInterface {
+  callback_interface_uniffi_bindings_tests_async_test_trait_interface_noop,
+  callback_interface_uniffi_bindings_tests_async_test_trait_interface_get_value,
+  callback_interface_uniffi_bindings_tests_async_test_trait_interface_set_value,
+  callback_interface_uniffi_bindings_tests_async_test_trait_interface_throw_if_equal,
+  callback_free_uniffi_bindings_tests_async_test_trait_interface
+};
+static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerTestTraitInterface;
+
+class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop final : public FireAndForgetCallbackMethodHandlerBase {
+private:
+  // Rust arguments
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop(
+      uint64_t aUniffiHandle)
+    : FireAndForgetCallbackMethodHandlerBase(
+        "TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_noop",
+        aUniffiHandle
+    )
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  void
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return;
+    }
+
+    // Convert each argument
+    // Stores the return value.  For now, we currently don't do anything with it, since we only support
+    // fire-and-forget callbacks.
+    NullableRootedUnion<dom::OwningUniFFIScaffoldingValue> returnValue(aCx);
+    // Make the call
+    aJsHandler->Call(mUniffiHandle.IntoRust(), 0, uniffiArgs, returnValue, aError);
+  }
+};
+
+
+// Sync callback methods are always wrapped to be fire-and-forget style async callbacks.  This means
+// we schedule the callback asynchronously and ignore the return value and any exceptions thrown.
+extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_noop(
+  uint64_t aUniffiHandle,
+  void* aUniffiOutReturn,
+  RustCallStatus* uniffiOutStatus
+) {
+  UniquePtr<FireAndForgetCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop>(aUniffiHandle);
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(std::move(handler), &gUniffiCallbackHandlerTestTraitInterface);
+}
+
+
+class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue final : public FireAndForgetCallbackMethodHandlerBase {
+private:
+  // Rust arguments
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue(
+      uint64_t aUniffiHandle)
+    : FireAndForgetCallbackMethodHandlerBase(
+        "TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_get_value",
+        aUniffiHandle
+    )
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  void
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return;
+    }
+
+    // Convert each argument
+    // Stores the return value.  For now, we currently don't do anything with it, since we only support
+    // fire-and-forget callbacks.
+    NullableRootedUnion<dom::OwningUniFFIScaffoldingValue> returnValue(aCx);
+    // Make the call
+    aJsHandler->Call(mUniffiHandle.IntoRust(), 1, uniffiArgs, returnValue, aError);
+  }
+};
+
+
+// Sync callback methods are always wrapped to be fire-and-forget style async callbacks.  This means
+// we schedule the callback asynchronously and ignore the return value and any exceptions thrown.
+extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_get_value(
+  uint64_t aUniffiHandle,
+  uint32_t* aUniffiOutReturn,
+  RustCallStatus* uniffiOutStatus
+) {
+  UniquePtr<FireAndForgetCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue>(aUniffiHandle);
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(std::move(handler), &gUniffiCallbackHandlerTestTraitInterface);
+}
+
+
+class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue final : public FireAndForgetCallbackMethodHandlerBase {
+private:
+  // Rust arguments
+  FfiValueInt<uint32_t> mValue{};
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue(
+      uint64_t aUniffiHandle,
+      uint32_t aValue)
+    : FireAndForgetCallbackMethodHandlerBase(
+        "TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_set_value",
+        aUniffiHandle
+    ), mValue(FfiValueInt<uint32_t>::FromRust(aValue))
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  void
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return;
+    }
+
+    // Convert each argument
+    mValue.Lift(
+      aCx,
+      &uniffiArgs[0],
+      aError);
+    if (aError.Failed()) {
+      return;
+    }
+    // Stores the return value.  For now, we currently don't do anything with it, since we only support
+    // fire-and-forget callbacks.
+    NullableRootedUnion<dom::OwningUniFFIScaffoldingValue> returnValue(aCx);
+    // Make the call
+    aJsHandler->Call(mUniffiHandle.IntoRust(), 2, uniffiArgs, returnValue, aError);
+  }
+};
+
+
+// Sync callback methods are always wrapped to be fire-and-forget style async callbacks.  This means
+// we schedule the callback asynchronously and ignore the return value and any exceptions thrown.
+extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_set_value(
+  uint64_t aUniffiHandle,
+  uint32_t aValue,
+  void* aUniffiOutReturn,
+  RustCallStatus* uniffiOutStatus
+) {
+  UniquePtr<FireAndForgetCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue>(aUniffiHandle, aValue);
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(std::move(handler), &gUniffiCallbackHandlerTestTraitInterface);
+}
+
+
+class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual final : public FireAndForgetCallbackMethodHandlerBase {
+private:
+  // Rust arguments
+  FfiValueRustBuffer mNumbers{};
+
+public:
+  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual(
+      uint64_t aUniffiHandle,
+      RustBuffer aNumbers)
+    : FireAndForgetCallbackMethodHandlerBase(
+        "TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal",
+        aUniffiHandle
+    ), mNumbers(FfiValueRustBuffer::FromRust(aNumbers))
+  {
+  }
+
+  MOZ_CAN_RUN_SCRIPT
+  void
+  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
+    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+
+    // Setup
+    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
+      return;
+    }
+
+    // Convert each argument
+    mNumbers.Lift(
+      aCx,
+      &uniffiArgs[0],
+      aError);
+    if (aError.Failed()) {
+      return;
+    }
+    // Stores the return value.  For now, we currently don't do anything with it, since we only support
+    // fire-and-forget callbacks.
+    NullableRootedUnion<dom::OwningUniFFIScaffoldingValue> returnValue(aCx);
+    // Make the call
+    aJsHandler->Call(mUniffiHandle.IntoRust(), 3, uniffiArgs, returnValue, aError);
+  }
+};
+
+
+// Sync callback methods are always wrapped to be fire-and-forget style async callbacks.  This means
+// we schedule the callback asynchronously and ignore the return value and any exceptions thrown.
+extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal(
+  uint64_t aUniffiHandle,
+  RustBuffer aNumbers,
+  RustBuffer* aUniffiOutReturn,
+  RustCallStatus* uniffiOutStatus
+) {
+  UniquePtr<FireAndForgetCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual>(aUniffiHandle, aNumbers);
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(std::move(handler), &gUniffiCallbackHandlerTestTraitInterface);
+}
+
+
+extern "C" void callback_free_uniffi_bindings_tests_test_trait_interface(uint64_t uniffiHandle) {
+  // Callback object handles are keys in a map stored in the JS handler. To
+  // handle the free call, schedule a fire-and-forget JS call to remove the key.
+  FireAndForgetCallbackMethodHandlerBase::ScheduleFireAndForgetCall(MakeUnique<CallbackFreeHandler>("TestTraitInterface.uniffi_free", uniffiHandle), &gUniffiCallbackHandlerTestTraitInterface);
+}
+
+static VTableCallbackInterfaceTestTraitInterface kUniffiVtableTestTraitInterface {
+  callback_interface_uniffi_bindings_tests_test_trait_interface_noop,
+  callback_interface_uniffi_bindings_tests_test_trait_interface_get_value,
+  callback_interface_uniffi_bindings_tests_test_trait_interface_set_value,
+  callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal,
+  callback_free_uniffi_bindings_tests_test_trait_interface
+};
 #endif /* MOZ_UNIFFI_FIXTURES */
 
 void RegisterCallbackHandler(uint64_t aInterfaceId, UniFFICallbackHandler& aCallbackHandler, ErrorResult& aError) {
@@ -10486,6 +12088,26 @@ void RegisterCallbackHandler(uint64_t aInterfaceId, UniFFICallbackHandler& aCall
 
       gUniffiCallbackHandlerTestCallbackInterface = &aCallbackHandler;
       uniffi_uniffi_bindings_tests_fn_init_callback_vtable_testcallbackinterface(&kUniffiVtableTestCallbackInterface);
+      break;
+    }
+    case 5: {
+      if (gUniffiCallbackHandlerAsyncTestTraitInterface) {
+        aError.ThrowUnknownError("[UniFFI] Callback handler already registered for AsyncTestTraitInterface"_ns);
+        return;
+      }
+
+      gUniffiCallbackHandlerAsyncTestTraitInterface = &aCallbackHandler;
+      uniffi_uniffi_bindings_tests_fn_init_callback_vtable_asynctesttraitinterface(&kUniffiVtableAsyncTestTraitInterface);
+      break;
+    }
+    case 6: {
+      if (gUniffiCallbackHandlerTestTraitInterface) {
+        aError.ThrowUnknownError("[UniFFI] Callback handler already registered for TestTraitInterface"_ns);
+        return;
+      }
+
+      gUniffiCallbackHandlerTestTraitInterface = &aCallbackHandler;
+      uniffi_uniffi_bindings_tests_fn_init_callback_vtable_testtraitinterface(&kUniffiVtableTestTraitInterface);
       break;
     }
     #endif /* MOZ_UNIFFI_FIXTURES */
@@ -10535,6 +12157,24 @@ void DeregisterCallbackHandler(uint64_t aInterfaceId, ErrorResult& aError) {
       }
 
       gUniffiCallbackHandlerTestCallbackInterface = nullptr;
+      break;
+    }
+    case 5: {
+      if (!gUniffiCallbackHandlerAsyncTestTraitInterface) {
+        aError.ThrowUnknownError("[UniFFI] Callback handler not registered for AsyncTestTraitInterface"_ns);
+        return;
+      }
+
+      gUniffiCallbackHandlerAsyncTestTraitInterface = nullptr;
+      break;
+    }
+    case 6: {
+      if (!gUniffiCallbackHandlerTestTraitInterface) {
+        aError.ThrowUnknownError("[UniFFI] Callback handler not registered for TestTraitInterface"_ns);
+        return;
+      }
+
+      gUniffiCallbackHandlerTestTraitInterface = nullptr;
       break;
     }
     #endif /* MOZ_UNIFFI_FIXTURES */

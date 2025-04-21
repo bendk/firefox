@@ -1659,7 +1659,7 @@ export class RelevancyStore {
         FfiConverterSequenceString.checkType(arms);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             9, // uniffi_relevancy_fn_method_relevancystore_bandit_init
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
             FfiConverterString.lower(bandit),
             FfiConverterSequenceString.lower(arms),
         )
@@ -1687,7 +1687,7 @@ export class RelevancyStore {
         FfiConverterSequenceString.checkType(arms);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             10, // uniffi_relevancy_fn_method_relevancystore_bandit_select
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
             FfiConverterString.lower(bandit),
             FfiConverterSequenceString.lower(arms),
         )
@@ -1717,7 +1717,7 @@ export class RelevancyStore {
         FfiConverterBoolean.checkType(selected);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             11, // uniffi_relevancy_fn_method_relevancystore_bandit_update
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
             FfiConverterString.lower(bandit),
             FfiConverterString.lower(arm),
             FfiConverterBoolean.lower(selected),
@@ -1738,7 +1738,7 @@ export class RelevancyStore {
        
         const result = UniFFIScaffolding.callSync(
             12, // uniffi_relevancy_fn_method_relevancystore_close
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -1754,7 +1754,7 @@ export class RelevancyStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             13, // uniffi_relevancy_fn_method_relevancystore_ensure_interest_data_populated
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -1774,7 +1774,7 @@ export class RelevancyStore {
         FfiConverterString.checkType(arm);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             14, // uniffi_relevancy_fn_method_relevancystore_get_bandit_data
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
             FfiConverterString.lower(bandit),
             FfiConverterString.lower(arm),
         )
@@ -1804,7 +1804,7 @@ export class RelevancyStore {
         FfiConverterSequenceString.checkType(topUrlsByFrecency);
         const result = await UniFFIScaffolding.callAsyncWrapper(
             15, // uniffi_relevancy_fn_method_relevancystore_ingest
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
             FfiConverterSequenceString.lower(topUrlsByFrecency),
         )
         return handleRustResult(
@@ -1821,7 +1821,7 @@ export class RelevancyStore {
        
         const result = UniFFIScaffolding.callSync(
             16, // uniffi_relevancy_fn_method_relevancystore_interrupt
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -1840,7 +1840,7 @@ export class RelevancyStore {
        
         const result = await UniFFIScaffolding.callAsyncWrapper(
             17, // uniffi_relevancy_fn_method_relevancystore_user_interest_vector
-            FfiConverterTypeRelevancyStore.lower(this),
+            FfiConverterTypeRelevancyStore.lowerReceiver(this),
         )
         return handleRustResult(
             result,
@@ -1867,6 +1867,11 @@ export class FfiConverterTypeRelevancyStore extends FfiConverter {
         return ptr;
     }
 
+    static lowerReceiver(value) {
+        // This works exactly the same as lower for non-trait interfaces
+        return this.lower(value);
+    }
+
     static read(dataStream) {
         return this.lift(dataStream.readPointer(2));
     }
@@ -1879,6 +1884,7 @@ export class FfiConverterTypeRelevancyStore extends FfiConverter {
         return 8;
     }
 }
+
 // Export the FFIConverter object to make external types work.
 export class FfiConverterSequenceTypeInterest extends FfiConverterArrayBuffer {
     static read(dataStream) {
