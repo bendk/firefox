@@ -13,7 +13,7 @@ uniffi = { workspace = true, features = ["ffi-trace"] }
 
 [features]
 default = ["simple_fns", "primitive_types", "complex_fns", "compound_types", "records", "enums",
-    "interfaces", "custom_types", "errors", "callback_interfaces", "futures"]
+    "interfaces", "custom_types", "errors", "callback_interfaces", "trait_interfaces", "futures"]
 simple_fns = []
 primitive_types = []
 complex_fns = []
@@ -24,4 +24,5 @@ interfaces = []
 custom_types = []
 errors = []
 callback_interfaces = []
+trait_interfaces = []
 futures = []
