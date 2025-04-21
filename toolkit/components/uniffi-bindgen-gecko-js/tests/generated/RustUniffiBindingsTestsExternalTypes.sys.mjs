@@ -285,9 +285,13 @@ UnitTestObjs.uniffiObjectPtr = uniffiObjectPtr;
 export function roundtripExtCustomType(
     custom) {
    
-FfiConverterTypeHandle.checkType(custom);
+if (custom instanceof UniffiSkipJsTypeCheck) {
+    custom = custom.value;
+} else {
+    FfiConverterTypeHandle.checkType(custom);
+}
 const result = UniFFIScaffolding.callSync(
-    162, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_custom_type
+    167, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_custom_type
     FfiConverterTypeHandle.lower(custom),
 )
 return handleRustResult(
@@ -303,9 +307,13 @@ return handleRustResult(
 export function roundtripExtEnum(
     en) {
    
-FfiConverterTypeEnumWithData.checkType(en);
+if (en instanceof UniffiSkipJsTypeCheck) {
+    en = en.value;
+} else {
+    FfiConverterTypeEnumWithData.checkType(en);
+}
 const result = UniFFIScaffolding.callSync(
-    163, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_enum
+    168, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_enum
     FfiConverterTypeEnumWithData.lower(en),
 )
 return handleRustResult(
@@ -321,9 +329,13 @@ return handleRustResult(
 export function roundtripExtInterface(
     int) {
    
-FfiConverterTypeTestInterface.checkType(int);
+if (int instanceof UniffiSkipJsTypeCheck) {
+    int = int.value;
+} else {
+    FfiConverterTypeTestInterface.checkType(int);
+}
 const result = UniFFIScaffolding.callSync(
-    164, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_interface
+    169, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_interface
     FfiConverterTypeTestInterface.lower(int),
 )
 return handleRustResult(
@@ -339,9 +351,13 @@ return handleRustResult(
 export function roundtripExtRecord(
     rec) {
    
-FfiConverterTypeSimpleRec.checkType(rec);
+if (rec instanceof UniffiSkipJsTypeCheck) {
+    rec = rec.value;
+} else {
+    FfiConverterTypeSimpleRec.checkType(rec);
+}
 const result = UniFFIScaffolding.callSync(
-    165, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_record
+    170, // uniffi_uniffi_bindings_tests_external_types_fn_func_roundtrip_ext_record
     FfiConverterTypeSimpleRec.lower(rec),
 )
 return handleRustResult(
@@ -428,5 +444,14 @@ export class FfiConverterUInt8 extends FfiConverter {
     }
     static read(dataStream) {
         return dataStream.readUint8()
+    }
+}
+// Wrapper to skip type checking for function arguments
+//
+// This is only defined and used on test fixtures.  The goal is to skip the JS type checking so that
+// we can test the lower-level C++ type checking.
+export class UniffiSkipJsTypeCheck {
+    constructor(value) {
+        this.value = value;
     }
 }

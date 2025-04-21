@@ -160,23 +160,16 @@ public:
     nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
 
     // Setup
-    if (!uniffiArgs.AppendElements({{ arguments.len() + 1 }}, mozilla::fallible)) {
+    if (!uniffiArgs.AppendElements({{ arguments.len() }}, mozilla::fallible)) {
       aError.Throw(NS_ERROR_OUT_OF_MEMORY);
       return;
     }
 
     // Convert each argument
-    mUniffiHandle.Lift(
-      aCx,
-      &uniffiArgs[0],
-      aError);
-    if (aError.Failed()) {
-        return;
-    }
     {%- for a in arguments %}
     {{ a.field_name }}.Lift(
       aCx,
-      &uniffiArgs[{{ loop.index }}],
+      &uniffiArgs[{{ loop.index0 }}],
       aError);
     if (aError.Failed()) {
         return;
