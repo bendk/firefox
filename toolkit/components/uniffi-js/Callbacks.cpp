@@ -19,7 +19,7 @@
 namespace mozilla::uniffi {
 extern mozilla::LazyLogModule gUniffiLogger;
 
-void UniffiCallbackMethodHandlerBase::FireAndForget(
+void UniffiCallbackMethodHandlerBase::ScheduleMakeCall(
     UniquePtr<UniffiCallbackMethodHandlerBase> aHandler,
     StaticRefPtr<dom::UniFFICallbackHandler>* aJsHandler) {
   nsresult dispatchResult = NS_DispatchToMainThread(NS_NewRunnableFunction(

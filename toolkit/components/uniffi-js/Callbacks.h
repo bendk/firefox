@@ -68,15 +68,22 @@ class UniffiCallbackMethodHandlerBase {
 
   // ---- Generic entry points ----
 
-  // Queue the method to be called asynchronously and ignore the return value.
+  // Queue the `MakeCall` method to be called in the JS main thread.
   //
-  // This is for fire-and-forget callbacks where the caller doesn't care about
-  // the return value and doesn't want to wait for the call to finish.  A good
-  // use case for this is logging.
+  // This is used in two cases:
   //
-  // FireAndForget is responsible for checking that the aJsHandler is non-null,
-  // this way we don't need to duplicate the null check in the generated code.
-  static void FireAndForget(
+  // * Async callbacks.  These pass `UniFFIForeignFutureCallback` as an extra
+  // argument and that's
+  //   used to return the result.
+  // * Sync callbacks wrapped to be fire-and-forget style async callbacks.  In
+  // this case,
+  //   the caller doesn't care about the return value and doesn't want to block
+  //   the current thread to wait for the call to finish.
+  //
+  // ScheduleMakeCall is responsible for checking that the aJsHandler is
+  // non-null, this way we don't need to duplicate the null check in the
+  // generated code.
+  static void ScheduleMakeCall(
       UniquePtr<UniffiCallbackMethodHandlerBase> aHandler,
       StaticRefPtr<dom::UniFFICallbackHandler>* aJsHandler);
 };
