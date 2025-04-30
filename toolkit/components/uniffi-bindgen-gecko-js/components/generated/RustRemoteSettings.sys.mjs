@@ -2265,9 +2265,9 @@ export class RemoteSettingsClient {
     /**
      * Shutdown the client, releasing the SQLite connection used to cache records.
      */
-    async shutdown() {
+    shutdown() {
        
-        const result = await UniFFIScaffolding.callAsyncWrapper(
+        const result = UniFFIScaffolding.callSync(
             22, // uniffi_remote_settings_fn_method_remotesettingsclient_shutdown
             FfiConverterTypeRemoteSettingsClient.lower(this),
         )
