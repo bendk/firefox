@@ -703,9 +703,9 @@ export class ContextIdComponent {
      * Unset the callbacks set during construction, and use a default
      * no-op ContextIdCallback instead.
      */
-    async unsetCallback() {
+    unsetCallback() {
        
-        const result = await UniFFIScaffolding.callAsyncWrapper(
+        const result = UniFFIScaffolding.callSync(
             4, // uniffi_context_id_fn_method_contextidcomponent_unset_callback
             FfiConverterTypeContextIDComponent.lower(this),
         )
