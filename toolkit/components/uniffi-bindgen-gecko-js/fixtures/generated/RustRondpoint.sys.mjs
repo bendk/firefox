@@ -3266,34 +3266,52 @@ export class EnumerationAvecDonnees {}
  * Zero
  */
 EnumerationAvecDonnees.Zero = class extends EnumerationAvecDonnees{
-    constructor(
-        ) {
+    constructor() {
             super();
-        }
+    }
 }
 /**
  * Un
  */
 EnumerationAvecDonnees.Un = class extends EnumerationAvecDonnees{
-    constructor(
-        premier
-        ) {
+    constructor({premier } = {}) {
             super();
+            try {
+                FfiConverterU32.checkType(premier);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("premier");
+                }
+                throw e;
+            }
             this.premier = premier;
-        }
+    }
 }
 /**
  * Deux
  */
 EnumerationAvecDonnees.Deux = class extends EnumerationAvecDonnees{
-    constructor(
-        premier,
-        second
-        ) {
+    constructor({premier, second } = {}) {
             super();
+            try {
+                FfiConverterU32.checkType(premier);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("premier");
+                }
+                throw e;
+            }
             this.premier = premier;
+            try {
+                FfiConverterString.checkType(second);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("second");
+                }
+                throw e;
+            }
             this.second = second;
-        }
+    }
 }
 
 // Export the FFIConverter object to make external types work.
@@ -3302,17 +3320,16 @@ export class FfiConverterTypeEnumerationAvecDonnees extends FfiConverterArrayBuf
         // Use sequential indices (1-based) for the wire format to match Python bindings
         switch (dataStream.readInt32()) {
             case 1:
-                return new EnumerationAvecDonnees.Zero(
-                    );
+                return new EnumerationAvecDonnees.Zero();
             case 2:
-                return new EnumerationAvecDonnees.Un(
-                    FfiConverterU32.read(dataStream)
-                    );
+                return new EnumerationAvecDonnees.Un({
+                    premier: FfiConverterU32.read(dataStream)
+                });
             case 3:
-                return new EnumerationAvecDonnees.Deux(
-                    FfiConverterU32.read(dataStream),
-                    FfiConverterString.read(dataStream)
-                    );
+                return new EnumerationAvecDonnees.Deux({
+                    premier: FfiConverterU32.read(dataStream),
+                    second: FfiConverterString.read(dataStream)
+                });
             default:
                 throw new UniFFITypeError("Unknown EnumerationAvecDonnees variant");
         }

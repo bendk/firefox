@@ -38,21 +38,21 @@ add_task(async function () {
   );
   const obj = {
     0: new EnumerationAvecDonnees.Zero(),
-    1: new EnumerationAvecDonnees.Un(1),
-    2: new EnumerationAvecDonnees.Deux(2, "deux"),
+    1: new EnumerationAvecDonnees.Un({premier: 1}),
+    2: new EnumerationAvecDonnees.Deux({premier: 2, second: "deux"}),
   };
 
   Assert.deepEqual(await copieCarte(obj), obj);
 
   const zero = new EnumerationAvecDonnees.Zero();
-  const one = new EnumerationAvecDonnees.Un(1);
-  const two = new EnumerationAvecDonnees.Deux(2);
+  const one = new EnumerationAvecDonnees.Un({premier: 1});
+  const two = new EnumerationAvecDonnees.Deux({premier: 2, second: "deux"});
   Assert.notEqual(zero, one);
   Assert.notEqual(one, two);
 
   Assert.deepEqual(zero, new EnumerationAvecDonnees.Zero());
-  Assert.deepEqual(one, new EnumerationAvecDonnees.Un(1));
-  Assert.notDeepEqual(one, new EnumerationAvecDonnees.Un(4));
+  Assert.deepEqual(one, new EnumerationAvecDonnees.Un({premier: 1}));
+  Assert.notDeepEqual(one, new EnumerationAvecDonnees.Un({premier: 4}));
 
   Assert.ok(await switcheroo(false));
   // Test the roundtrip across the FFI.

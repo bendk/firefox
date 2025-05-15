@@ -471,22 +471,22 @@ class _QuickSuggestTestUtils {
 
     if (result.payload.source == "rust") {
       result.payload.iconBlob = iconBlob;
-      result.payload.suggestionObject = new lazy.Suggestion.Amp(
+      result.payload.suggestionObject = new lazy.Suggestion.Amp({
         title,
         url,
-        originalUrl, // rawUrl
-        null, // icon,
-        null, // iconMimetype
+        rawUrl: originalUrl, // rawUrl
+        icon: null, // icon,
+        iconMimetype: null, // iconMimetype
         fullKeyword,
         blockId,
         advertiser,
         iabCategory,
         impressionUrl,
         clickUrl,
-        clickUrl, // rawClickUrl
-        0.3, // score
-        null // ftsMatchInfo
-      );
+        rawClickUrl: clickUrl, // rawClickUrl
+        scpre: 0.3, // score
+        ftsMatchInfo: null // ftsMatchInfo
+      });
     } else {
       result.payload.icon = icon;
     }
@@ -563,13 +563,13 @@ class _QuickSuggestTestUtils {
     };
 
     if (source == "rust") {
-      result.payload.suggestionObject = new lazy.Suggestion.Wikipedia(
+      result.payload.suggestionObject = new lazy.Suggestion.Wikipedia({
         title,
         url,
-        null, // icon
-        null, // iconMimetype
+        icon: null, // icon
+        iconMimeType: null, // iconMimetype
         fullKeyword
-      );
+      });
     }
 
     return result;
@@ -880,16 +880,16 @@ class _QuickSuggestTestUtils {
     };
 
     if (source == "rust") {
-      result.payload.suggestionObject = new lazy.Suggestion.Amo(
+      result.payload.suggestionObject = new lazy.Suggestion.Amo({
         title,
-        originalUrl, // url
+        url: originalUrl, // url
         icon,
         description,
-        "4.7", // rating
-        1, // numberOfRatings
-        "amo-suggestion@example.com", // guid
-        0.2 // score
-      );
+        rating: "4.7", // rating
+        numberOfRatings: 1, // numberOfRatings
+        guid: "amo-suggestion@example.com", // guid
+        score: 0.2 // score
+      });
     }
 
     return result;
@@ -931,12 +931,12 @@ class _QuickSuggestTestUtils {
         bottomTextL10n: { id: "firefox-suggest-mdn-bottom-text" },
         source: "rust",
         provider: "Mdn",
-        suggestionObject: new lazy.Suggestion.Mdn(
+        suggestionObject: new lazy.Suggestion.Mdn({
           title,
           url,
           description,
-          0.2 // score
-        ),
+          score: 0.2 // score
+        }),
       },
     };
   }
@@ -1004,16 +1004,16 @@ class _QuickSuggestTestUtils {
     };
 
     if (source == "rust") {
-      result.payload.suggestionObject = new lazy.Suggestion.Yelp(
-        originalUrl, // url
+      result.payload.suggestionObject = new lazy.Suggestion.Yelp({
+        url: originalUrl, // url
         title,
-        null, // icon
-        null, // iconMimetype
-        0.2, // score
-        false, // hasLocationSign
-        false, // subjectExactMatch
-        "find_loc" // locationParam
-      );
+        icon: null, // icon
+        iconMimeType: null, // iconMimetype
+        score: 0.2, // score
+        hasLocationSign: false, // hasLocationSign
+        subjectExactMatch: false, // subjectExactMatch
+        locationParam: "find_loc" // locationParam
+      });
     }
 
     return result;
