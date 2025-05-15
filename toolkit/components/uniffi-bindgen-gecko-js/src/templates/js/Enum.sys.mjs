@@ -56,15 +56,29 @@ export class {{ enum_.js_name() }} {}
 {{ variant.js_docstring(false, 0) -}}
 {{enum_.js_name()}}.{{ variant.js_name(false) }} = class extends {{ enum_.js_name() }}{
     constructor(
-        {% for field in variant.fields() -%}
-        {{ field.js_name() }}{%- if loop.last %}{%- else %}, {%- endif %}
-        {% endfor -%}
+        {%- if variant.fields().is_empty() -%}
         ) {
             super();
+        {%- else -%}
+        { 
+            {%- for field in variant.fields() -%}
+            {{ field.js_name() }}{% if field.default_value().is_some() %} = {% match field.default_value() %}{% when Some with (default_val) %}{{ default_val.render() }}{% else %}undefined{% endmatch %}{% endif %}{%- if loop.last %} {% else %}, {% endif -%}
+            {%- endfor -%}
+        } = {}) {
+            super();
             {%- for field in variant.fields() %}
+            try {
+                {{ field.ffi_converter() }}.checkType({{ field.js_name() }});
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("{{ field.js_name() }}");
+                }
+                throw e;
+            }
             this.{{field.js_name()}} = {{ field.js_name() }};
             {%- endfor %}
-        }
+        {%- endif %}
+    }
 }
 {%- endfor %}
 
@@ -75,11 +89,15 @@ export class {{ ffi_converter }} extends FfiConverterArrayBuffer {
         switch (dataStream.readInt32()) {
             {%- for variant in enum_.variants() %}
             case {{ loop.index }}:
-                return new {{ enum_.js_name() }}.{{ variant.js_name(false)  }}(
+                {%- if variant.fields().is_empty() %}
+                return new {{ enum_.js_name() }}.{{ variant.js_name(false)  }}();
+                {%- else %}
+                return new {{ enum_.js_name() }}.{{ variant.js_name(false)  }}({
                     {%- for field in variant.fields() %}
-                    {{ field.ffi_converter() }}.read(dataStream){%- if loop.last %}{% else %}, {%- endif %}
+                    {{ field.js_name() }}: {{ field.ffi_converter() }}.read(dataStream){%- if loop.last %}{% else %}, {%- endif %}
                     {%- endfor %}
-                    );
+                });
+                {%- endif %}
             {%- endfor %}
             default:
                 throw new UniFFITypeError("Unknown {{ enum_.js_name() }} variant");

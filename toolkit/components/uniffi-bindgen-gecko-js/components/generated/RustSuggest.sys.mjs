@@ -2776,14 +2776,27 @@ export class SuggestProviderConfig {}
  * Weather
  */
 SuggestProviderConfig.Weather = class extends SuggestProviderConfig{
-    constructor(
-        score,
-        minKeywordLength
-        ) {
+    constructor({score, minKeywordLength } = {}) {
             super();
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
+            try {
+                FfiConverterI32.checkType(minKeywordLength);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("minKeywordLength");
+                }
+                throw e;
+            }
             this.minKeywordLength = minKeywordLength;
-        }
+    }
 }
 
 // Export the FFIConverter object to make external types work.
@@ -2792,10 +2805,10 @@ export class FfiConverterTypeSuggestProviderConfig extends FfiConverterArrayBuff
         // Use sequential indices (1-based) for the wire format to match Python bindings
         switch (dataStream.readInt32()) {
             case 1:
-                return new SuggestProviderConfig.Weather(
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterI32.read(dataStream)
-                    );
+                return new SuggestProviderConfig.Weather({
+                    score: FfiConverterF64.read(dataStream),
+                    minKeywordLength: FfiConverterI32.read(dataStream)
+                });
             default:
                 throw new UniFFITypeError("Unknown SuggestProviderConfig variant");
         }
@@ -2839,208 +2852,640 @@ export class Suggestion {}
  * Amp
  */
 Suggestion.Amp = class extends Suggestion{
-    constructor(
-        title,
-        url,
-        rawUrl,
-        icon,
-        iconMimetype,
-        fullKeyword,
-        blockId,
-        advertiser,
-        iabCategory,
-        impressionUrl,
-        clickUrl,
-        rawClickUrl,
-        score,
-        ftsMatchInfo
-        ) {
+    constructor({title, url, rawUrl, icon, iconMimetype, fullKeyword, blockId, advertiser, iabCategory, impressionUrl, clickUrl, rawClickUrl, score, ftsMatchInfo } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterString.checkType(rawUrl);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("rawUrl");
+                }
+                throw e;
+            }
             this.rawUrl = rawUrl;
+            try {
+                FfiConverterOptionalbytes.checkType(icon);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("icon");
+                }
+                throw e;
+            }
             this.icon = icon;
+            try {
+                FfiConverterOptionalstring.checkType(iconMimetype);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iconMimetype");
+                }
+                throw e;
+            }
             this.iconMimetype = iconMimetype;
+            try {
+                FfiConverterString.checkType(fullKeyword);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("fullKeyword");
+                }
+                throw e;
+            }
             this.fullKeyword = fullKeyword;
+            try {
+                FfiConverterI64.checkType(blockId);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("blockId");
+                }
+                throw e;
+            }
             this.blockId = blockId;
+            try {
+                FfiConverterString.checkType(advertiser);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("advertiser");
+                }
+                throw e;
+            }
             this.advertiser = advertiser;
+            try {
+                FfiConverterString.checkType(iabCategory);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iabCategory");
+                }
+                throw e;
+            }
             this.iabCategory = iabCategory;
+            try {
+                FfiConverterString.checkType(impressionUrl);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("impressionUrl");
+                }
+                throw e;
+            }
             this.impressionUrl = impressionUrl;
+            try {
+                FfiConverterString.checkType(clickUrl);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("clickUrl");
+                }
+                throw e;
+            }
             this.clickUrl = clickUrl;
+            try {
+                FfiConverterString.checkType(rawClickUrl);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("rawClickUrl");
+                }
+                throw e;
+            }
             this.rawClickUrl = rawClickUrl;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
+            try {
+                FfiConverterOptionalTypeFtsMatchInfo.checkType(ftsMatchInfo);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("ftsMatchInfo");
+                }
+                throw e;
+            }
             this.ftsMatchInfo = ftsMatchInfo;
-        }
+    }
 }
 /**
  * Pocket
  */
 Suggestion.Pocket = class extends Suggestion{
-    constructor(
-        title,
-        url,
-        score,
-        isTopPick
-        ) {
+    constructor({title, url, score, isTopPick } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
+            try {
+                FfiConverterBool.checkType(isTopPick);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("isTopPick");
+                }
+                throw e;
+            }
             this.isTopPick = isTopPick;
-        }
+    }
 }
 /**
  * Wikipedia
  */
 Suggestion.Wikipedia = class extends Suggestion{
-    constructor(
-        title,
-        url,
-        icon,
-        iconMimetype,
-        fullKeyword
-        ) {
+    constructor({title, url, icon, iconMimetype, fullKeyword } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterOptionalbytes.checkType(icon);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("icon");
+                }
+                throw e;
+            }
             this.icon = icon;
+            try {
+                FfiConverterOptionalstring.checkType(iconMimetype);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iconMimetype");
+                }
+                throw e;
+            }
             this.iconMimetype = iconMimetype;
+            try {
+                FfiConverterString.checkType(fullKeyword);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("fullKeyword");
+                }
+                throw e;
+            }
             this.fullKeyword = fullKeyword;
-        }
+    }
 }
 /**
  * Amo
  */
 Suggestion.Amo = class extends Suggestion{
-    constructor(
-        title,
-        url,
-        iconUrl,
-        description,
-        rating,
-        numberOfRatings,
-        guid,
-        score
-        ) {
+    constructor({title, url, iconUrl, description, rating, numberOfRatings, guid, score } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterString.checkType(iconUrl);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iconUrl");
+                }
+                throw e;
+            }
             this.iconUrl = iconUrl;
+            try {
+                FfiConverterString.checkType(description);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("description");
+                }
+                throw e;
+            }
             this.description = description;
+            try {
+                FfiConverterOptionalstring.checkType(rating);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("rating");
+                }
+                throw e;
+            }
             this.rating = rating;
+            try {
+                FfiConverterI64.checkType(numberOfRatings);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("numberOfRatings");
+                }
+                throw e;
+            }
             this.numberOfRatings = numberOfRatings;
+            try {
+                FfiConverterString.checkType(guid);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("guid");
+                }
+                throw e;
+            }
             this.guid = guid;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
-        }
+    }
 }
 /**
  * Yelp
  */
 Suggestion.Yelp = class extends Suggestion{
-    constructor(
-        url,
-        title,
-        icon,
-        iconMimetype,
-        score,
-        hasLocationSign,
-        subjectExactMatch,
-        locationParam
-        ) {
+    constructor({url, title, icon, iconMimetype, score, hasLocationSign, subjectExactMatch, locationParam } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterOptionalbytes.checkType(icon);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("icon");
+                }
+                throw e;
+            }
             this.icon = icon;
+            try {
+                FfiConverterOptionalstring.checkType(iconMimetype);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iconMimetype");
+                }
+                throw e;
+            }
             this.iconMimetype = iconMimetype;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
+            try {
+                FfiConverterBool.checkType(hasLocationSign);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("hasLocationSign");
+                }
+                throw e;
+            }
             this.hasLocationSign = hasLocationSign;
+            try {
+                FfiConverterBool.checkType(subjectExactMatch);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("subjectExactMatch");
+                }
+                throw e;
+            }
             this.subjectExactMatch = subjectExactMatch;
+            try {
+                FfiConverterString.checkType(locationParam);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("locationParam");
+                }
+                throw e;
+            }
             this.locationParam = locationParam;
-        }
+    }
 }
 /**
  * Mdn
  */
 Suggestion.Mdn = class extends Suggestion{
-    constructor(
-        title,
-        url,
-        description,
-        score
-        ) {
+    constructor({title, url, description, score } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterString.checkType(description);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("description");
+                }
+                throw e;
+            }
             this.description = description;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
-        }
+    }
 }
 /**
  * Weather
  */
 Suggestion.Weather = class extends Suggestion{
-    constructor(
-        city,
-        region,
-        country,
-        latitude,
-        longitude,
-        score
-        ) {
+    constructor({city, region, country, latitude, longitude, score } = {}) {
             super();
+            try {
+                FfiConverterOptionalstring.checkType(city);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("city");
+                }
+                throw e;
+            }
             this.city = city;
+            try {
+                FfiConverterOptionalstring.checkType(region);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("region");
+                }
+                throw e;
+            }
             this.region = region;
+            try {
+                FfiConverterOptionalstring.checkType(country);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("country");
+                }
+                throw e;
+            }
             this.country = country;
+            try {
+                FfiConverterOptionalf64.checkType(latitude);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("latitude");
+                }
+                throw e;
+            }
             this.latitude = latitude;
+            try {
+                FfiConverterOptionalf64.checkType(longitude);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("longitude");
+                }
+                throw e;
+            }
             this.longitude = longitude;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
-        }
+    }
 }
 /**
  * Fakespot
  */
 Suggestion.Fakespot = class extends Suggestion{
-    constructor(
-        fakespotGrade,
-        productId,
-        rating,
-        title,
-        totalReviews,
-        url,
-        icon,
-        iconMimetype,
-        score,
-        matchInfo
-        ) {
+    constructor({fakespotGrade, productId, rating, title, totalReviews, url, icon, iconMimetype, score, matchInfo } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(fakespotGrade);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("fakespotGrade");
+                }
+                throw e;
+            }
             this.fakespotGrade = fakespotGrade;
+            try {
+                FfiConverterString.checkType(productId);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("productId");
+                }
+                throw e;
+            }
             this.productId = productId;
+            try {
+                FfiConverterF64.checkType(rating);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("rating");
+                }
+                throw e;
+            }
             this.rating = rating;
+            try {
+                FfiConverterString.checkType(title);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("title");
+                }
+                throw e;
+            }
             this.title = title;
+            try {
+                FfiConverterI64.checkType(totalReviews);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("totalReviews");
+                }
+                throw e;
+            }
             this.totalReviews = totalReviews;
+            try {
+                FfiConverterString.checkType(url);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("url");
+                }
+                throw e;
+            }
             this.url = url;
+            try {
+                FfiConverterOptionalbytes.checkType(icon);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("icon");
+                }
+                throw e;
+            }
             this.icon = icon;
+            try {
+                FfiConverterOptionalstring.checkType(iconMimetype);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("iconMimetype");
+                }
+                throw e;
+            }
             this.iconMimetype = iconMimetype;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
+            try {
+                FfiConverterOptionalTypeFtsMatchInfo.checkType(matchInfo);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("matchInfo");
+                }
+                throw e;
+            }
             this.matchInfo = matchInfo;
-        }
+    }
 }
 /**
  * Dynamic
  */
 Suggestion.Dynamic = class extends Suggestion{
-    constructor(
-        suggestionType,
-        data,
-        dismissalKey,
-        score
-        ) {
+    constructor({suggestionType, data, dismissalKey, score } = {}) {
             super();
+            try {
+                FfiConverterString.checkType(suggestionType);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("suggestionType");
+                }
+                throw e;
+            }
             this.suggestionType = suggestionType;
+            try {
+                FfiConverterOptionalTypeJsonValue.checkType(data);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("data");
+                }
+                throw e;
+            }
             this.data = data;
+            try {
+                FfiConverterOptionalstring.checkType(dismissalKey);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("dismissalKey");
+                }
+                throw e;
+            }
             this.dismissalKey = dismissalKey;
+            try {
+                FfiConverterF64.checkType(score);
+            } catch (e) {
+                if (e instanceof UniFFITypeError) {
+                    e.addItemDescriptionPart("score");
+                }
+                throw e;
+            }
             this.score = score;
-        }
+    }
 }
 
 // Export the FFIConverter object to make external types work.
@@ -3049,95 +3494,95 @@ export class FfiConverterTypeSuggestion extends FfiConverterArrayBuffer {
         // Use sequential indices (1-based) for the wire format to match Python bindings
         switch (dataStream.readInt32()) {
             case 1:
-                return new Suggestion.Amp(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalbytes.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterI64.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterOptionalTypeFtsMatchInfo.read(dataStream)
-                    );
+                return new Suggestion.Amp({
+                    title: FfiConverterString.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    rawUrl: FfiConverterString.read(dataStream),
+                    icon: FfiConverterOptionalbytes.read(dataStream),
+                    iconMimetype: FfiConverterOptionalstring.read(dataStream),
+                    fullKeyword: FfiConverterString.read(dataStream),
+                    blockId: FfiConverterI64.read(dataStream),
+                    advertiser: FfiConverterString.read(dataStream),
+                    iabCategory: FfiConverterString.read(dataStream),
+                    impressionUrl: FfiConverterString.read(dataStream),
+                    clickUrl: FfiConverterString.read(dataStream),
+                    rawClickUrl: FfiConverterString.read(dataStream),
+                    score: FfiConverterF64.read(dataStream),
+                    ftsMatchInfo: FfiConverterOptionalTypeFtsMatchInfo.read(dataStream)
+                });
             case 2:
-                return new Suggestion.Pocket(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterBool.read(dataStream)
-                    );
+                return new Suggestion.Pocket({
+                    title: FfiConverterString.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    score: FfiConverterF64.read(dataStream),
+                    isTopPick: FfiConverterBool.read(dataStream)
+                });
             case 3:
-                return new Suggestion.Wikipedia(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalbytes.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterString.read(dataStream)
-                    );
+                return new Suggestion.Wikipedia({
+                    title: FfiConverterString.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    icon: FfiConverterOptionalbytes.read(dataStream),
+                    iconMimetype: FfiConverterOptionalstring.read(dataStream),
+                    fullKeyword: FfiConverterString.read(dataStream)
+                });
             case 4:
-                return new Suggestion.Amo(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterI64.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterF64.read(dataStream)
-                    );
+                return new Suggestion.Amo({
+                    title: FfiConverterString.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    iconUrl: FfiConverterString.read(dataStream),
+                    description: FfiConverterString.read(dataStream),
+                    rating: FfiConverterOptionalstring.read(dataStream),
+                    numberOfRatings: FfiConverterI64.read(dataStream),
+                    guid: FfiConverterString.read(dataStream),
+                    score: FfiConverterF64.read(dataStream)
+                });
             case 5:
-                return new Suggestion.Yelp(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalbytes.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterBool.read(dataStream),
-                    FfiConverterBool.read(dataStream),
-                    FfiConverterString.read(dataStream)
-                    );
+                return new Suggestion.Yelp({
+                    url: FfiConverterString.read(dataStream),
+                    title: FfiConverterString.read(dataStream),
+                    icon: FfiConverterOptionalbytes.read(dataStream),
+                    iconMimetype: FfiConverterOptionalstring.read(dataStream),
+                    score: FfiConverterF64.read(dataStream),
+                    hasLocationSign: FfiConverterBool.read(dataStream),
+                    subjectExactMatch: FfiConverterBool.read(dataStream),
+                    locationParam: FfiConverterString.read(dataStream)
+                });
             case 6:
-                return new Suggestion.Mdn(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterF64.read(dataStream)
-                    );
+                return new Suggestion.Mdn({
+                    title: FfiConverterString.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    description: FfiConverterString.read(dataStream),
+                    score: FfiConverterF64.read(dataStream)
+                });
             case 7:
-                return new Suggestion.Weather(
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterOptionalf64.read(dataStream),
-                    FfiConverterOptionalf64.read(dataStream),
-                    FfiConverterF64.read(dataStream)
-                    );
+                return new Suggestion.Weather({
+                    city: FfiConverterOptionalstring.read(dataStream),
+                    region: FfiConverterOptionalstring.read(dataStream),
+                    country: FfiConverterOptionalstring.read(dataStream),
+                    latitude: FfiConverterOptionalf64.read(dataStream),
+                    longitude: FfiConverterOptionalf64.read(dataStream),
+                    score: FfiConverterF64.read(dataStream)
+                });
             case 8:
-                return new Suggestion.Fakespot(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterI64.read(dataStream),
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalbytes.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterF64.read(dataStream),
-                    FfiConverterOptionalTypeFtsMatchInfo.read(dataStream)
-                    );
+                return new Suggestion.Fakespot({
+                    fakespotGrade: FfiConverterString.read(dataStream),
+                    productId: FfiConverterString.read(dataStream),
+                    rating: FfiConverterF64.read(dataStream),
+                    title: FfiConverterString.read(dataStream),
+                    totalReviews: FfiConverterI64.read(dataStream),
+                    url: FfiConverterString.read(dataStream),
+                    icon: FfiConverterOptionalbytes.read(dataStream),
+                    iconMimetype: FfiConverterOptionalstring.read(dataStream),
+                    score: FfiConverterF64.read(dataStream),
+                    matchInfo: FfiConverterOptionalTypeFtsMatchInfo.read(dataStream)
+                });
             case 9:
-                return new Suggestion.Dynamic(
-                    FfiConverterString.read(dataStream),
-                    FfiConverterOptionalTypeJsonValue.read(dataStream),
-                    FfiConverterOptionalstring.read(dataStream),
-                    FfiConverterF64.read(dataStream)
-                    );
+                return new Suggestion.Dynamic({
+                    suggestionType: FfiConverterString.read(dataStream),
+                    data: FfiConverterOptionalTypeJsonValue.read(dataStream),
+                    dismissalKey: FfiConverterOptionalstring.read(dataStream),
+                    score: FfiConverterF64.read(dataStream)
+                });
             default:
                 throw new UniFFITypeError("Unknown Suggestion variant");
         }
