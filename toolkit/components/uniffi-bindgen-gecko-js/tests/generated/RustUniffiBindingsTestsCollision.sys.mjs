@@ -510,35 +510,19 @@ const uniffiObjectPtr = Symbol("uniffiObjectPtr");
 const constructUniffiObject = Symbol("constructUniffiObject");
 UnitTestObjs.uniffiObjectPtr = uniffiObjectPtr;
 /**
- * Set the global error reporter.  This is typically done early in startup.
+ * invokeCollisionCallback
  */
-export async function setApplicationErrorReporter(
-    errorReporter) {
+export async function invokeCollisionCallback(
+    cb) {
    
-FfiConverterTypeApplicationErrorReporter.checkType(errorReporter);
+FfiConverterTypeTestCallbackInterface.checkType(cb);
 const result = await UniFFIScaffolding.callAsyncWrapper(
-    5, // uniffi_error_support_fn_func_set_application_error_reporter
-    FfiConverterTypeApplicationErrorReporter.lower(errorReporter),
+    167, // uniffi_uniffi_bindings_tests_collision_fn_func_invoke_collision_callback
+    FfiConverterTypeTestCallbackInterface.lower(cb),
 )
 return handleRustResult(
     result,
-    (result) => undefined,
-    null,
-)
-}
-
-/**
- * Unset the global error reporter.  This is typically done at shutdown for
- * platforms that want to cleanup references like Desktop.
- */
-export async function unsetApplicationErrorReporter() {
-   
-const result = await UniFFIScaffolding.callAsyncWrapper(
-    6, // uniffi_error_support_fn_func_unset_application_error_reporter
-)
-return handleRustResult(
-    result,
-    (result) => undefined,
+    FfiConverterString.lift.bind(FfiConverterString),
     null,
 )
 }
@@ -574,40 +558,13 @@ export class FfiConverterString extends FfiConverter {
     }
 }
 // Export the FFIConverter object to make external types work.
-export class FfiConverterUInt32 extends FfiConverter {
-    static checkType(value) {
-        super.checkType(value);
-        if (!Number.isInteger(value)) {
-            throw new UniFFITypeError(`${value} is not an integer`);
-        }
-        if (value < 0 || value > 4294967295) {
-            throw new UniFFITypeError(`${value} exceeds the U32 bounds`);
-        }
-    }
-    static computeSize(_value) {
-        return 4;
-    }
-    static lift(value) {
-        return value;
-    }
-    static lower(value) {
-        return value;
-    }
-    static write(dataStream, value) {
-        dataStream.writeUint32(value)
-    }
-    static read(dataStream) {
-        return dataStream.readUint32()
-    }
-}
-// Export the FFIConverter object to make external types work.
-export class FfiConverterTypeApplicationErrorReporter extends FfiConverter {
+export class FfiConverterTypeTestCallbackInterface extends FfiConverter {
     static lower(callbackObj) {
-        return uniffiCallbackHandlerErrorsupportApplicationErrorReporter.storeCallbackObj(callbackObj)
+        return uniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface.storeCallbackObj(callbackObj)
     }
 
     static lift(handleId) {
-        return uniffiCallbackHandlerErrorsupportApplicationErrorReporter.getCallbackObj(handleId)
+        return uniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface.getCallbackObj(handleId)
     }
 
     static read(dataStream) {
@@ -623,30 +580,15 @@ export class FfiConverterTypeApplicationErrorReporter extends FfiConverter {
     }
 }
 
-const uniffiCallbackHandlerErrorsupportApplicationErrorReporter = new UniFFICallbackHandler(
-    "ApplicationErrorReporter",
-    2,
+const uniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface = new UniFFICallbackHandler(
+    "TestCallbackInterface",
+    5,
     [
         new UniFFICallbackMethodHandler(
-            "reportError",
+            "getValue",
             [
-                FfiConverterString,
-                FfiConverterString,
             ],
-            (result) => undefined,
-            (e) => {
-              throw e;
-            }
-        ),
-        new UniFFICallbackMethodHandler(
-            "reportBreadcrumb",
-            [
-                FfiConverterString,
-                FfiConverterString,
-                FfiConverterUInt32,
-                FfiConverterUInt32,
-            ],
-            (result) => undefined,
+            FfiConverterString.lower.bind(FfiConverterString),
             (e) => {
               throw e;
             }
@@ -655,7 +597,7 @@ const uniffiCallbackHandlerErrorsupportApplicationErrorReporter = new UniFFICall
 );
 
 // Allow the shutdown-related functionality to be tested in the unit tests
-UnitTestObjs.uniffiCallbackHandlerErrorsupportApplicationErrorReporter = uniffiCallbackHandlerErrorsupportApplicationErrorReporter;
+UnitTestObjs.uniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface = uniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface;
 // Export the FFIConverter object to make external types work.
 export class FfiConverterUInt8 extends FfiConverter {
     static checkType(value) {

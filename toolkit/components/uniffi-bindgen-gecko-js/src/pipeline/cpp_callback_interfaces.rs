@@ -13,6 +13,7 @@ pub fn pass(root: &mut Root) -> Result<()> {
     root.cpp_scaffolding.callback_interfaces =
         CombinedItems::try_new(root, |module, ids, items| {
             let module_name = module.name.clone();
+            println!("{:#?}", module.ffi_definitions);
             let ffi_func_map: HashMap<String, FfiFunctionType> = module
                 .ffi_definitions
                 .iter()
@@ -22,7 +23,7 @@ pub fn pass(root: &mut Root) -> Result<()> {
                 })
                 .map(|func_type| (func_type.name.0.clone(), func_type.clone()))
                 .collect();
-
+            println!("{:#?}", ffi_func_map);
             module.try_visit_mut(|cbi: &mut CallbackInterface| {
                 let interface_name = cbi.name.clone();
                 cbi.id = ids.new_id();
@@ -30,10 +31,15 @@ pub fn pass(root: &mut Root) -> Result<()> {
                     id: cbi.id,
                     name: cbi.name.clone(),
                     handler_var: format!(
-                        "gUniffiCallbackHandler{}",
+                        "gUniffiCallbackHandler{}{}",
+                        module_name.to_upper_camel_case(),
                         cbi.name.to_upper_camel_case()
                     ),
-                    vtable_var: format!("kUniffiVtable{}", cbi.name.to_upper_camel_case()),
+                    vtable_var: format!(
+                        "kUniffiVtable{}{}",
+                        module_name.to_upper_camel_case(),
+                        cbi.name.to_upper_camel_case()
+                    ),
                     vtable_struct_type: cbi.vtable.struct_type.clone(),
                     init_fn: cbi.vtable.init_fn.clone(),
                     free_fn: format!(

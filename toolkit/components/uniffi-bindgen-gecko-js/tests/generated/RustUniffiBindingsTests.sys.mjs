@@ -3140,11 +3140,11 @@ export class FfiConverterTypeComplexMethods extends FfiConverter {
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypeTestAsyncCallbackInterface extends FfiConverter {
     static lower(callbackObj) {
-        return uniffiCallbackHandlerTestAsyncCallbackInterface.storeCallbackObj(callbackObj)
+        return uniffiCallbackHandlerUniffiBindingsTestsTestAsyncCallbackInterface.storeCallbackObj(callbackObj)
     }
 
     static lift(handleId) {
-        return uniffiCallbackHandlerTestAsyncCallbackInterface.getCallbackObj(handleId)
+        return uniffiCallbackHandlerUniffiBindingsTestsTestAsyncCallbackInterface.getCallbackObj(handleId)
     }
 
     static read(dataStream) {
@@ -3160,7 +3160,7 @@ export class FfiConverterTypeTestAsyncCallbackInterface extends FfiConverter {
     }
 }
 
-const uniffiCallbackHandlerTestAsyncCallbackInterface = new UniFFICallbackHandler(
+const uniffiCallbackHandlerUniffiBindingsTestsTestAsyncCallbackInterface = new UniFFICallbackHandler(
     "TestAsyncCallbackInterface",
     3,
     [
@@ -3189,15 +3189,15 @@ const uniffiCallbackHandlerTestAsyncCallbackInterface = new UniFFICallbackHandle
 );
 
 // Allow the shutdown-related functionality to be tested in the unit tests
-UnitTestObjs.uniffiCallbackHandlerTestAsyncCallbackInterface = uniffiCallbackHandlerTestAsyncCallbackInterface;
+UnitTestObjs.uniffiCallbackHandlerUniffiBindingsTestsTestAsyncCallbackInterface = uniffiCallbackHandlerUniffiBindingsTestsTestAsyncCallbackInterface;
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypeTestCallbackInterface extends FfiConverter {
     static lower(callbackObj) {
-        return uniffiCallbackHandlerTestCallbackInterface.storeCallbackObj(callbackObj)
+        return uniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface.storeCallbackObj(callbackObj)
     }
 
     static lift(handleId) {
-        return uniffiCallbackHandlerTestCallbackInterface.getCallbackObj(handleId)
+        return uniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface.getCallbackObj(handleId)
     }
 
     static read(dataStream) {
@@ -3213,7 +3213,7 @@ export class FfiConverterTypeTestCallbackInterface extends FfiConverter {
     }
 }
 
-const uniffiCallbackHandlerTestCallbackInterface = new UniFFICallbackHandler(
+const uniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface = new UniFFICallbackHandler(
     "TestCallbackInterface",
     4,
     [
@@ -3230,7 +3230,7 @@ const uniffiCallbackHandlerTestCallbackInterface = new UniFFICallbackHandler(
 );
 
 // Allow the shutdown-related functionality to be tested in the unit tests
-UnitTestObjs.uniffiCallbackHandlerTestCallbackInterface = uniffiCallbackHandlerTestCallbackInterface;
+UnitTestObjs.uniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface = uniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
 // Export the FFIConverter object to make external types work.
 export class FfiConverterMapStringString extends FfiConverterArrayBuffer {
     static read(dataStream) {
