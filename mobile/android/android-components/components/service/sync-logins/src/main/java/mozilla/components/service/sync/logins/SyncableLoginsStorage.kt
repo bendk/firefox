@@ -112,7 +112,7 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun wipeLocal() = withContext(coroutineContext) {
+    override suspend fun wipeLocal() {
         getStorage().wipeLocal()
     }
 
@@ -121,8 +121,8 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun delete(guid: String): Boolean = withContext(coroutineContext) {
-        getStorage().delete(guid)
+    override suspend fun delete(guid: String): Boolean {
+        return getStorage().delete(guid)
     }
 
     /**
@@ -130,8 +130,8 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun get(guid: String): Login? = withContext(coroutineContext) {
-        getStorage().get(guid)?.toLogin()
+    override suspend fun get(guid: String): Login? {
+        return getStorage().get(guid)?.toLogin()
     }
 
     /**
@@ -140,7 +140,7 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(NoSuchRecordException::class, LoginsApiException::class)
-    override suspend fun touch(guid: String) = withContext(coroutineContext) {
+    override suspend fun touch(guid: String) {
         getStorage().touch(guid)
     }
 
@@ -149,8 +149,8 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun list(): List<Login> = withContext(coroutineContext) {
-        getStorage().list().map { it.toLogin() }
+    override suspend fun list(): List<Login> {
+        return getStorage().list().map { it.toLogin() }
     }
 
     /**
@@ -160,8 +160,8 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(InvalidKey::class, InvalidRecordException::class, LoginsApiException::class)
-    override suspend fun add(entry: LoginEntry) = withContext(coroutineContext) {
-        getStorage().add(entry.toLoginEntry()).toLogin()
+    override suspend fun add(entry: LoginEntry): Login {
+        return getStorage().add(entry.toLoginEntry()).toLogin()
     }
 
     /**
@@ -177,8 +177,8 @@ class SyncableLoginsStorage(
         InvalidRecordException::class,
         LoginsApiException::class,
     )
-    override suspend fun update(guid: String, entry: LoginEntry) = withContext(coroutineContext) {
-        getStorage().update(guid, entry.toLoginEntry()).toLogin()
+    override suspend fun update(guid: String, entry: LoginEntry): Login {
+        return getStorage().update(guid, entry.toLoginEntry()).toLogin()
     }
 
     /**
@@ -188,8 +188,8 @@ class SyncableLoginsStorage(
      *              errors (IO failure, rust panics, etc)
      */
     @Throws(InvalidKey::class, InvalidRecordException::class, LoginsApiException::class)
-    override suspend fun addOrUpdate(entry: LoginEntry) = withContext(coroutineContext) {
-        getStorage().addOrUpdate(entry.toLoginEntry()).toLogin()
+    override suspend fun addOrUpdate(entry: LoginEntry): Login {
+        return return getStorage().addOrUpdate(entry.toLoginEntry()).toLogin()
     }
 
     override fun registerWithSyncManager() {
@@ -202,8 +202,8 @@ class SyncableLoginsStorage(
      * @throws [LoginsApiException] On unexpected errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun getByBaseDomain(origin: String): List<Login> = withContext(coroutineContext) {
-        getStorage().getByBaseDomain(origin).map { it.toLogin() }
+    override suspend fun getByBaseDomain(origin: String): List<Login> {
+        return getStorage().getByBaseDomain(origin).map { it.toLogin() }
     }
 
     /**
@@ -211,8 +211,8 @@ class SyncableLoginsStorage(
      * @throws [LoginsApiException] On unexpected errors (IO failure, rust panics, etc)
      */
     @Throws(LoginsApiException::class)
-    override suspend fun findLoginToUpdate(entry: LoginEntry): Login? = withContext(coroutineContext) {
-        getStorage().findLoginToUpdate(entry.toLoginEntry())?.toLogin()
+    override suspend fun findLoginToUpdate(entry: LoginEntry): Login? {
+        return getStorage().findLoginToUpdate(entry.toLoginEntry())?.toLogin()
     }
 
     override fun close() {
