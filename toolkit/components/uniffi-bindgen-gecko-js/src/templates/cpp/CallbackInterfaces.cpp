@@ -75,6 +75,37 @@ public:
     return returnValue.IntoRust();
     {% endif -%}
   }
+
+
+  /**
+    * Invoke a callback method synchronously and return the result
+    *
+    * Must only be called on the main thread.
+    */
+  static void
+  MakeSyncCall(
+        JSContext* aCx,
+        RefPtr<dom::UniFFICallbackHandler>& aJsHandler,
+        uint64_t aUniffiHandle,
+        uint32_t aMethodIndex,
+        const nsTArray<dom::OwningUniFFIScaffoldingValue>& aUniffiArgs,
+        {{ return_handler.return_type_name }}* aUniffiOutReturn,
+        RustCallStatus* aUniffiOutStatus) {
+    RootedDictionary<UniFFIScaffoldingCallResult> callResult(aCx);
+    IgnoredErrorResult error;
+    aJsHandler->CallSync(aUniffiHandle, aMethodIndex, aUniffiArgs, callResult, error);
+    if (error.Failed()) {
+      MOZ_LOG(
+          gUniffiLogger, LogLevel::Error,
+          ("[{{ return_handler.name }}] Error invoking JS handler"));
+      return;
+    }
+    {% if return_handler.return_ty.is_some() -%}
+    *aUniffiOutReturn = Lower(callResult, aUniffiOutStatus, error);
+    {% else -%}
+    Lower(callResult, aUniffiOutStatus, error);
+    {% endif -%}
+  }
 };
 {%- endfor %}
 {{ preprocessor_condition_end }}
@@ -268,6 +299,60 @@ extern "C" void {{ meth.fn_name }}(
 ) {
   UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<{{ meth.async_handler_class_name }}>(aUniffiHandle{% for a in arguments %}, {{ a.name }}{%- endfor %});
   AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &{{ cbi.handler_var }});
+}
+
+{%- when CallbackMethodKind::Sync %}
+/**
+ * {{ meth.fn_name }} -- C function to handle the callback method
+ *
+ * This is what Rust calls when it invokes a callback method.
+ */
+extern "C" void {{ meth.fn_name }}(
+  uint64_t aUniffiHandle,
+  {%- for a in meth.arguments %}
+  {{ a.ty.type_name }} {{ a.name }},
+  {%- endfor %}
+  {{ meth.out_pointer_ty.type_name }} aUniffiOutReturn,
+  RustCallStatus* aUniffiOutStatus
+) {
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = {{ cbi.handler_var }};
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[{{ meth.fn_name }}] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "{{ meth.fn_name }}");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements({{ arguments.len()  }}, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[{{ meth.fn_name }}] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  {%- for a in arguments %}
+  {{ a.ffi_value_class }} {{ a.var_name }} = {{ a.ffi_value_class }}::FromRust({{ a.name }});
+  {{ a.var_name }}.Lift(aes.cx(), &uniffiArgs[{{ loop.index0 }}], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[{{ meth.fn_name }}] Failed to lift {{ a.name }}"));
+    return;
+  }
+  {%- endfor %}
+
+  {{ meth.return_handler_class_name }}::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    {{ method_index }},
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 {%- endmatch %}
 {%- endfor %}
