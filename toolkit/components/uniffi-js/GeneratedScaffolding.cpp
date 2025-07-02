@@ -11117,6 +11117,31 @@ public:
     }
 
     }
+
+
+  /**
+    * Invoke a callback method synchronously and return the result
+    */
+  static void
+  MakeSyncCall(
+        JSContext* aCx,
+        RefPtr<dom::UniFFICallbackHandler>& aJsHandler,
+        uint64_t aUniffiHandle,
+        uint32_t aMethodIndex,
+        const nsTArray<dom::OwningUniFFIScaffoldingValue>& aUniffiArgs,
+        void* aUniffiOutReturn,
+        RustCallStatus* aUniffiOutStatus) {
+    RootedDictionary<UniFFIScaffoldingCallResult> callResult(aCx);
+    IgnoredErrorResult error;
+    aJsHandler->CallSync(aUniffiHandle, aMethodIndex, aUniffiArgs, callResult, error);
+    if (error.Failed()) {
+      MOZ_LOG(
+          gUniffiLogger, LogLevel::Error,
+          ("[CallbackLowerReturnVoid] Error invoking JS handler"));
+      return;
+    }
+    Lower(callResult, aUniffiOutStatus, error);
+    }
 };
 
 #ifdef MOZ_UNIFFI_FIXTURES
@@ -11180,6 +11205,31 @@ public:
 
     return returnValue.IntoRust();
     }
+
+
+  /**
+    * Invoke a callback method synchronously and return the result
+    */
+  static void
+  MakeSyncCall(
+        JSContext* aCx,
+        RefPtr<dom::UniFFICallbackHandler>& aJsHandler,
+        uint64_t aUniffiHandle,
+        uint32_t aMethodIndex,
+        const nsTArray<dom::OwningUniFFIScaffoldingValue>& aUniffiArgs,
+        uint32_t* aUniffiOutReturn,
+        RustCallStatus* aUniffiOutStatus) {
+    RootedDictionary<UniFFIScaffoldingCallResult> callResult(aCx);
+    IgnoredErrorResult error;
+    aJsHandler->CallSync(aUniffiHandle, aMethodIndex, aUniffiArgs, callResult, error);
+    if (error.Failed()) {
+      MOZ_LOG(
+          gUniffiLogger, LogLevel::Error,
+          ("[CallbackLowerReturnUInt32] Error invoking JS handler"));
+      return;
+    }
+    *aUniffiOutReturn = Lower(callResult, aUniffiOutStatus, error);
+    }
 };
 
 /**
@@ -11241,60 +11291,37 @@ public:
 
     return returnValue.IntoRust();
     }
+
+
+  /**
+    * Invoke a callback method synchronously and return the result
+    */
+  static void
+  MakeSyncCall(
+        JSContext* aCx,
+        RefPtr<dom::UniFFICallbackHandler>& aJsHandler,
+        uint64_t aUniffiHandle,
+        uint32_t aMethodIndex,
+        const nsTArray<dom::OwningUniFFIScaffoldingValue>& aUniffiArgs,
+        RustBuffer* aUniffiOutReturn,
+        RustCallStatus* aUniffiOutStatus) {
+    RootedDictionary<UniFFIScaffoldingCallResult> callResult(aCx);
+    IgnoredErrorResult error;
+    aJsHandler->CallSync(aUniffiHandle, aMethodIndex, aUniffiArgs, callResult, error);
+    if (error.Failed()) {
+      MOZ_LOG(
+          gUniffiLogger, LogLevel::Error,
+          ("[CallbackLowerReturnRustBuffer] Error invoking JS handler"));
+      return;
+    }
+    *aUniffiOutReturn = Lower(callResult, aUniffiOutStatus, error);
+    }
 };
 #endif /* MOZ_UNIFFI_FIXTURES */
 
 // Callback interface method handlers, vtables, etc.
 
 static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerContextIdContextIdCallback;
-/**
- * Callback method handler subclass for callback_interface_context_id_context_id_callback_persist
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodContextIdContextIdCallbackPersist final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mContextId{};
-  FfiValueInt<int64_t> mCreationDate{};
-
-public:
-  CallbackInterfaceMethodContextIdContextIdCallbackPersist(
-      uint64_t aUniffiHandle,
-      RustBuffer aContextId,
-      int64_t aCreationDate
-  ) : AsyncCallbackMethodHandlerBase ("ContextIdCallback.callback_interface_context_id_context_id_callback_persist", aUniffiHandle),
-      mContextId(FfiValueRustBuffer::FromRust(aContextId)),
-      mCreationDate(FfiValueInt<int64_t>::FromRust(aCreationDate)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(2, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mContextId.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-    mCreationDate.Lift(aCx, &uniffiArgs[1], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
-    return nullptr;
-  }
-};
-
 /**
  * callback_interface_context_id_context_id_callback_persist -- C function to handle the callback method
  *
@@ -11305,52 +11332,53 @@ extern "C" void callback_interface_context_id_context_id_callback_persist(
   RustBuffer aContextId,
   int64_t aCreationDate,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodContextIdContextIdCallbackPersist>(aUniffiHandle, aContextId, aCreationDate);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerContextIdContextIdCallback);
-}
-/**
- * Callback method handler subclass for callback_interface_context_id_context_id_callback_rotated
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodContextIdContextIdCallbackRotated final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mOldContextId{};
-
-public:
-  CallbackInterfaceMethodContextIdContextIdCallbackRotated(
-      uint64_t aUniffiHandle,
-      RustBuffer aOldContextId
-  ) : AsyncCallbackMethodHandlerBase ("ContextIdCallback.callback_interface_context_id_context_id_callback_rotated", aUniffiHandle),
-      mOldContextId(FfiValueRustBuffer::FromRust(aOldContextId)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mOldContextId.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 1, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerContextIdContextIdCallback;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_context_id_context_id_callback_persist] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_context_id_context_id_callback_persist");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(2, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_context_id_context_id_callback_persist] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer contextId = FfiValueRustBuffer::FromRust(aContextId);
+  contextId.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_context_id_context_id_callback_persist] Failed to lift aContextId"));
+    return;
+  }
+  FfiValueInt<int64_t> creationDate = FfiValueInt<int64_t>::FromRust(aCreationDate);
+  creationDate.Lift(aes.cx(), &uniffiArgs[1], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_context_id_context_id_callback_persist] Failed to lift aCreationDate"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    0,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_context_id_context_id_callback_rotated -- C function to handle the callback method
  *
@@ -11360,10 +11388,44 @@ extern "C" void callback_interface_context_id_context_id_callback_rotated(
   uint64_t aUniffiHandle,
   RustBuffer aOldContextId,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodContextIdContextIdCallbackRotated>(aUniffiHandle, aOldContextId);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerContextIdContextIdCallback);
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerContextIdContextIdCallback;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_context_id_context_id_callback_rotated] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "callback_interface_context_id_context_id_callback_rotated");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_context_id_context_id_callback_rotated] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer oldContextId = FfiValueRustBuffer::FromRust(aOldContextId);
+  oldContextId.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_context_id_context_id_callback_rotated] Failed to lift aOldContextId"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    1,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 
 extern "C" void callback_free_context_id_context_id_callback(uint64_t uniffiHandle) {
@@ -11381,54 +11443,6 @@ static VTableCallbackInterfaceContextIdContextIdCallback kUniffiVtableContextIdC
 };
 static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerErrorsupportApplicationErrorReporter;
 /**
- * Callback method handler subclass for callback_interface_errorsupport_application_error_reporter_report_error
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportError final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mTypeName{};
-  FfiValueRustBuffer mMessage{};
-
-public:
-  CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportError(
-      uint64_t aUniffiHandle,
-      RustBuffer aTypeName,
-      RustBuffer aMessage
-  ) : AsyncCallbackMethodHandlerBase ("ApplicationErrorReporter.callback_interface_errorsupport_application_error_reporter_report_error", aUniffiHandle),
-      mTypeName(FfiValueRustBuffer::FromRust(aTypeName)),
-      mMessage(FfiValueRustBuffer::FromRust(aMessage)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(2, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mTypeName.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-    mMessage.Lift(aCx, &uniffiArgs[1], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
-    return nullptr;
-  }
-};
-
-/**
  * callback_interface_errorsupport_application_error_reporter_report_error -- C function to handle the callback method
  *
  * This is what Rust calls when it invokes a callback method.
@@ -11438,73 +11452,53 @@ extern "C" void callback_interface_errorsupport_application_error_reporter_repor
   RustBuffer aTypeName,
   RustBuffer aMessage,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportError>(aUniffiHandle, aTypeName, aMessage);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerErrorsupportApplicationErrorReporter);
-}
-/**
- * Callback method handler subclass for callback_interface_errorsupport_application_error_reporter_report_breadcrumb
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportBreadcrumb final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mMessage{};
-  FfiValueRustBuffer mModule{};
-  FfiValueInt<uint32_t> mLine{};
-  FfiValueInt<uint32_t> mColumn{};
-
-public:
-  CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportBreadcrumb(
-      uint64_t aUniffiHandle,
-      RustBuffer aMessage,
-      RustBuffer aModule,
-      uint32_t aLine,
-      uint32_t aColumn
-  ) : AsyncCallbackMethodHandlerBase ("ApplicationErrorReporter.callback_interface_errorsupport_application_error_reporter_report_breadcrumb", aUniffiHandle),
-      mMessage(FfiValueRustBuffer::FromRust(aMessage)),
-      mModule(FfiValueRustBuffer::FromRust(aModule)),
-      mLine(FfiValueInt<uint32_t>::FromRust(aLine)),
-      mColumn(FfiValueInt<uint32_t>::FromRust(aColumn)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(4, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mMessage.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-    mModule.Lift(aCx, &uniffiArgs[1], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-    mLine.Lift(aCx, &uniffiArgs[2], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-    mColumn.Lift(aCx, &uniffiArgs[3], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 1, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerErrorsupportApplicationErrorReporter;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_errorsupport_application_error_reporter_report_error] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_errorsupport_application_error_reporter_report_error");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(2, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_errorsupport_application_error_reporter_report_error] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer typeName = FfiValueRustBuffer::FromRust(aTypeName);
+  typeName.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_error] Failed to lift aTypeName"));
+    return;
+  }
+  FfiValueRustBuffer message = FfiValueRustBuffer::FromRust(aMessage);
+  message.Lift(aes.cx(), &uniffiArgs[1], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_error] Failed to lift aMessage"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    0,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_errorsupport_application_error_reporter_report_breadcrumb -- C function to handle the callback method
  *
@@ -11517,10 +11511,68 @@ extern "C" void callback_interface_errorsupport_application_error_reporter_repor
   uint32_t aLine,
   uint32_t aColumn,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodErrorsupportApplicationErrorReporterReportBreadcrumb>(aUniffiHandle, aMessage, aModule, aLine, aColumn);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerErrorsupportApplicationErrorReporter);
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerErrorsupportApplicationErrorReporter;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "callback_interface_errorsupport_application_error_reporter_report_breadcrumb");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(4, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer message = FfiValueRustBuffer::FromRust(aMessage);
+  message.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] Failed to lift aMessage"));
+    return;
+  }
+  FfiValueRustBuffer module = FfiValueRustBuffer::FromRust(aModule);
+  module.Lift(aes.cx(), &uniffiArgs[1], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] Failed to lift aModule"));
+    return;
+  }
+  FfiValueInt<uint32_t> line = FfiValueInt<uint32_t>::FromRust(aLine);
+  line.Lift(aes.cx(), &uniffiArgs[2], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] Failed to lift aLine"));
+    return;
+  }
+  FfiValueInt<uint32_t> column = FfiValueInt<uint32_t>::FromRust(aColumn);
+  column.Lift(aes.cx(), &uniffiArgs[3], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_errorsupport_application_error_reporter_report_breadcrumb] Failed to lift aColumn"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    1,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 
 extern "C" void callback_free_errorsupport_application_error_reporter(uint64_t uniffiHandle) {
@@ -11891,40 +11943,6 @@ static VTableCallbackInterfaceUniffiBindingsTestsTestAsyncCallbackInterface kUni
 };
 static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
 /**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_callback_interface_noop
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceNoop final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceNoop(
-      uint64_t aUniffiHandle
-  ) : AsyncCallbackMethodHandlerBase ("TestCallbackInterface.callback_interface_uniffi_bindings_tests_test_callback_interface_noop", aUniffiHandle){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
-    return nullptr;
-  }
-};
-
-/**
  * callback_interface_uniffi_bindings_tests_test_callback_interface_noop -- C function to handle the callback method
  *
  * This is what Rust calls when it invokes a callback method.
@@ -11932,45 +11950,37 @@ public:
 extern "C" void callback_interface_uniffi_bindings_tests_test_callback_interface_noop(
   uint64_t aUniffiHandle,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceNoop>(aUniffiHandle);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_callback_interface_get_value
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceGetValue final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceGetValue(
-      uint64_t aUniffiHandle
-  ) : AsyncCallbackMethodHandlerBase ("TestCallbackInterface.callback_interface_uniffi_bindings_tests_test_callback_interface_get_value", aUniffiHandle){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 1, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_noop] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_callback_interface_noop");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_noop] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    0,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_callback_interface_get_value -- C function to handle the callback method
  *
@@ -11979,52 +11989,37 @@ public:
 extern "C" void callback_interface_uniffi_bindings_tests_test_callback_interface_get_value(
   uint64_t aUniffiHandle,
   uint32_t* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceGetValue>(aUniffiHandle);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_callback_interface_set_value
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceSetValue final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueInt<uint32_t> mValue{};
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceSetValue(
-      uint64_t aUniffiHandle,
-      uint32_t aValue
-  ) : AsyncCallbackMethodHandlerBase ("TestCallbackInterface.callback_interface_uniffi_bindings_tests_test_callback_interface_set_value", aUniffiHandle),
-      mValue(FfiValueInt<uint32_t>::FromRust(aValue)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mValue.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 2, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_get_value] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_callback_interface_get_value");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_get_value] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+
+  CallbackLowerReturnUInt32::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    1,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_callback_interface_set_value -- C function to handle the callback method
  *
@@ -12034,52 +12029,45 @@ extern "C" void callback_interface_uniffi_bindings_tests_test_callback_interface
   uint64_t aUniffiHandle,
   uint32_t aValue,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceSetValue>(aUniffiHandle, aValue);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceThrowIfEqual final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mNumbers{};
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceThrowIfEqual(
-      uint64_t aUniffiHandle,
-      RustBuffer aNumbers
-  ) : AsyncCallbackMethodHandlerBase ("TestCallbackInterface.callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal", aUniffiHandle),
-      mNumbers(FfiValueRustBuffer::FromRust(aNumbers)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mNumbers.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 3, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_set_value] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_callback_interface_set_value");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_set_value] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueInt<uint32_t> value = FfiValueInt<uint32_t>::FromRust(aValue);
+  value.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_uniffi_bindings_tests_test_callback_interface_set_value] Failed to lift aValue"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    2,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal -- C function to handle the callback method
  *
@@ -12089,10 +12077,44 @@ extern "C" void callback_interface_uniffi_bindings_tests_test_callback_interface
   uint64_t aUniffiHandle,
   RustBuffer aNumbers,
   RustBuffer* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestCallbackInterfaceThrowIfEqual>(aUniffiHandle, aNumbers);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface);
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestCallbackInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer numbers = FfiValueRustBuffer::FromRust(aNumbers);
+  numbers.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_uniffi_bindings_tests_test_callback_interface_throw_if_equal] Failed to lift aNumbers"));
+    return;
+  }
+
+  CallbackLowerReturnRustBuffer::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    3,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 
 extern "C" void callback_free_uniffi_bindings_tests_test_callback_interface(uint64_t uniffiHandle) {
@@ -12463,40 +12485,6 @@ static VTableCallbackInterfaceUniffiBindingsTestsAsyncTestTraitInterface kUniffi
 };
 static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface;
 /**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_trait_interface_noop
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop(
-      uint64_t aUniffiHandle
-  ) : AsyncCallbackMethodHandlerBase ("TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_noop", aUniffiHandle){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
-    return nullptr;
-  }
-};
-
-/**
  * callback_interface_uniffi_bindings_tests_test_trait_interface_noop -- C function to handle the callback method
  *
  * This is what Rust calls when it invokes a callback method.
@@ -12504,45 +12492,37 @@ public:
 extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_noop(
   uint64_t aUniffiHandle,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceNoop>(aUniffiHandle);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_trait_interface_get_value
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue(
-      uint64_t aUniffiHandle
-  ) : AsyncCallbackMethodHandlerBase ("TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_get_value", aUniffiHandle){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 1, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_noop] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_trait_interface_noop");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_noop] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    0,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_trait_interface_get_value -- C function to handle the callback method
  *
@@ -12551,52 +12531,37 @@ public:
 extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_get_value(
   uint64_t aUniffiHandle,
   uint32_t* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceGetValue>(aUniffiHandle);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_trait_interface_set_value
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueInt<uint32_t> mValue{};
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue(
-      uint64_t aUniffiHandle,
-      uint32_t aValue
-  ) : AsyncCallbackMethodHandlerBase ("TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_set_value", aUniffiHandle),
-      mValue(FfiValueInt<uint32_t>::FromRust(aValue)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mValue.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 2, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_get_value] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_trait_interface_get_value");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_get_value] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+
+  CallbackLowerReturnUInt32::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    1,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_trait_interface_set_value -- C function to handle the callback method
  *
@@ -12606,52 +12571,45 @@ extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_se
   uint64_t aUniffiHandle,
   uint32_t aValue,
   void* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceSetValue>(aUniffiHandle, aValue);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface);
-}
-/**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-  FfiValueRustBuffer mNumbers{};
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual(
-      uint64_t aUniffiHandle,
-      RustBuffer aNumbers
-  ) : AsyncCallbackMethodHandlerBase ("TestTraitInterface.callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal", aUniffiHandle),
-      mNumbers(FfiValueRustBuffer::FromRust(aNumbers)){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-    mNumbers.Lift(aCx, &uniffiArgs[0], aError);
-    if (aError.Failed()) {
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 3, uniffiArgs, aError);
-    return nullptr;
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_set_value] JS handler has null global"));
+    return;
   }
-};
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_trait_interface_set_value");
 
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_set_value] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueInt<uint32_t> value = FfiValueInt<uint32_t>::FromRust(aValue);
+  value.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_uniffi_bindings_tests_test_trait_interface_set_value] Failed to lift aValue"));
+    return;
+  }
+
+  CallbackLowerReturnVoid::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    2,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
+}
 /**
  * callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal -- C function to handle the callback method
  *
@@ -12661,10 +12619,44 @@ extern "C" void callback_interface_uniffi_bindings_tests_test_trait_interface_th
   uint64_t aUniffiHandle,
   RustBuffer aNumbers,
   RustBuffer* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsTestTraitInterfaceThrowIfEqual>(aUniffiHandle, aNumbers);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface);
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsTestTraitInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(1, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+  FfiValueRustBuffer numbers = FfiValueRustBuffer::FromRust(aNumbers);
+  numbers.Lift(aes.cx(), &uniffiArgs[0], error);
+  if (error.Failed()) {
+    MOZ_LOG(
+        gUniffiLogger, LogLevel::Error,
+        ("[callback_interface_uniffi_bindings_tests_test_trait_interface_throw_if_equal] Failed to lift aNumbers"));
+    return;
+  }
+
+  CallbackLowerReturnRustBuffer::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    3,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 
 extern "C" void callback_free_uniffi_bindings_tests_test_trait_interface(uint64_t uniffiHandle) {
@@ -12684,40 +12676,6 @@ static VTableCallbackInterfaceUniffiBindingsTestsTestTraitInterface kUniffiVtabl
 };
 static StaticRefPtr<dom::UniFFICallbackHandler> gUniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface;
 /**
- * Callback method handler subclass for callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value
- *
- * This is like the handler for an async function except:
- *
- * - It doesn't input the complete callback function/data
- * - It doesn't override HandleReturn and returns `nullptr` from MakeCall.
- *   This means ScheduleAsyncCall will schedule `MakeCall` and not do anything
- *   with the result, which is what we want.
- */
-class CallbackInterfaceMethodUniffiBindingsTestsCollisionTestCallbackInterfaceGetValue final : public AsyncCallbackMethodHandlerBase {
-private:
-  // Rust arguments
-
-public:
-  CallbackInterfaceMethodUniffiBindingsTestsCollisionTestCallbackInterfaceGetValue(
-      uint64_t aUniffiHandle
-  ) : AsyncCallbackMethodHandlerBase ("TestCallbackInterface.callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value", aUniffiHandle){ }
-
-  MOZ_CAN_RUN_SCRIPT
-  already_AddRefed<dom::Promise>
-  MakeCall(JSContext* aCx, dom::UniFFICallbackHandler* aJsHandler, ErrorResult& aError) override {
-    // Convert arguments
-    nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
-    if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
-      aError.Throw(NS_ERROR_OUT_OF_MEMORY);
-      return nullptr;
-    }
-
-    RefPtr<dom::Promise> result = aJsHandler->CallAsync(mUniffiHandle.IntoRust(), 0, uniffiArgs, aError);
-    return nullptr;
-  }
-};
-
-/**
  * callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value -- C function to handle the callback method
  *
  * This is what Rust calls when it invokes a callback method.
@@ -12725,10 +12683,36 @@ public:
 extern "C" void callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value(
   uint64_t aUniffiHandle,
   RustBuffer* aUniffiOutReturn,
-  RustCallStatus* uniffiOutStatus
+  RustCallStatus* aUniffiOutStatus
 ) {
-  UniquePtr<AsyncCallbackMethodHandlerBase> handler = MakeUnique<CallbackInterfaceMethodUniffiBindingsTestsCollisionTestCallbackInterfaceGetValue>(aUniffiHandle);
-  AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(std::move(handler), &gUniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface);
+  MOZ_ASSERT(NS_IsMainThread());
+  // Take our own reference to the callback handler to ensure that it
+  // stays alive for the duration of this call
+  RefPtr<dom::UniFFICallbackHandler> jsHandler = gUniffiCallbackHandlerUniffiBindingsTestsCollisionTestCallbackInterface;
+  // Create a JS context for the call
+  JSObject* global = jsHandler->CallbackGlobalOrNull();
+  if (!global) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value] JS handler has null global"));
+    return;
+  }
+  dom::AutoEntryScript aes(global, "callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value");
+
+  // Convert arguments
+  nsTArray<dom::OwningUniFFIScaffoldingValue> uniffiArgs;
+  if (!uniffiArgs.AppendElements(0, mozilla::fallible)) {
+    MOZ_LOG(gUniffiLogger, LogLevel::Error, ("[callback_interface_uniffi_bindings_tests_collision_test_callback_interface_get_value] Failed to allocate arguments"));
+    return;
+  }
+  IgnoredErrorResult error;
+
+  CallbackLowerReturnRustBuffer::MakeSyncCall(
+    aes.cx(),
+    jsHandler,
+    aUniffiHandle,
+    0,
+    uniffiArgs,
+    aUniffiOutReturn,
+    aUniffiOutStatus);
 }
 
 extern "C" void callback_free_uniffi_bindings_tests_collision_test_callback_interface(uint64_t uniffiHandle) {

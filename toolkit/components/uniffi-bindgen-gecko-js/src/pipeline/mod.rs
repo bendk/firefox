@@ -22,6 +22,7 @@ mod types;
 
 use crate::Config;
 use anyhow::Result;
+pub use crate::ConcurrencyMode;
 pub use nodes::*;
 use std::collections::HashMap;
 use uniffi_bindgen::pipeline::{general, initial};
