@@ -47,30 +47,26 @@ pub fn pass(root: &mut Root) -> Result<()> {
             Ok(())
         })?;
 
-    let mut seen_async_complete_handlers = HashSet::new();
-    root.cpp_scaffolding.async_callback_method_handler_bases = root
+    let mut seen_return_handler_classes = HashSet::new();
+    root.cpp_scaffolding.callback_return_handler_classes = root
         .cpp_scaffolding
         .callback_interfaces
         .try_map(|callback_interfaces| {
-            let mut async_callback_method_handler_bases = vec![];
+            let mut return_handler_classes = vec![];
             callback_interfaces.try_visit(|meth: &CppCallbackInterfaceMethod| {
-                let CallbackMethodKind::Async(async_data) = &meth.kind else {
-                    return Ok(());
-                };
-                if seen_async_complete_handlers
-                    .insert(async_data.callback_handler_base_class.clone())
-                {
-                    async_callback_method_handler_bases.push(AsyncCallbackMethodHandlerBase {
-                        class_name: async_data.callback_handler_base_class.clone(),
-                        complete_callback_type_name: async_data.complete_callback_type_name.clone(),
-                        result_type_name: async_data.result_type_name.clone(),
-                        return_type: meth.return_ty.clone(),
+                let name = return_handler_class_name(meth.return_ty.as_ref())?;
+                if seen_return_handler_classes.insert(name.clone()) {
+                    return_handler_classes.push(CallbackReturnHandlerClass {
+                        name,
+                        return_ty: meth.return_ty.clone(),
+                        ..CallbackReturnHandlerClass::default()
                     });
                 };
                 Ok(())
             })?;
-            Ok(async_callback_method_handler_bases)
+            Ok(return_handler_classes)
         })?;
+
     Ok(())
 }
 
@@ -119,14 +115,8 @@ fn map_method(
             interface_name.to_snake_case(),
             meth.callable.name.to_snake_case(),
         ),
-        base_class_name: match &meth.callable.async_data {
-            // Note: non-async callbacks are currently always treated as fire-and-forget methods.
-            // These fire-and-forget methods inherit from `AsyncCallbackMethodHandlerBase` directly
-            // and have a no-op `HandleReturn` method.
-            None => "AsyncCallbackMethodHandlerBase".to_string(),
-            Some(_) => async_callback_method_handler_base_class(&meth.callable)?,
-        },
-        handler_class_name: format!(
+        return_handler_class_name: return_handler_class_name(return_ty.as_ref())?,
+        async_handler_class_name: format!(
             "CallbackInterfaceMethod{}{}{}",
             module_name.to_upper_camel_case(),
             interface_name.to_upper_camel_case(),
@@ -220,5 +210,41 @@ fn generate_cpp_callback_interface(
                 map_method(vtable_meth, ffi_func, module_name, interface_name)
             })
             .collect::<Result<Vec<_>>>()?,
+    })
+}
+
+pub fn return_handler_class_name(return_ty: Option<&FfiValueReturnType>) -> Result<String> {
+    Ok(match return_ty {
+        None => "CallbackLowerReturnVoid".to_string(),
+        Some(return_ty) => match &return_ty.ty.ty {
+            FfiType::UInt8 => "CallbackLowerReturnUInt8".to_string(),
+            FfiType::Int8 => "CallbackLowerReturnInt8".to_string(),
+            FfiType::UInt16 => "CallbackLowerReturnUInt16".to_string(),
+            FfiType::Int16 => "CallbackLowerReturnInt16".to_string(),
+            FfiType::UInt32 => "CallbackLowerReturnUInt32".to_string(),
+            FfiType::Int32 => "CallbackLowerReturnInt32".to_string(),
+            FfiType::UInt64 => "CallbackLowerReturnUInt64".to_string(),
+            FfiType::Int64 => "CallbackLowerReturnInt64".to_string(),
+            FfiType::Float32 => "CallbackLowerReturnFloat32".to_string(),
+            FfiType::Float64 => "CallbackLowerReturnFloat64".to_string(),
+            FfiType::RustBuffer(_) => "CallbackLowerReturnRustBuffer".to_string(),
+            FfiType::RustArcPtr {
+                module_name,
+                object_name,
+            } => {
+                format!(
+                    "CallbackLowerReturnObject{}{}",
+                    module_name.to_upper_camel_case(),
+                    object_name.to_upper_camel_case(),
+                )
+            }
+            FfiType::Handle(HandleKind::CallbackInterface {
+                module_name,
+                interface_name,
+            }) => {
+                format!("CallbackLowerReturnCallbackInterface{module_name}_{interface_name}")
+            }
+            ty => bail!("Invalid callback return FFI type: {ty:?}"),
+        },
     })
 }
