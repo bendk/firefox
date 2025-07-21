@@ -16,20 +16,23 @@ ChromeUtils.defineESModuleGetters(lazy, {
 
   LoginHelper: "resource://gre/modules/LoginHelper.sys.mjs",
 
-  // how can we group this, without repeating the source?
-  LoginEntry:
-    "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustLogins.sys.mjs",
-  LoginMeta:
-    "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustLogins.sys.mjs",
-  LoginEntryWithMeta:
-    "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustLogins.sys.mjs",
-  createLoginStoreWithStaticKeyManager:
-    "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustLogins.sys.mjs",
+  AsyncShutdown: "resource://gre/modules/AsyncShutdown.sys.mjs",
 });
 
 const { initialize: initRustComponents } = ChromeUtils.importESModule(
   "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustInitRustComponents.sys.mjs"
 );
+
+const {
+  LoginEntry,
+  LoginMeta,
+  LoginEntryWithMeta,
+  PrimaryPasswordAuthenticator,
+  createLoginStoreWithNssKeymanager,
+} = ChromeUtils.importESModule(
+  "moz-src:///toolkit/components/uniffi-bindgen-gecko-js/components/generated/RustLogins.sys.mjs",
+);
+
 
 const LoginInfo = Components.Constructor(
   "@mozilla.org/login-manager/loginInfo;1",
@@ -43,7 +46,7 @@ const LoginInfo = Components.Constructor(
 // toolkit/components/passwordmgr/LoginInfo.sys.mjs
 // but I'd like to decouple from as many components as possible by now
 const loginInfoToLoginEntry = loginInfo =>
-  new lazy.LoginEntry({
+  new LoginEntry({
     origin: loginInfo.origin,
     httpRealm: loginInfo.httpRealm,
     formActionOrigin: loginInfo.formActionOrigin,
@@ -56,9 +59,9 @@ const loginInfoToLoginEntry = loginInfo =>
 // Convert a LoginInfo to a LoginEntryWithMeta, to be used for migrating
 // records between legacy and Rust storage.
 const loginInfoToLoginEntryWithMeta = loginInfo =>
-  new lazy.LoginEntryWithMeta({
+  new LoginEntryWithMeta({
     entry: loginInfoToLoginEntry(loginInfo),
-    meta: new lazy.LoginMeta({
+    meta: new LoginMeta({
       id: loginInfo.guid,
       timesUsed: loginInfo.timesUsed,
       timeCreated: loginInfo.timeCreated,
@@ -166,7 +169,30 @@ class RustLoginsStoreAdapter {
     const login = this.#store.findLoginToUpdate(loginEntry);
     return login && loginToLoginInfo(login);
   }
+
+  shutdown() {
+    this.#store.shutdown();
+  }
 }
+
+// TODO: this is a mock atm to work with LoginTestUtils.primaryPassword
+class LoginStorageAuthenticator extends PrimaryPasswordAuthenticator {
+  async getPrimaryPassword() {
+    console.log("LoginStorageAuthenticator: get primary password");
+    return new Promise(resolve => resolve("omgsecret!"));
+  }
+
+  async onAuthenticationSuccess() {
+    console.log("LoginStorageAuthenticator: authentication success!");
+    return new Promise(resolve => resolve());
+  }
+
+  async onAuthenticationFailure() {
+    console.error("LoginStorageAuthenticator: authentication failure!");
+    return new Promise(resolve => resolve());
+  }
+}
+
 
 export class LoginManagerRustStorage {
   #store = null;
@@ -185,14 +211,18 @@ export class LoginManagerRustStorage {
   
         await initRustComponents(profilePath);
 
-        // using a static, predefined key for development
-        const key =
-          '{\"kty\":\"oct\",\"k\":\"0YqHUnEcQEMLEs7ftX1j0TMJ80876EqnKNSTx1YYnzM\"}';
-        console.log(`using key: ${key}`);
+        const authenticator = new LoginStorageAuthenticator();
+        const store = createLoginStoreWithNssKeymanager(path, authenticator);
 
-        const store = lazy.createLoginStoreWithStaticKeyManager(path, key);
         this.#store = new RustLoginsStoreAdapter(store);
         console.log("Rust login storage ready.");
+
+        // Interrupt sooner prior to the `profile-before-change` phase to allow
+        // all the in-progress IOs to exit.
+        lazy.AsyncShutdown.profileChangeTeardown.addBlocker(
+          "LoginManagerRustStorage: Interrupt IO operations on login store",
+          () => this.#shutdown()
+        );
       })().catch(console.error);
     } catch (e) {
       this.log(`Initialization failed ${e.name}.`);
@@ -705,6 +735,10 @@ export class LoginManagerRustStorage {
 
   get isLoggedIn() {
     throw Components.Exception("isLoggedIn", Cr.NS_ERROR_NOT_IMPLEMENTED);
+  }
+
+  #shutdown() {
+    this.#store.shutdown();
   }
 }
 

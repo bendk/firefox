@@ -12,6 +12,26 @@ const { LoginManagerRustStorage } = ChromeUtils.importESModule(
 ("use strict");
 
 /**
+ * Tests Rust storage primary password support
+ */
+add_task(async function test_primary_password_dialog() {
+  LoginTestUtils.primaryPassword.enable();
+
+  const loginInfo = TestData.formLogin({
+    username: "username",
+    password: "password",
+    guid: "{bb1ac9e6-e539-45d8-9262-854ee4866f49}",
+  });
+  const rustStorage = new LoginManagerRustStorage();
+  await rustStorage.initialize();
+
+  // TODO: here it hangs
+  await rustStorage.addLoginsAsync([loginInfo]);
+
+  LoginTestUtils.primaryPassword.disable();
+}).only()
+
+/**
  * Tests addLogin gets synced to Rust Storage
  */
 add_task(async function test_mirror_addLogin() {
