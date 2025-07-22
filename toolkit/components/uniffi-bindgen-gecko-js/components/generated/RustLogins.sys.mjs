@@ -2322,9 +2322,9 @@ export class LoginStoreInterface {
     /**
      * addManyWithMeta
      * @param {Array.<LoginEntryWithMeta>} entriesWithMeta
-     * @returns {Array.<BulkResultEntry>}
+     * @returns {Promise<Array.<BulkResultEntry>>}}
      */
-    addManyWithMeta(
+    async addManyWithMeta(
         entriesWithMeta) {
       throw Error("addManyWithMeta not implemented");
     }
@@ -2617,13 +2617,13 @@ export class LoginStore extends LoginStoreInterface {
     /**
      * addManyWithMeta
      * @param {Array.<LoginEntryWithMeta>} entriesWithMeta
-     * @returns {Array.<BulkResultEntry>}
+     * @returns {Promise<Array.<BulkResultEntry>>}}
      */
-    addManyWithMeta(
+    async addManyWithMeta(
         entriesWithMeta) {
        
         FfiConverterSequenceTypeLoginEntryWithMeta.checkType(entriesWithMeta);
-        const result = UniFFIScaffolding.callSync(
+        const result = await UniFFIScaffolding.callAsyncWrapper(
             23, // uniffi_logins_fn_method_loginstore_add_many_with_meta
             FfiConverterTypeLoginStore.lowerReceiver(this),
             FfiConverterSequenceTypeLoginEntryWithMeta.lower(entriesWithMeta),

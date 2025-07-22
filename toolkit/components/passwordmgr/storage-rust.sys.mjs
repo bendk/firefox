@@ -136,9 +136,9 @@ class RustLoginsStoreAdapter {
     return loginToLoginInfo(login);
   }
 
-  addManyWithMeta(loginInfos) {
+  async addManyWithMeta(loginInfos) {
     const loginEntriesWithMeta = loginInfos.map(loginInfoToLoginEntryWithMeta);
-    const results = this.#store.addManyWithMeta(loginEntriesWithMeta);
+    const results = await this.#store.addManyWithMeta(loginEntriesWithMeta);
     return results
       .filter(result => "login" in result)
       .map(({ login }) => loginToLoginInfo(login));
@@ -312,14 +312,15 @@ export class LoginManagerRustStorage {
       loginsToAdd.push(loginInfo);
     }
 
-    const result = this.#store.addManyWithMeta(loginsToAdd);
+    const result = await this.#store.addManyWithMeta(loginsToAdd);
 
     // TODO: during write-only replica these events are disabled
     // Send a notification that a login was added.
     // lazy.LoginHelper.notifyStorageChanged("addLogin", resultLoginInfo);
 
     // Emulate being async
-    return Promise.resolve(result);
+    //return Promise.resolve(result);
+    return result;
   }
 
   modifyLogin(oldLogin, newLoginData, fromSync) {
