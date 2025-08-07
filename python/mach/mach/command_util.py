@@ -204,6 +204,9 @@ MACH_COMMANDS = {
     "run-condprofile": MachCommandReference("testing/condprofile/mach_commands.py"),
     "rusttests": MachCommandReference("testing/mach_commands.py"),
     "settings": MachCommandReference("python/mach/mach/commands/settings.py"),
+    "setup-app-services": MachCommandReference(
+        "services/app-services/mach_commands.py"
+    ),
     "show-log": MachCommandReference("python/mozbuild/mozbuild/mach_commands.py"),
     "static-analysis": MachCommandReference(
         "python/mozbuild/mozbuild/code_analysis/mach_commands.py"
