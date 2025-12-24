@@ -331,17 +331,19 @@ extern "C" void {{ meth.fn_name }}(
 {%- endmatch %}
 {%- endfor %}
 
-extern "C" void {{ cbi.free_fn }}(uint64_t uniffiHandle) {
+extern "C" void {{ cbi.free_fn }}(uint64_t aUniffiHandle) {
+  if (CallbackHandleRelease(aUniffiHandle) == 0) {
    // Callback object handles are keys in a map stored in the JS handler. To
    // handle the free call, schedule a fire-and-forget JS call to remove the key.
    AsyncCallbackMethodHandlerBase::ScheduleAsyncCall(
-      MakeUnique<CallbackFreeHandler>("{{ cbi.name }}.uniffi_free", uniffiHandle),
+      MakeUnique<CallbackFreeHandler>("{{ cbi.name }}.uniffi_free", aUniffiHandle),
       &{{ cbi.handler_var }});
+  }
 }
 
-extern "C" uint64_t {{ cbi.clone_fn }}(uint64_t uniffiHandle) {
-  // XXXX - need to call back into js here? Or something?!?
-  return 0;
+extern "C" uint64_t {{ cbi.clone_fn }}(uint64_t aUniffiHandle) {
+  CallbackHandleAddRef(aUniffiHandle);
+  return aUniffiHandle;
 }
 
 static {{ cbi.vtable_struct_type.type_name }} {{ cbi.vtable_var }} {

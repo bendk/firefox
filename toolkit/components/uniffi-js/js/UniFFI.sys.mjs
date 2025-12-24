@@ -669,7 +669,6 @@ export const constructUniffiObject = Symbol("constructUniffiObject");
 export class UniFFICallbackHandler {
   #name;
   #interfaceId;
-  #handleCounter;
   #handleMap;
   #methodHandlers;
   #allowNewCallbacks;
@@ -684,7 +683,6 @@ export class UniFFICallbackHandler {
   constructor(name, interfaceId, methodHandlers) {
     this.#name = name;
     this.#interfaceId = interfaceId;
-    this.#handleCounter = 0;
     this.#handleMap = new Map();
     this.#methodHandlers = methodHandlers;
     this.#allowNewCallbacks = true;
@@ -703,10 +701,7 @@ export class UniFFICallbackHandler {
     if (!this.#allowNewCallbacks) {
       throw new UniFFIError(`No new callbacks allowed for ${this.#name}`);
     }
-    // Increment first.  This way handles start at `1` and we can use `0` to represent a NULL
-    // handle.
-    this.#handleCounter += 1;
-    const handle = this.#handleCounter;
+    const handle = UniFFIScaffolding.callbackHandleCreate();
     this.#handleMap.set(
       handle,
       new UniFFICallbackHandleMapEntry(
@@ -720,10 +715,34 @@ export class UniFFICallbackHandler {
   /**
    * Get a previously stored callback object
    *
+   * This consumes the handle, decreasing it's refcount.
+   *
    * @param {int} handle - Callback object handle, returned from `storeCallbackObj()`
    * @returns {obj} - Callback object
    */
-  getCallbackObj(handle) {
+  takeCallbackObj(handle) {
+    const callbackObj = this.#handleMap.get(handle).callbackObj;
+    if (UniFFIScaffolding.callbackHandleRelease(handle) == 0) {
+      this.#handleMap.delete(handle);
+    }
+    if (callbackObj === undefined) {
+      throw new UniFFIError(
+        `${this.#name}: invalid callback handle id: ${handle}`
+      );
+    }
+    return callbackObj;
+  }
+
+  /**
+   * Borrow a previously stored callback object
+   *
+   * This does not consume the handle and keeps the refcount the same.
+   * The only time we use this is when lifting the receiver for a callback interface method.
+   *
+   * @param {int} handle - Callback object handle, returned from `storeCallbackObj()`
+   * @returns {obj} - Callback object
+   */
+  borrowCallbackObj(handle) {
     const callbackObj = this.#handleMap.get(handle).callbackObj;
     if (callbackObj === undefined) {
       throw new UniFFIError(
@@ -789,7 +808,7 @@ export class UniFFICallbackHandler {
    * @param {UniFFIScaffoldingValue[]} args - Arguments to pass to the method
    */
   callSync(handle, methodId, ...args) {
-    const callbackObj = this.getCallbackObj(handle);
+    const callbackObj = this.borrowCallbackObj(handle);
     const methodHandler = this.getMethodHandler(methodId);
     try {
       const returnValue = methodHandler.call(callbackObj, args);
@@ -807,7 +826,7 @@ export class UniFFICallbackHandler {
    * @param {UniFFIScaffoldingValue[]} args - Arguments to pass to the method
    */
   async callAsync(handle, methodId, ...args) {
-    const callbackObj = this.getCallbackObj(handle);
+    const callbackObj = this.borrowCallbackObj(handle);
     const methodHandler = this.getMethodHandler(methodId);
     try {
       const returnValue = await methodHandler.call(callbackObj, args);

@@ -1811,19 +1811,30 @@ export class EncryptorDecryptorImpl extends EncryptorDecryptor {
 //
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypeEncryptorDecryptor extends FfiConverter {
-    // lift works like a regular interface
-    static lift(value) {
-        const opts = {};
-        opts[constructUniffiObject] = value;
-        return new EncryptorDecryptorImpl(opts);
+    static lift(handle) {
+        if ((handle & 1) == 0) {
+          // Rust handle.  Construct an object from it
+          const opts = {};
+          opts[constructUniffiObject] = handle;
+          return new EncryptorDecryptorImpl(opts);
+        } else {
+          // JS handle.  Get the JS object from the callback handler
+          return uniffiCallbackHandlerLoginsEncryptorDecryptor.takeCallbackObj(handle)
+        }
     }
 
-    // lower treats value like a callback interface
     static lower(value) {
-        if (!(value instanceof EncryptorDecryptor)) {
-            throw new UniFFITypeError("expected 'EncryptorDecryptor' subclass");
+        const ptr = value[uniffiObjectPtr];
+        if (ptr instanceof UniFFIPointer) {
+          // Rust-implemented interface, return the ptr.  The C++ code will clone it.
+          return ptr;
+        } else {
+          // JS-implemented interface, store the object in the handle map and return the handle
+          if (!(value instanceof EncryptorDecryptor)) {
+              throw new UniFFITypeError("expected 'EncryptorDecryptor' subclass");
+          }
+          return uniffiCallbackHandlerLoginsEncryptorDecryptor.storeCallbackObj(value)
         }
-        return uniffiCallbackHandlerLoginsEncryptorDecryptor.storeCallbackObj(value)
     }
 
     // lowerReceiver is used when calling methods on an interface we got from Rust, 
@@ -1941,19 +1952,30 @@ export class KeyManagerImpl extends KeyManager {
 //
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypeKeyManager extends FfiConverter {
-    // lift works like a regular interface
-    static lift(value) {
-        const opts = {};
-        opts[constructUniffiObject] = value;
-        return new KeyManagerImpl(opts);
+    static lift(handle) {
+        if ((handle & 1) == 0) {
+          // Rust handle.  Construct an object from it
+          const opts = {};
+          opts[constructUniffiObject] = handle;
+          return new KeyManagerImpl(opts);
+        } else {
+          // JS handle.  Get the JS object from the callback handler
+          return uniffiCallbackHandlerLoginsKeyManager.takeCallbackObj(handle)
+        }
     }
 
-    // lower treats value like a callback interface
     static lower(value) {
-        if (!(value instanceof KeyManager)) {
-            throw new UniFFITypeError("expected 'KeyManager' subclass");
+        const ptr = value[uniffiObjectPtr];
+        if (ptr instanceof UniFFIPointer) {
+          // Rust-implemented interface, return the ptr.  The C++ code will clone it.
+          return ptr;
+        } else {
+          // JS-implemented interface, store the object in the handle map and return the handle
+          if (!(value instanceof KeyManager)) {
+              throw new UniFFITypeError("expected 'KeyManager' subclass");
+          }
+          return uniffiCallbackHandlerLoginsKeyManager.storeCallbackObj(value)
         }
-        return uniffiCallbackHandlerLoginsKeyManager.storeCallbackObj(value)
     }
 
     // lowerReceiver is used when calling methods on an interface we got from Rust, 
@@ -3500,19 +3522,30 @@ export class PrimaryPasswordAuthenticatorImpl extends PrimaryPasswordAuthenticat
 //
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypePrimaryPasswordAuthenticator extends FfiConverter {
-    // lift works like a regular interface
-    static lift(value) {
-        const opts = {};
-        opts[constructUniffiObject] = value;
-        return new PrimaryPasswordAuthenticatorImpl(opts);
+    static lift(handle) {
+        if ((handle & 1) == 0) {
+          // Rust handle.  Construct an object from it
+          const opts = {};
+          opts[constructUniffiObject] = handle;
+          return new PrimaryPasswordAuthenticatorImpl(opts);
+        } else {
+          // JS handle.  Get the JS object from the callback handler
+          return uniffiCallbackHandlerLoginsPrimaryPasswordAuthenticator.takeCallbackObj(handle)
+        }
     }
 
-    // lower treats value like a callback interface
     static lower(value) {
-        if (!(value instanceof PrimaryPasswordAuthenticator)) {
-            throw new UniFFITypeError("expected 'PrimaryPasswordAuthenticator' subclass");
+        const ptr = value[uniffiObjectPtr];
+        if (ptr instanceof UniFFIPointer) {
+          // Rust-implemented interface, return the ptr.  The C++ code will clone it.
+          return ptr;
+        } else {
+          // JS-implemented interface, store the object in the handle map and return the handle
+          if (!(value instanceof PrimaryPasswordAuthenticator)) {
+              throw new UniFFITypeError("expected 'PrimaryPasswordAuthenticator' subclass");
+          }
+          return uniffiCallbackHandlerLoginsPrimaryPasswordAuthenticator.storeCallbackObj(value)
         }
-        return uniffiCallbackHandlerLoginsPrimaryPasswordAuthenticator.storeCallbackObj(value)
     }
 
     // lowerReceiver is used when calling methods on an interface we got from Rust, 

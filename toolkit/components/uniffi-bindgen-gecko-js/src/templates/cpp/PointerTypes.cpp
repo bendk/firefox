@@ -99,10 +99,6 @@ extern "C" uint64_t {{ trait_interface_info.clone_fn }}(uint64_t uniffiHandle);
 // interface version
 class {{ pointer_type.ffi_value_class }} {
  private:
-  // Did we lower a callback interface, rather than lift an object interface?
-  // This is weird, but it's a needed work until something like
-  // https://github.com/mozilla/uniffi-rs/pull/1823 lands.
-  bool mLoweredCallbackInterface = false;
   // The raw FFI value is a uint64_t in all cases.
   // For callback interfaces, the uint64_t handle gets casted to a pointer.  Callback interface
   // handles are used as the uint64_t and are incremented by one at a time, so even on a 32-bit system this
@@ -120,60 +116,55 @@ class {{ pointer_type.ffi_value_class }} {
   {{ pointer_type.ffi_value_class }}& operator=({{ pointer_type.ffi_value_class }}&& aOther) {
     FreeHandle();
     mValue = aOther.mValue;
-    mLoweredCallbackInterface = aOther.mLoweredCallbackInterface;
     aOther.mValue = 0;
-    aOther.mLoweredCallbackInterface = false;
     return *this;
   }
 
-  // Lower treats `aValue` as a callback interface
+  // Lower a trait interface, `aValue` can either by a Rust or JS handle
   void Lower(const dom::OwningUniFFIScaffoldingValue& aValue,
              ErrorResult& aError) {
-    if (!aValue.IsDouble()) {
+    FreeHandle();
+    if (aValue.IsUniFFIPointer()) {
+      // Rust handle.  Clone the handle and return it.
+      dom::UniFFIPointer& value = aValue.GetAsUniFFIPointer();
+      if (!value.IsSamePtrType(&{{ pointer_type.name }})) {
+        aError.ThrowTypeError("Incorrect UniFFI pointer type"_ns);
+        return;
+      }
+      mValue = value.ClonePtr();
+    } else if (aValue.IsDouble()) {
+      // JS handle.  Just return it, the JS code has already incremented the
+      // refcount
+      double floatValue = aValue.GetAsDouble();
+      uint64_t intValue = static_cast<uint64_t>(floatValue);
+      if (intValue != floatValue) {
+        aError.ThrowTypeError("Not an integer"_ns);
+        return;
+      }
+      mValue = intValue;
+    } else {
       aError.ThrowTypeError("Bad argument type"_ns);
       return;
     }
-    double floatValue = aValue.GetAsDouble();
-    uint64_t intValue = static_cast<uint64_t>(floatValue);
-    if (intValue != floatValue) {
-      aError.ThrowTypeError("Not an integer"_ns);
-      return;
-    }
-    FreeHandle();
-    mValue = intValue;
-    mLoweredCallbackInterface = true;
   }
 
-  // LowerReceiver is used for method receivers.  It treats `aValue` as an object pointer.
-  void LowerReciever(const dom::OwningUniFFIScaffoldingValue& aValue,
-             ErrorResult& aError) {
-    if (!aValue.IsUniFFIPointer()) {
-      aError.ThrowTypeError("Expected UniFFI pointer argument"_ns);
-      return;
-    }
-    dom::UniFFIPointer& value = aValue.GetAsUniFFIPointer();
-    if (!value.IsSamePtrType(&{{ pointer_type.name }})) {
-      aError.ThrowTypeError("Incorrect UniFFI pointer type"_ns);
-      return;
-    }
-    FreeHandle();
-    mValue = value.ClonePtr();
-    mLoweredCallbackInterface = false;
-  }
-
-  // Lift treats `aDest` as a regular interface
+  // Lift a trait interface.  `mValue` can either by a Rust or JS handle
   void Lift(JSContext* aContext, dom::OwningUniFFIScaffoldingValue* aDest,
             ErrorResult& aError) {
-    aDest->SetAsUniFFIPointer() =
-        dom::UniFFIPointer::Create(mValue, &{{ pointer_type.name }});
+    if ((mValue & 1) == 0) {
+      // Rust handle
+      aDest->SetAsUniFFIPointer() =
+          dom::UniFFIPointer::Create(mValue, &{{ pointer_type.name }});
+    } else {
+      // JS handle
+      aDest->SetAsDouble() = mValue;
+    }
     mValue = 0;
-    mLoweredCallbackInterface = false;
   }
 
   uint64_t IntoRust() {
     auto temp = mValue;
     mValue = 0;
-    mLoweredCallbackInterface = false;
     return temp;
   }
 
@@ -182,21 +173,22 @@ class {{ pointer_type.ffi_value_class }} {
   }
 
   void FreeHandle() {
-    // This behavior depends on if we lowered a callback interface handle or lifted an interface
-    // pointer.
-    if (mLoweredCallbackInterface && mValue != 0) {
-//                                     printf("FREEING CB %p\n", mValue);
-        {{ trait_interface_info.free_fn }}(mValue);
-        mValue = 0;
-    } else if (!mLoweredCallbackInterface && mValue != 0) {
-//                                     printf("FREEING interface %p\n", mValue);
+    // If we're storing a handle, call the free function for it. The function to
+    // call depends on if we're holding a JS or Rust implementation of the
+    // interface. We can tell that by looking at the lowest bit of the handle
+    if (mValue == 0) {
+      // 0 indicates we're not storing a handle.
+    } else if ((mValue & 1) == 0) {
+      // Rust implementation
       RustCallStatus callStatus{};
       ({{ pointer_type.ffi_func_free.0 }})(mValue, &callStatus);
       // No need to check `RustCallStatus`, it's only part of the API to match
       // other FFI calls.  The free function can never fail.
+    } else {
+      // JS implementation
+      {{ trait_interface_info.free_fn }}(mValue);
     }
     mValue = 0;
-    mLoweredCallbackInterface = false;
   }
 
   ~{{ pointer_type.ffi_value_class }}() {

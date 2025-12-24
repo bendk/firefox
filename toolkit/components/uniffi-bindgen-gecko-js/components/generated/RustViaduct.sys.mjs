@@ -1218,19 +1218,30 @@ export class BackendImpl extends Backend {
 //
 // Export the FFIConverter object to make external types work.
 export class FfiConverterTypeBackend extends FfiConverter {
-    // lift works like a regular interface
-    static lift(value) {
-        const opts = {};
-        opts[constructUniffiObject] = value;
-        return new BackendImpl(opts);
+    static lift(handle) {
+        if ((handle & 1) == 0) {
+          // Rust handle.  Construct an object from it
+          const opts = {};
+          opts[constructUniffiObject] = handle;
+          return new BackendImpl(opts);
+        } else {
+          // JS handle.  Get the JS object from the callback handler
+          return uniffiCallbackHandlerViaductBackend.takeCallbackObj(handle)
+        }
     }
 
-    // lower treats value like a callback interface
     static lower(value) {
-        if (!(value instanceof Backend)) {
-            throw new UniFFITypeError("expected 'Backend' subclass");
+        const ptr = value[uniffiObjectPtr];
+        if (ptr instanceof UniFFIPointer) {
+          // Rust-implemented interface, return the ptr.  The C++ code will clone it.
+          return ptr;
+        } else {
+          // JS-implemented interface, store the object in the handle map and return the handle
+          if (!(value instanceof Backend)) {
+              throw new UniFFITypeError("expected 'Backend' subclass");
+          }
+          return uniffiCallbackHandlerViaductBackend.storeCallbackObj(value)
         }
-        return uniffiCallbackHandlerViaductBackend.storeCallbackObj(value)
     }
 
     // lowerReceiver is used when calling methods on an interface we got from Rust, 

@@ -427,7 +427,7 @@ export class FfiConverterTypeEventSink extends FfiConverter {
     }
 
     static lift(handleId) {
-        return uniffiCallbackHandlerTracingEventSink.getCallbackObj(handleId)
+        return uniffiCallbackHandlerTracingEventSink.takeCallbackObj(handleId)
     }
 
     static read(dataStream) {
