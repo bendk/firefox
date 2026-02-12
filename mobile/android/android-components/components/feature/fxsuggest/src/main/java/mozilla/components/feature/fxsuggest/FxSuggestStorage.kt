@@ -21,6 +21,7 @@ import mozilla.components.feature.fxsuggest.facts.emitSuggestionQueryCountFact
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.remotesettings.RemoteSettingsService
 import mozilla.components.support.rusterrors.reportRustError
+import mozilla.appservices.errorsupport.submitErrorPing
 import mozilla.appservices.suggest.InternalException as UniffiInternalException
 
 /**
@@ -126,6 +127,7 @@ class FxSuggestStorage(
             default
         } catch (e: UniffiInternalException) {
             Logger.error(e.toString())
+            submitErrorPing("suggest-internal-error", e.toString())
             reportRustError("suggest-internal-error", e.toString())
             default
         }

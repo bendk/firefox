@@ -31,6 +31,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
+import mozilla.appservices.errorsupport.submitErrorPing
 import mozilla.appservices.remotesettings.InternalException as UniffiInternalException
 
 /**
@@ -79,6 +80,7 @@ class RemoteSettingsClient(
             RemoteSettingsResult.NetworkFailure(e)
         } catch (e: UniffiInternalException) {
             Logger.error(e.toString())
+            submitErrorPing("remote-settings-internal-error", e.toString())
             reportRustError("remote-settings-internal-error", e.toString())
             RemoteSettingsResult.NetworkFailure(e)
         }
