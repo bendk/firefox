@@ -194,6 +194,27 @@ impl LoginDb {
         rows.collect::<Result<_>>()
     }
 
+    /// Like `get_all()`, but only the logins with the given guids.  Guids we don't have a login
+    /// for are simply absent from the result, so this can return fewer rows than it was given
+    /// ids.  As with `get_all()` the order of the rows is whatever the query gives us - in
+    /// particular it is not the order of `ids`.
+    pub fn get_many(&self, ids: &[String]) -> Result<Vec<EncryptedLogin>> {
+        let mut logins = Vec::with_capacity(ids.len());
+        sql_support::each_chunk(ids, |chunk, _| -> Result<()> {
+            logins.extend(self.db.query_rows_and_then(
+                &format!(
+                    "SELECT * FROM ({}) WHERE guid IN ({})",
+                    &*GET_ALL_SQL,
+                    sql_support::repeat_sql_values(chunk.len())
+                ),
+                rusqlite::params_from_iter(chunk),
+                EncryptedLogin::from_row,
+            )?);
+            Ok(())
+        })?;
+        Ok(logins)
+    }
+
     pub fn get_by_base_domain(&self, base_domain: &str) -> Result<Vec<EncryptedLogin>> {
         // We first parse the input string as a host so it is normalized.
         let base_host = match Host::parse(base_domain) {
@@ -614,8 +635,19 @@ impl LoginDb {
     ) -> Result<Vec<Result<EncryptedLogin>>> {
         let tx = self.unchecked_transaction()?;
         let mut results = vec![];
-        for entry_with_meta in entries_with_meta {
-            let guid = Guid::from_string(entry_with_meta.meta.id.clone());
+        for mut entry_with_meta in entries_with_meta {
+            let guid = match Self::validate_or_fixup_guid(Guid::from_string(
+                entry_with_meta.meta.id.clone(),
+            )) {
+                Ok(guid) => guid,
+                Err(err) => {
+                    results.push(Err(err));
+                    continue;
+                }
+            };
+            // Keep `meta.id` in sync with the (possibly regenerated) guid; it is used
+            // as the stored/envelope id and when encrypting `sec_fields` below.
+            entry_with_meta.meta.id = guid.to_string();
             match self.fixup_and_check_for_dupes(&guid, entry_with_meta.entry) {
                 Ok(new_entry) => {
                     let sec_fields = SecureLoginFields {
@@ -647,6 +679,33 @@ impl LoginDb {
         tx.commit()?;
 
         Ok(results)
+    }
+
+    /// Validates a caller-supplied guid from the "with meta" import path against the
+    /// sync server's rules (see `Guid::is_valid_for_sync_server`). A guid that is
+    /// invalid for the sync server can never have existed on the server, so
+    /// regenerating it loses no sync identity.
+    ///
+    /// With the `fixup_invalid_guids` feature (enabled on Desktop during migration),
+    /// an invalid guid is silently replaced with a fresh random one. Without it, an
+    /// invalid guid is rejected so the problem surfaces at write time instead of being
+    /// persisted and later crashing the sync uploader (bug 2056116).
+    fn validate_or_fixup_guid(guid: Guid) -> Result<Guid> {
+        if guid.is_valid_for_sync_server() {
+            return Ok(guid);
+        }
+        #[cfg(feature = "fixup_invalid_guids")]
+        {
+            warn!("regenerating a login guid that is invalid for the sync server");
+            Ok(Guid::random())
+        }
+        #[cfg(not(feature = "fixup_invalid_guids"))]
+        {
+            Err(InvalidLogin::IllegalFieldValue {
+                field_info: "guid is not valid for the sync server".into(),
+            }
+            .into())
+        }
     }
 
     pub fn add(&self, entry: LoginEntry) -> Result<EncryptedLogin> {
@@ -1350,6 +1409,51 @@ mod tests {
     }
 
     #[test]
+    fn test_get_many() {
+        ensure_initialized();
+
+        let db = LoginDb::open_in_memory();
+        let mut added = Vec::new();
+        for origin in ["https://a.example.com", "https://b.example.com"] {
+            added.push(
+                db.add(LoginEntry {
+                    origin: origin.into(),
+                    http_realm: Some("https://www.example.com".into()),
+                    username: "test".into(),
+                    password: "sekret".into(),
+                    ..LoginEntry::default()
+                })
+                .expect("should be able to add login"),
+            );
+        }
+        let ids = added.iter().map(|l| l.meta.id.clone()).collect::<Vec<_>>();
+
+        // Neither `get_many()` nor `get_all()` promises an order, so compare them sorted.
+        let by_origin = |logins: Vec<EncryptedLogin>| {
+            let mut logins = logins;
+            logins.sort_by(|l, r| l.fields.origin.cmp(&r.fields.origin));
+            logins
+        };
+
+        // Asking for every id gives us exactly what `get_all()` does.
+        assert_eq!(
+            by_origin(db.get_many(&ids).unwrap()),
+            by_origin(db.get_all().unwrap())
+        );
+
+        // A subset gives us just that subset...
+        assert_eq!(db.get_many(&ids[1..]).unwrap(), added[1..]);
+
+        // ...and ids we don't have a login for are absent rather than an error.
+        assert_eq!(
+            db.get_many(&[ids[0].clone(), "no-such-guid".to_string()])
+                .unwrap(),
+            added[..1]
+        );
+        assert_eq!(db.get_many(&[]).unwrap(), Vec::new());
+    }
+
+    #[test]
     fn test_add_many() {
         ensure_initialized();
 
@@ -1572,6 +1676,44 @@ mod tests {
             .expect("should get a record");
 
         assert_eq!(fetched.meta, meta);
+    }
+
+    #[test]
+    fn test_add_with_meta_invalid_guid() {
+        ensure_initialized();
+
+        let now_ms = util::system_time_ms_i64(SystemTime::now());
+        // A guid containing a comma is invalid for the sync server.
+        let meta = LoginMeta {
+            id: "invalid,guid".to_string(),
+            time_created: now_ms,
+            time_password_changed: now_ms,
+            time_last_used: now_ms,
+            times_used: 1,
+            time_last_breach_alert_dismissed: None,
+        };
+        let db = LoginDb::open_in_memory();
+        let result = db.add_with_meta(LoginEntryWithMeta {
+            entry: LoginEntry {
+                origin: "https://www.example.com".into(),
+                http_realm: Some("https://www.example.com".into()),
+                username: "test".into(),
+                password: "sekret".into(),
+                ..LoginEntry::default()
+            },
+            meta,
+        });
+
+        // Without the fixup feature the invalid guid is rejected; with it, the guid
+        // is regenerated to one that is valid for the sync server.
+        #[cfg(not(feature = "fixup_invalid_guids"))]
+        assert!(result.is_err());
+
+        #[cfg(feature = "fixup_invalid_guids")]
+        {
+            let login = result.expect("invalid guid should be repaired");
+            assert!(Guid::new(&login.meta.id).is_valid_for_sync_server());
+        }
     }
 
     #[test]
