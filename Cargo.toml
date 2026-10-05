@@ -161,9 +161,14 @@ rust-version = "1.95.0"
 
 [workspace.dependencies]
 # Shared across multiple UniFFI consumers.
-uniffi = "0.32"
-uniffi_bindgen = "0.32"
-uniffi_pipeline = "0.32"
+uniffi = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi-bindgen-kotlin-jni = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi-bindgen-kotlin-jni-runtime = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_bindgen = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_pipeline = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_internal_macros = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+weedle2 = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+
 # Shared across multiple application-services consumers.
 rusqlite = "0.37"
 # Shared across multiple glean consumers.
@@ -441,3 +446,11 @@ gl_generator = { git = "https://github.com/jamienicol/gl-rs", rev = "71c792dbfe0
 
 # Implement mach2 0.4 in terms of 0.6
 mach2 = { path = "build/rust/mach2" }
+
+uniffi = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_bindgen = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi-bindgen-kotlin-jni = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi-bindgen-kotlin-jni-runtime = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_pipeline = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+uniffi_internal_macros = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }
+weedle2 = { git = "https://github.com/bendk/uniffi-rs.git", rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e" }

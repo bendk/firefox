@@ -15,7 +15,7 @@
 //! if we grow significantly more complicated attribute handling.
 
 use anyhow::{bail, Result};
-use uniffi_meta::{Checksum, ObjectImpl, TraitKind};
+use uniffi_meta::{Checksum, ObjectImpl, PassBy, TraitKind};
 
 /// Represents an attribute parsed from UDL, like `[ByRef]` or `[Throws]`.
 ///
@@ -25,6 +25,7 @@ use uniffi_meta::{Checksum, ObjectImpl, TraitKind};
 #[derive(Debug, Clone, Checksum)]
 pub(super) enum Attribute {
     ByRef,
+    ByMutRef,
     Enum,
     Error,
     Name(String),
@@ -64,6 +65,7 @@ impl TryFrom<&weedle::attribute::ExtendedAttribute<'_>> for Attribute {
             // Matches plain named attributes like "[ByRef"].
             weedle::attribute::ExtendedAttribute::NoArgs(attr) => match (attr.0).0 {
                 "ByRef" => Ok(Attribute::ByRef),
+                "ByMutRef" => Ok(Attribute::ByMutRef),
                 "Enum" => Ok(Attribute::Enum),
                 "Error" => Ok(Attribute::Error),
                 "Custom" => Ok(Attribute::Custom { crate_name: None }),
@@ -312,14 +314,30 @@ impl<T: TryInto<FunctionAttributes, Error = anyhow::Error>> TryFrom<Option<T>>
 
 /// Represents UDL attributes that might appear on a function argument.
 ///
-/// This supports the `[ByRef]` attribute for arguments that should be passed
-/// by reference in the generated Rust scaffolding.
+/// This supports the `[ByRef]` and `[ByMutRef]` attributes for arguments that
+/// should be passed by (mutable) reference in the generated Rust scaffolding.
 #[derive(Debug, Clone, Checksum, Default)]
 pub(super) struct ArgumentAttributes(Vec<Attribute>);
 
 impl ArgumentAttributes {
     pub fn by_ref(&self) -> bool {
         self.0.iter().any(|attr| matches!(attr, Attribute::ByRef))
+    }
+
+    pub fn by_mut_ref(&self) -> bool {
+        self.0
+            .iter()
+            .any(|attr| matches!(attr, Attribute::ByMutRef))
+    }
+
+    pub fn pass_by(&self) -> PassBy {
+        if self.by_mut_ref() {
+            PassBy::MutRef
+        } else if self.by_ref() {
+            PassBy::ref_()
+        } else {
+            PassBy::Value
+        }
     }
 }
 
@@ -330,9 +348,14 @@ impl TryFrom<&weedle::attribute::ExtendedAttributeList<'_>> for ArgumentAttribut
     ) -> Result<Self, Self::Error> {
         let attrs = parse_attributes(weedle_attributes, |attr| match attr {
             Attribute::ByRef => Ok(()),
+            Attribute::ByMutRef => Ok(()),
             _ => bail!(format!("{attr:?} not supported for arguments")),
         })?;
-        Ok(Self(attrs))
+        let this = Self(attrs);
+        if this.by_ref() && this.by_mut_ref() {
+            bail!("[ByRef] and [ByMutRef] cannot be combined on one argument");
+        }
+        Ok(this)
     }
 }
 
@@ -410,11 +433,20 @@ impl TryFrom<&weedle::attribute::ExtendedAttributeList<'_>> for InterfaceAttribu
             Attribute::Remote => Ok(()),
             _ => bail!(format!("{attr:?} not supported for interface definition")),
         })?;
-        // If `[Enum]` can only also have `[Traits]`
-        let ok_for_enum =
-            attrs.len() == 1 || attrs.iter().any(|a| matches!(a, Attribute::Traits(_)));
+        // If `[Enum]` also allow any of `[Traits, Remote]`
+        let ok_for_enum = attrs.len() == 1
+            || attrs
+                .iter()
+                .any(|a| matches!(a, Attribute::Traits(_) | Attribute::Remote));
         if attrs.iter().any(|a| matches!(a, Attribute::Enum)) && !ok_for_enum {
             bail!("conflicting attributes on interface definition");
+        }
+        // Foreign impls need UniFFI to add a hidden method to the trait, which is impossible for a
+        // trait defined in another crate.
+        if attrs.iter().any(|a| matches!(a, Attribute::Remote))
+            && attrs.iter().any(|a| matches!(a, Attribute::WithForeign))
+        {
+            bail!("remote traits can't be implemented by foreign code, so `[Remote]` and `[WithForeign]` conflict");
         }
         Ok(Self(attrs))
     }
@@ -850,6 +882,33 @@ mod test {
     }
 
     #[test]
+    fn test_by_mut_ref_attribute() {
+        let (_, node) = weedle::attribute::ExtendedAttributeList::parse("[ByMutRef]").unwrap();
+        let attrs = ArgumentAttributes::try_from(&node).unwrap();
+        assert!(attrs.by_mut_ref());
+        assert!(!attrs.by_ref());
+    }
+
+    #[test]
+    fn test_by_ref_only() {
+        let (_, node) = weedle::attribute::ExtendedAttributeList::parse("[ByRef]").unwrap();
+        let attrs = ArgumentAttributes::try_from(&node).unwrap();
+        assert!(attrs.by_ref());
+        assert!(!attrs.by_mut_ref());
+    }
+
+    #[test]
+    fn test_by_ref_and_by_mut_ref_conflict() {
+        let (_, node) =
+            weedle::attribute::ExtendedAttributeList::parse("[ByRef, ByMutRef]").unwrap();
+        let err = ArgumentAttributes::try_from(&node).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "[ByRef] and [ByMutRef] cannot be combined on one argument"
+        );
+    }
+
+    #[test]
     fn test_other_attributes_not_supported_for_arguments() {
         let (_, node) =
             weedle::attribute::ExtendedAttributeList::parse("[Throws=Error, ByRef]").unwrap();
@@ -884,6 +943,28 @@ mod test {
         let (_, node) = weedle::attribute::ExtendedAttributeList::parse("[WithForeign]").unwrap();
         let attrs = InterfaceAttributes::try_from(&node).unwrap();
         assert!(attrs.object_impl().is_err())
+    }
+
+    #[test]
+    fn test_remote_trait_attribute() {
+        let (_, node) = weedle::attribute::ExtendedAttributeList::parse("[Trait, Remote]").unwrap();
+        let attrs = InterfaceAttributes::try_from(&node).unwrap();
+        assert!(attrs.contains_remote());
+        assert_eq!(
+            attrs.object_impl().unwrap(),
+            ObjectImpl::Trait(TraitKind::RustOnly)
+        );
+
+        // Foreign impls need a hidden method added to the trait, which is impossible for a trait
+        // defined in another crate.
+        let (_, node) =
+            weedle::attribute::ExtendedAttributeList::parse("[Trait, Remote, WithForeign]")
+                .unwrap();
+        let err = InterfaceAttributes::try_from(&node).unwrap_err();
+        assert_eq!(
+            err.to_string(),
+            "remote traits can't be implemented by foreign code, so `[Remote]` and `[WithForeign]` conflict"
+        );
     }
 
     #[test]

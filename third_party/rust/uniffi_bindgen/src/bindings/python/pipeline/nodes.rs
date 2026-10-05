@@ -13,6 +13,7 @@ use super::*;
 
 use_prev_node!(general::AsyncData);
 use_prev_node!(general::Checksum);
+use_prev_node!(general::ChecksumMode);
 use_prev_node!(general::EnumShape);
 use_prev_node!(general::FieldsKind);
 use_prev_node!(general::FfiFunctionKind);
@@ -24,6 +25,7 @@ use_prev_node!(general::FfiStructName, names::map_ffi_struct_name);
 use_prev_node!(general::FfiType);
 use_prev_node!(general::HandleKind);
 use_prev_node!(general::ObjectImpl);
+use_prev_node!(general::PassBy);
 use_prev_node!(general::Radix);
 use_prev_node!(general::RustFfiFunctionName);
 use_prev_node!(general::TraitKind);
@@ -39,6 +41,7 @@ pub struct Root {
     #[map_node(from(namespaces))]
     pub modules: IndexMap<String, Module>,
     pub builtin_types: BuiltinTypes,
+    pub checksum_mode: ChecksumMode,
 }
 
 #[derive(Debug, Clone, MapNode, Node)]
@@ -84,6 +87,7 @@ pub struct Module {
     pub correct_contract_version: String,
     // Copy builtin types so that we can use in from the `Module.py` template
     pub builtin_types: BuiltinTypes,
+    pub checksum_mode: ChecksumMode,
 }
 
 // These structs exist so that we can easily deserialize the entire `uniffi.toml` file.
@@ -152,7 +156,10 @@ pub enum CallableKind {
     /// Toplevel function
     Function,
     /// Interface/Trait interface method
-    Method { self_type: TypeNode },
+    Method {
+        self_type: TypeNode,
+        takes_self_by_arc: bool,
+    },
     /// Interface constructor
     Constructor { self_type: TypeNode, primary: bool },
     /// Method inside a VTable or a CallbackInterface
@@ -161,6 +168,7 @@ pub enum CallableKind {
     /// Callables inside `Interface::methods` will still be `Callable::Method`.
     VTableMethod {
         self_type: TypeNode,
+        takes_self_by_arc: bool,
         for_callback_interface: bool,
     },
 }
@@ -187,7 +195,7 @@ pub struct Argument {
     #[map_node(names::var_name(&self.name))]
     pub name: String,
     pub ty: TypeNode,
-    pub by_ref: bool,
+    pub pass_by: PassBy,
     pub optional: bool,
     pub default: Option<DefaultValueNode>,
 }
@@ -195,15 +203,33 @@ pub struct Argument {
 impl Argument {
     /// Returns the Python FfiConverter class name for this argument.
     ///
-    /// For a borrowed `Bytes` (`&[u8]`) argument this routes through
-    /// `_UniffiFfiConverterByRefBytes`, which does zero-copy lowering.
-    /// For every other argument it returns the converter attached to the
-    /// argument's type.
+    /// A `&mut [u8]` (`by_mut_ref`) routes through
+    /// `_UniffiFfiConverterByMutRefBytes` (writable `bytearray`); a read-only
+    /// `&[u8]` (`by_ref`) through `_UniffiFfiConverterByRefBytes`; everything
+    /// else uses the converter attached to the argument's type.
     pub fn ffi_converter_name(&self) -> String {
-        if self.by_ref && matches!(self.ty.ty, Type::Bytes) {
-            "_UniffiFfiConverterByRefBytes".to_string()
-        } else {
-            self.ty.ffi_converter_name.clone()
+        match self.pass_by {
+            PassBy::MutRef if matches!(self.ty.ty, Type::Bytes) => {
+                "_UniffiFfiConverterByMutRefBytes".to_string()
+            }
+            PassBy::Ref { .. } if matches!(self.ty.ty, Type::Bytes) => {
+                "_UniffiFfiConverterByRefBytes".to_string()
+            }
+            _ => self.ty.ffi_converter_name.clone(),
+        }
+    }
+
+    /// Python parameter type annotation. `&mut [u8]` requires a writable
+    /// buffer, so it is annotated `bytearray`; a read-only `&[u8]` accepts
+    /// either `bytes` or `bytearray`; everything else uses the type's own
+    /// annotation.
+    pub fn param_type_name(&self) -> String {
+        match self.pass_by {
+            PassBy::MutRef if matches!(self.ty.ty, Type::Bytes) => "bytearray".to_string(),
+            PassBy::Ref { .. } if matches!(self.ty.ty, Type::Bytes) => {
+                "typing.Union[bytes, bytearray]".to_string()
+            }
+            _ => self.ty.type_name.clone(),
         }
     }
 }
@@ -302,18 +328,16 @@ pub struct Field {
 
 #[derive(Debug, Clone, Node, MapNode)]
 #[map_node(from(general::Enum))]
+#[map_node(enums::map_enum)]
 pub struct Enum {
-    #[map_node(names::type_name(&self.name))]
     pub name: String,
     /// Is this a "flat" enum -- one with no associated data
     pub is_flat: bool,
     pub shape: EnumShape,
-    #[map_node(enums::map_variants(self.variants, self.shape, context)?)]
     pub variants: Vec<Variant>,
     pub discr_type: TypeNode,
     pub docstring: Option<String>,
     pub self_type: TypeNode,
-    #[map_node(interfaces::map_constructors(&self.name, self.constructors, context)?)]
     pub constructors: Vec<Constructor>,
     pub methods: Vec<Method>,
     pub uniffi_trait_methods: UniffiTraitMethods,
@@ -327,6 +351,12 @@ pub struct Variant {
     pub fields_kind: FieldsKind,
     pub fields: Vec<Field>,
     pub docstring: Option<String>,
+    /// Name of the generated class.
+    ///
+    /// This is not what users normally use to reference the variant, that's `Enum.VARIANT_NAME`.
+    /// Instead, this what we use when defining the python class,
+    /// before we assign the enum class attribute to it.
+    pub class_name_py: String,
 }
 
 #[derive(Debug, Clone, Node, MapNode)]

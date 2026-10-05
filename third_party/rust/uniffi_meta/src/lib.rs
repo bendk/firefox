@@ -16,7 +16,7 @@ mod reader;
 pub use reader::{read_metadata, read_metadata_type};
 
 mod types;
-pub use types::{AsType, ObjectImpl, TraitKind, Type, TypeIterator};
+pub use types::{AsType, ObjectImpl, PassBy, TraitKind, Type, TypeIterator};
 
 mod metadata;
 pub use metadata::codes;
@@ -25,7 +25,7 @@ pub use metadata::codes;
 // `docs/uniffi-versioning.md` for details.
 //
 // Once we get to 1.0, then we'll need to update the scheme to something like 100 + major_version
-pub const UNIFFI_CONTRACT_VERSION: u32 = 30;
+pub const UNIFFI_CONTRACT_VERSION: u32 = 31;
 
 /// Similar to std::hash::Hash.
 ///
@@ -265,7 +265,7 @@ impl From<TraitMethodMetadata> for MethodMetadata {
 pub struct FnParamMetadata {
     pub name: String,
     pub ty: Type,
-    pub by_ref: bool,
+    pub pass_by: PassBy,
     pub optional: bool,
     pub default: Option<DefaultValueMetadata>,
 }
@@ -275,7 +275,7 @@ impl FnParamMetadata {
         Self {
             name: name.to_string(),
             ty,
-            by_ref: false,
+            pass_by: PassBy::Value,
             optional: false,
             default: None,
         }
@@ -536,6 +536,20 @@ impl Checksum for ObjectTraitImplMetadata {
     }
 }
 
+/// This notes that a type implements From<UnexpectedUniFFICallbackError>
+///
+/// It's only used by `uniffi_parse_rs`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct FromUnexpectedCallbackErrorImplMetadata {
+    pub ty: Type,
+}
+
+impl Checksum for FromUnexpectedCallbackErrorImplMetadata {
+    fn checksum<H: Hasher>(&self, state: &mut H) {
+        Checksum::checksum(&self.ty, state);
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CustomTypeMetadata {
     pub module_path: String,
@@ -572,6 +586,7 @@ pub enum Metadata {
     CustomType(CustomTypeMetadata),
     UniffiTrait(UniffiTraitMetadata),
     ObjectTraitImpl(ObjectTraitImplMetadata),
+    FromUnexpectedCallbackErrorImpl(FromUnexpectedCallbackErrorImplMetadata),
 }
 
 impl Metadata {
@@ -594,6 +609,9 @@ impl Metadata {
             Metadata::CustomType(meta) => &meta.module_path,
             Metadata::UniffiTrait(meta) => meta.module_path(),
             Metadata::ObjectTraitImpl(t) => t.ty.crate_name().expect("type has no crate name"),
+            Metadata::FromUnexpectedCallbackErrorImpl(t) => {
+                t.ty.crate_name().expect("type has no crate name")
+            }
         }
     }
 }
@@ -673,6 +691,12 @@ impl From<UniffiTraitMetadata> for Metadata {
 impl From<ObjectTraitImplMetadata> for Metadata {
     fn from(t: ObjectTraitImplMetadata) -> Self {
         Self::ObjectTraitImpl(t)
+    }
+}
+
+impl From<FromUnexpectedCallbackErrorImplMetadata> for Metadata {
+    fn from(m: FromUnexpectedCallbackErrorImplMetadata) -> Self {
+        Self::FromUnexpectedCallbackErrorImpl(m)
     }
 }
 

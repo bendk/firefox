@@ -8,7 +8,8 @@ use crate::{converters::convert_docstring, InterfaceCollector};
 use anyhow::{bail, Result};
 use std::collections::HashSet;
 use uniffi_meta::{
-    ConstructorMetadata, FnParamMetadata, MethodMetadata, ObjectMetadata, Type, UniffiTraitMetadata,
+    ConstructorMetadata, FnParamMetadata, MethodMetadata, ObjectMetadata, PassBy, Type,
+    UniffiTraitMetadata,
 };
 
 impl APIConverter<ObjectMetadata> for weedle::InterfaceDefinition<'_> {
@@ -95,7 +96,7 @@ impl APIConverter<ObjectMetadata> for weedle::InterfaceDefinition<'_> {
                                     name: object_name.to_string(),
                                     imp: object_impl,
                                 },
-                                by_ref: true,
+                                pass_by: PassBy::ref_(),
                                 default: None,
                                 optional: false,
                             }],
@@ -110,7 +111,7 @@ impl APIConverter<ObjectMetadata> for weedle::InterfaceDefinition<'_> {
                                     name: object_name.to_string(),
                                     imp: object_impl,
                                 },
-                                by_ref: true,
+                                pass_by: PassBy::ref_(),
                                 default: None,
                                 optional: false,
                             }],
@@ -130,7 +131,7 @@ impl APIConverter<ObjectMetadata> for weedle::InterfaceDefinition<'_> {
                                     name: object_name.to_string(),
                                     imp: object_impl,
                                 },
-                                by_ref: true,
+                                pass_by: PassBy::ref_(),
                                 default: None,
                                 optional: false,
                             }],

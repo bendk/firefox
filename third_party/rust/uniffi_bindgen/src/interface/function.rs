@@ -142,7 +142,7 @@ impl From<uniffi_meta::FnParamMetadata> for Argument {
         Argument {
             name: meta.name,
             type_: meta.ty,
-            by_ref: meta.by_ref,
+            pass_by: meta.pass_by,
             optional: meta.optional,
             default: meta.default,
         }
@@ -185,7 +185,7 @@ impl From<uniffi_meta::FnMetadata> for Function {
 pub struct Argument {
     pub(super) name: String,
     pub(super) type_: Type,
-    pub(super) by_ref: bool,
+    pub(super) pass_by: uniffi_meta::PassBy,
     pub(super) optional: bool,
     pub(super) default: Option<DefaultValue>,
 }
@@ -199,14 +199,24 @@ impl Argument {
         self.name = new_name;
     }
 
-    pub fn by_ref(&self) -> bool {
-        self.by_ref
+    /// True for any borrow, mutable or not — this is what decides whether
+    /// scaffolding renders a `&` prefix.
+    pub fn is_borrowed(&self) -> bool {
+        self.pass_by.is_borrowed()
     }
 
-    /// True for zero-copy `&[u8]` / `[ByRef] bytes` arguments, which take the
-    /// `ForeignBytes` FFI path instead of the owned `RustBuffer` path.
+    /// True for zero-copy borrowed bytes arguments — `&[u8]` / `[ByRef] bytes`
+    /// and their mutable counterparts — which take the `ForeignBytes` FFI path
+    /// instead of the owned `RustBuffer` path.
     pub fn is_borrowed_bytes(&self) -> bool {
-        self.by_ref && matches!(self.type_, Type::Bytes)
+        self.is_borrowed() && matches!(self.type_, Type::Bytes)
+    }
+
+    /// True for zero-copy `&mut [u8]` / `[ByMutRef] bytes` arguments. Always
+    /// implies `is_borrowed_bytes()`; the mutable distinction drives foreign
+    /// codegen only (the FFI path is the same `ForeignBytes` route).
+    pub fn is_borrowed_bytes_mut(&self) -> bool {
+        self.pass_by.is_mut_ref() && matches!(self.type_, Type::Bytes)
     }
 
     pub fn default_value(&self) -> Option<&DefaultValue> {
@@ -376,6 +386,7 @@ impl<T: Callable> Callable for &T {
 mod test {
     use super::super::ComponentInterface;
     use super::*;
+    use uniffi_meta::PassBy;
 
     #[test]
     fn test_minimal_and_rich_function() -> Result<()> {
@@ -447,7 +458,7 @@ mod test {
         let arg = Argument {
             name: "buf".into(),
             type_: Type::Bytes,
-            by_ref: true,
+            pass_by: PassBy::ref_(),
             optional: false,
             default: None,
         };
@@ -460,7 +471,7 @@ mod test {
         let arg = Argument {
             name: "buf".into(),
             type_: Type::Bytes,
-            by_ref: false,
+            pass_by: PassBy::Value,
             optional: false,
             default: None,
         };
@@ -477,7 +488,7 @@ mod test {
             arguments: vec![Argument {
                 name: "a".to_string(),
                 type_: Type::Int32,
-                by_ref: false,
+                pass_by: PassBy::Value,
                 optional: true,
                 default: None,
             }],
@@ -491,5 +502,34 @@ mod test {
         assert!(f.iter_types().any(|t| matches!(t, Type::Int32)));
         assert!(f.iter_types().any(|t| matches!(t, Type::Int64)));
         assert!(f.iter_types().any(|t| matches!(t, Type::Int8)));
+    }
+
+    #[test]
+    fn test_by_mut_ref_bytes_is_borrowed_bytes_mut() {
+        let arg = Argument {
+            name: "buf".to_string(),
+            type_: Type::Bytes,
+            pass_by: PassBy::MutRef,
+            optional: false,
+            default: None,
+        };
+        assert!(arg.is_borrowed_bytes());
+        assert!(arg.is_borrowed_bytes_mut());
+        // Still ABI-identical to &[u8]: routed to ForeignBytes.
+        let ffi_arg = FfiArgument::from(&arg);
+        assert!(matches!(ffi_arg.type_, FfiType::ForeignBytes));
+    }
+
+    #[test]
+    fn test_by_ref_bytes_is_not_mut() {
+        let arg = Argument {
+            name: "buf".to_string(),
+            type_: Type::Bytes,
+            pass_by: PassBy::ref_(),
+            optional: false,
+            default: None,
+        };
+        assert!(arg.is_borrowed_bytes());
+        assert!(!arg.is_borrowed_bytes_mut());
     }
 }

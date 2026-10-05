@@ -5,7 +5,8 @@
 //! Organize the metadata, transforming it from a simple list to a more tree-like structure.
 
 use anyhow::{anyhow, bail, Result};
-use std::collections::{btree_map::Entry, BTreeMap};
+use std::collections::{btree_map::Entry, BTreeMap, BTreeSet};
+use uniffi_meta::crate_name;
 
 use super::*;
 
@@ -39,6 +40,7 @@ pub struct UniffiMetaConverter {
         BTreeMap<uniffi_meta::Type, uniffi_meta::ObjectTraitImplMetadata>,
     >,
     orig_names: BTreeMap<(String, String), String>,
+    from_unexpected_callback_error_impls: BTreeSet<uniffi_meta::Type>,
 }
 
 /// Utility trait used to insert metadata items into a BTreeMap, but bail on duplicates
@@ -93,28 +95,28 @@ impl UniffiMetaConverter {
             uniffi_meta::Metadata::Func(func) => {
                 self.update_orig_names(&func.module_path, &func.orig_name, &func.name);
                 self.functions
-                    .entry(module_path_to_crate_name(&func.module_path))
+                    .entry(crate_name(&func.module_path).to_string())
                     .or_default()
                     .insert_unique(func.name.clone(), func)?;
             }
             uniffi_meta::Metadata::Record(rec) => {
                 self.update_orig_names(&rec.module_path, &rec.orig_name, &rec.name);
                 self.records
-                    .entry(module_path_to_crate_name(&rec.module_path))
+                    .entry(crate_name(&rec.module_path).to_string())
                     .or_default()
                     .insert_unique(rec.name.clone(), rec)?;
             }
             uniffi_meta::Metadata::Enum(en) => {
                 self.update_orig_names(&en.module_path, &en.orig_name, &en.name);
                 self.enums
-                    .entry(module_path_to_crate_name(&en.module_path))
+                    .entry(crate_name(&en.module_path).to_string())
                     .or_default()
                     .insert_unique(en.name.clone(), en)?;
             }
             uniffi_meta::Metadata::Object(int) => {
                 self.update_orig_names(&int.module_path, &int.orig_name, &int.name);
                 self.interfaces
-                    .entry(module_path_to_crate_name(&int.module_path))
+                    .entry(crate_name(&int.module_path).to_string())
                     .or_default()
                     .insert_unique(int.name.clone(), int)?;
             }
@@ -122,7 +124,7 @@ impl UniffiMetaConverter {
                 // No `update_orig_names` call, since callback interfaces don't support renaming
                 // yet
                 self.callback_interfaces
-                    .entry(module_path_to_crate_name(&cbi.module_path))
+                    .entry(crate_name(&cbi.module_path).to_string())
                     .or_default()
                     .insert_unique(cbi.name.clone(), cbi)?;
             }
@@ -130,7 +132,7 @@ impl UniffiMetaConverter {
                 // No `update_orig_names` call, since custom types don't support renaming yet
                 let by_crate = self
                     .custom_types
-                    .entry(module_path_to_crate_name(&custom.module_path))
+                    .entry(crate_name(&custom.module_path).to_string())
                     .or_default();
                 match by_crate.entry(custom.name.clone()) {
                     Entry::Vacant(e) => {
@@ -159,7 +161,7 @@ impl UniffiMetaConverter {
             uniffi_meta::Metadata::Constructor(cons) => {
                 self.constructors
                     .entry((
-                        module_path_to_crate_name(&cons.module_path),
+                        crate_name(&cons.module_path).to_string(),
                         cons.self_name.to_string(),
                     ))
                     .or_default()
@@ -168,7 +170,7 @@ impl UniffiMetaConverter {
             uniffi_meta::Metadata::Method(meth) => {
                 self.methods
                     .entry((
-                        module_path_to_crate_name(&meth.module_path),
+                        crate_name(&meth.module_path).to_string(),
                         meth.self_name.to_string(),
                     ))
                     .or_default()
@@ -177,7 +179,7 @@ impl UniffiMetaConverter {
             uniffi_meta::Metadata::TraitMethod(meth) => {
                 self.trait_methods
                     .entry((
-                        module_path_to_crate_name(&meth.module_path),
+                        crate_name(&meth.module_path).to_string(),
                         meth.trait_name.to_string(),
                     ))
                     .or_default()
@@ -194,7 +196,7 @@ impl UniffiMetaConverter {
 
                 self.uniffi_traits
                     .entry((
-                        module_path_to_crate_name(&meth.module_path),
+                        crate_name(&meth.module_path).to_string(),
                         meth.self_name.to_string(),
                     ))
                     .or_default()
@@ -220,11 +222,14 @@ impl UniffiMetaConverter {
                     _ => bail!("Invalid ObjectTraitImpl type: {:?}", imp.ty),
                 };
                 self.trait_impls
-                    .entry((module_path_to_crate_name(module_path), name.to_string()))
+                    .entry((crate_name(module_path).to_string(), name.to_string()))
                     .or_default()
                     .insert_unique(imp.trait_ty.clone(), imp)?;
             }
             uniffi_meta::Metadata::UdlFile(_) => (),
+            uniffi_meta::Metadata::FromUnexpectedCallbackErrorImpl(meta) => {
+                self.from_unexpected_callback_error_impls.insert(meta.ty);
+            }
         }
         Ok(())
     }
@@ -232,7 +237,7 @@ impl UniffiMetaConverter {
     fn update_orig_names(&mut self, module_path: &str, orig_name: &Option<String>, name: &str) {
         if let Some(orig_name) = orig_name {
             self.orig_names.insert(
-                (module_path_to_crate_name(module_path), name.to_string()),
+                (module_path.to_string(), name.to_string()),
                 orig_name.clone(),
             );
         }
@@ -269,7 +274,13 @@ impl UniffiMetaConverter {
 
         let mut root = Root {
             namespaces: self.namespaces.into_iter().collect(),
+            from_unexpected_callback_error_impls: self
+                .from_unexpected_callback_error_impls
+                .into_iter()
+                .map(|ty| ty.map_node(&context))
+                .collect::<Result<Vec<_>>>()?,
             cdylib: None,
+            checksum_mode: ChecksumMode::Legacy,
         };
 
         // Move child items into their parents
@@ -340,18 +351,16 @@ impl UniffiMetaConverter {
     }
 }
 
-fn module_path_to_crate_name(module_path: &str) -> String {
-    module_path.split("::").next().unwrap().to_string()
-}
-
 fn get_namespace<'a>(
     module_path_map: &BTreeMap<String, String>,
     root: &'a mut Root,
     module_path: &str,
 ) -> Result<&'a mut Namespace> {
-    let crate_name = module_path.split("::").next().unwrap();
+    let crate_name = crate_name(module_path)
+        // fixup module paths from uniffi_udl;
+        .replace("-", "_");
     let namespace_name = module_path_map
-        .get(crate_name)
+        .get(&crate_name)
         .map(String::as_str)
         .ok_or_else(|| anyhow!("module lookup failed: {module_path:?}"))?;
     root.namespaces

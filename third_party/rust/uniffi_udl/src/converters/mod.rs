@@ -7,7 +7,7 @@ use anyhow::{bail, Result};
 
 use uniffi_meta::{
     CallbackInterfaceMetadata, DefaultValueMetadata, FieldMetadata, FnParamMetadata,
-    MethodMetadata, RecordMetadata, TraitMethodMetadata, Type, UniffiTraitMetadata,
+    MethodMetadata, PassBy, RecordMetadata, TraitMethodMetadata, Type, UniffiTraitMetadata,
     VariantMetadata,
 };
 
@@ -224,7 +224,7 @@ fn make_uniffi_traits(
                         vec![FnParamMetadata {
                             name: "other".to_string(),
                             ty: other.clone(),
-                            by_ref: true,
+                            pass_by: PassBy::ref_(),
                             default: None,
                             optional: false,
                         }],
@@ -235,7 +235,7 @@ fn make_uniffi_traits(
                         vec![FnParamMetadata {
                             name: "other".to_string(),
                             ty: other.clone(),
-                            by_ref: true,
+                            pass_by: PassBy::ref_(),
                             default: None,
                             optional: false,
                         }],
@@ -251,7 +251,7 @@ fn make_uniffi_traits(
                         vec![FnParamMetadata {
                             name: "other".to_string(),
                             ty: other.clone(),
-                            by_ref: true,
+                            pass_by: PassBy::ref_(),
                             default: None,
                             optional: false,
                         }],

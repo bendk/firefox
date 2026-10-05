@@ -1,0 +1,11 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+syn::custom_keyword!(None);
+syn::custom_keyword!(Some);
+syn::custom_keyword!(default);
+syn::custom_keyword!(remote);
+syn::custom_keyword!(try_lift);
+syn::custom_keyword!(lower);
+syn::custom_keyword!(cfg);

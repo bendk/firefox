@@ -17,17 +17,22 @@ This is needed if some async functions run outside of the eventloop, for example
       like `pollster` to block on the async call.
 
 In this case, we need an event loop to run the Python async function, but there's no eventloop set
-for the thread.  Use `uniffi_set_event_loop` to force an eventloop to be used in this case.
+for the thread.  Use `uniffi_set_default_event_loop` to force an eventloop to be used in this case.
 """
-def uniffi_set_event_loop(eventloop: asyncio.BaseEventLoop):
+def uniffi_set_default_event_loop(eventloop: asyncio.BaseEventLoop):
     global _UNIFFI_GLOBAL_EVENT_LOOP
     _UNIFFI_GLOBAL_EVENT_LOOP = eventloop
 
 def _uniffi_get_event_loop():
-    if _UNIFFI_GLOBAL_EVENT_LOOP is not None:
-        return _UNIFFI_GLOBAL_EVENT_LOOP
-    else:
+    # A loop running on this thread owns the futures the call awaits, so it wins. The global is
+    # the fallback for threads that have none, which is what it was added for: preferring it
+    # everywhere hands one loop another loop's future as soon as a process runs two.
+    try:
         return asyncio.get_running_loop()
+    except RuntimeError:
+        if _UNIFFI_GLOBAL_EVENT_LOOP is not None:
+            return _UNIFFI_GLOBAL_EVENT_LOOP
+        raise RuntimeError("UniFFI error: no running event loop and uniffi_set_default_event_loop not called")
 
 # Continuation callback for async functions
 # lift the return value or error and resolve the future, causing the async function to resume.

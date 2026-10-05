@@ -543,7 +543,12 @@ impl Method {
         vec![Argument {
             name: "ptr".to_string(),
             type_: self.self_type.clone(),
-            by_ref: !self.takes_self_by_arc,
+            pass_by: if !self.takes_self_by_arc {
+                // Receivers can't be `&Arc<T>`, that's an invalid self argument
+                uniffi_meta::PassBy::Ref { is_arc: false }
+            } else {
+                uniffi_meta::PassBy::Value
+            },
             optional: false,
             default: None,
         }]

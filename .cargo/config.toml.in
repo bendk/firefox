@@ -15,6 +15,11 @@ git = "https://github.com/FirefoxGraphics/wpf-gpu-raster"
 rev = "99979da091fd58fba8477e7fcdf5ec0727102916"
 replace-with = "vendored-sources"
 
+[source."git+https://github.com/bendk/uniffi-rs.git?rev=3bc2884fe89a5d8895baf41fe9ef490ef8416e8e"]
+git = "https://github.com/bendk/uniffi-rs.git"
+rev = "3bc2884fe89a5d8895baf41fe9ef490ef8416e8e"
+replace-with = "vendored-sources"
+
 [source."git+https://github.com/franziskuskiefer/cose-rust?rev=43c22248d136c8b38fe42ea709d08da6355cf04b"]
 git = "https://github.com/franziskuskiefer/cose-rust"
 rev = "43c22248d136c8b38fe42ea709d08da6355cf04b"
@@ -80,9 +85,9 @@ git = "https://github.com/mozilla/cubeb-pulse-rs"
 rev = "43e6ffe0dcaace8e02093abc738fb80cc93db8db"
 replace-with = "vendored-sources"
 
-[source."git+https://github.com/mozilla/glean?tag=v70.2.0"]
+[source."git+https://github.com/mozilla/glean?tag=v71.0.0"]
 git = "https://github.com/mozilla/glean"
-tag = "v70.2.0"
+tag = "v71.0.0"
 replace-with = "vendored-sources"
 
 [source."git+https://github.com/mozilla/happy-eyeballs?tag=v1.0.0"]

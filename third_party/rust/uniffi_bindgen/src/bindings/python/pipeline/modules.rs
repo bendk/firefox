@@ -13,6 +13,7 @@ pub fn map_namespace(namespace: general::Namespace, context: &Context) -> Result
 
     let mut module = Module {
         cdylib_name: context.cdylib()?,
+        checksum_mode: context.checksum_mode()?.clone(),
         has_async_fns: namespace.has_descendant(|callable: &general::Callable| callable.is_async()),
         has_callback_interface: namespace.has_descendant(|_: &general::CallbackInterface| true),
         has_async_callback_method: has_async_callback_method(&namespace),
@@ -44,6 +45,7 @@ pub fn map_namespace(namespace: general::Namespace, context: &Context) -> Result
         exported_names.push(i.protocol.name.clone());
     });
     module.visit(|c: &CallbackInterface| exported_names.push(c.protocol.name.clone()));
+    module.visit(|c: &CustomType| exported_names.push(c.name.clone()));
     module.exported_names = exported_names;
     Ok(module)
 }

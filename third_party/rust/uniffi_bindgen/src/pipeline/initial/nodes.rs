@@ -8,15 +8,19 @@ use super::*;
 
 use_prev_node!(uniffi_meta::EnumShape);
 use_prev_node!(uniffi_meta::ObjectImpl);
+use_prev_node!(uniffi_meta::PassBy);
 use_prev_node!(uniffi_meta::Radix);
 use_prev_node!(uniffi_meta::TraitKind);
 
 /// Root node of the Initial IR
-#[derive(Debug, Clone, PartialEq, Eq, Node, MapNode)]
+#[derive(Debug, Clone, Node, MapNode)]
 pub struct Root {
     pub namespaces: IndexMap<String, Namespace>,
     /// The library path the user passed to us, if we're in library mode
     pub cdylib: Option<String>,
+    // Types that implement `From<uniffi::UnexpectedUniFFICallbackError>`
+    pub from_unexpected_callback_error_impls: Vec<Type>,
+    pub checksum_mode: ChecksumMode,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Node, MapNode)]
@@ -29,6 +33,25 @@ pub struct Namespace {
     pub functions: Vec<Function>,
     pub type_definitions: Vec<TypeDefinition>,
 }
+#[derive(Debug, Clone, Node, MapNode)]
+pub enum ChecksumMode {
+    /// Legacy checksum mode
+    ///
+    /// A Rust checksum function will be generated for each exported function.
+    /// The generated bindings will check the outputs of those functions against
+    /// the expected checksums.
+    ///
+    /// This is used when generating bindings from UDL or a library file.
+    Legacy,
+    // Skip checksum checks
+    //
+    // This is currently used when parsing Rust source.
+    //
+    // Eventually, we can re-implement checksums once we enabling using `uniffi_parse_rs`
+    // to generate both the scaffolding and bindings
+    // (https://github.com/mozilla/uniffi-rs/issues/2932).
+    Skip,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Node, MapNode)]
 #[map_node(from(uniffi_meta::FnMetadata))]
@@ -38,6 +61,7 @@ pub struct Function {
     #[map_node(context.new_callable_id())]
     pub id: u64,
     pub name: String,
+    pub module_path: String,
     pub is_async: bool,
     pub inputs: Vec<Argument>,
     pub return_type: Option<Type>,
@@ -80,6 +104,7 @@ pub struct Method {
     pub id: u64,
     pub name: String,
     pub is_async: bool,
+    pub takes_self_by_arc: bool,
     pub inputs: Vec<Argument>,
     pub return_type: Option<Type>,
     pub throws: Option<Type>,
@@ -110,16 +135,23 @@ pub struct TraitMethod {
 pub struct Argument {
     pub name: String,
     pub ty: Type,
-    pub by_ref: bool,
+    pub pass_by: PassBy,
     pub optional: bool,
     pub default: Option<DefaultValue>,
 }
 
 impl Argument {
-    /// True for zero-copy `&[u8]` / `[ByRef] bytes` arguments, which take the
-    /// `ForeignBytes` FFI path instead of the owned `RustBuffer` path.
+    /// True for zero-copy borrowed bytes arguments — `&[u8]` / `[ByRef] bytes`
+    /// and their mutable counterparts — which take the `ForeignBytes` FFI path
+    /// instead of the owned `RustBuffer` path.
     pub fn is_borrowed_bytes(&self) -> bool {
-        self.by_ref && matches!(self.ty, Type::Bytes)
+        self.pass_by.is_borrowed() && matches!(self.ty, Type::Bytes)
+    }
+
+    /// True for zero-copy `&mut [u8]` / `[ByMutRef] bytes` arguments. Implies
+    /// `is_borrowed_bytes()`; drives foreign codegen only.
+    pub fn is_borrowed_bytes_mut(&self) -> bool {
+        self.pass_by.is_mut_ref() && matches!(self.ty, Type::Bytes)
     }
 }
 
@@ -160,6 +192,7 @@ pub struct Record {
     pub constructors: Vec<Constructor>,
     pub methods: Vec<Method>,
     pub uniffi_traits: Vec<UniffiTrait>,
+    pub module_path: String,
     pub name: String,
     pub orig_name: String,
     pub fields: Vec<Field>,
@@ -184,11 +217,13 @@ pub struct Enum {
     pub constructors: Vec<Constructor>,
     pub methods: Vec<Method>,
     pub uniffi_traits: Vec<UniffiTrait>,
+    pub module_path: String,
     pub name: String,
     pub orig_name: String,
     pub shape: EnumShape,
     pub variants: Vec<Variant>,
     pub discr_type: Option<Type>,
+    pub non_exhaustive: bool,
     pub docstring: Option<String>,
 }
 
@@ -211,6 +246,7 @@ pub struct Interface {
     pub methods: Vec<Method>,
     pub uniffi_traits: Vec<UniffiTrait>,
     pub trait_impls: Vec<ObjectTraitImpl>,
+    pub module_path: String,
     pub name: String,
     pub orig_name: String,
     pub docstring: Option<String>,
@@ -222,6 +258,7 @@ pub struct Interface {
 #[map_node(types::map_callback_interface)]
 pub struct CallbackInterface {
     pub methods: Vec<Method>,
+    pub module_path: String,
     pub name: String,
     pub orig_name: String,
     pub docstring: Option<String>,
@@ -249,6 +286,7 @@ pub struct ObjectTraitImpl {
 #[map_node(from(uniffi_meta::CustomTypeMetadata))]
 #[map_node(types::map_custom_type)]
 pub struct CustomType {
+    pub module_path: String,
     pub name: String,
     pub orig_name: String,
     pub builtin: Type,
@@ -364,6 +402,39 @@ impl Type {
             | Type::CallbackInterface { namespace, .. }
             | Type::Custom { namespace, .. } => Some(namespace.as_str()),
             _ => None,
+        }
+    }
+
+    pub fn has_user_type(&self) -> bool {
+        match self {
+            Self::UInt8
+            | Self::Int8
+            | Self::UInt16
+            | Self::Int16
+            | Self::UInt32
+            | Self::Int32
+            | Self::UInt64
+            | Self::Int64
+            | Self::Float32
+            | Self::Float64
+            | Self::Boolean
+            | Self::String
+            | Self::Bytes
+            | Self::Timestamp
+            | Self::Duration => false,
+            Self::Interface { .. }
+            | Self::Record { .. }
+            | Self::Enum { .. }
+            | Self::CallbackInterface { .. }
+            | Self::Custom { .. } => true,
+            Self::Box { inner_type }
+            | Self::Optional { inner_type }
+            | Self::Sequence { inner_type }
+            | Self::Set { inner_type } => inner_type.has_user_type(),
+            Self::Map {
+                key_type,
+                value_type,
+            } => key_type.has_user_type() || value_type.has_user_type(),
         }
     }
 }

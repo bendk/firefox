@@ -161,6 +161,20 @@ pub(crate) fn expand_export(
     }
 }
 
+pub(crate) fn is_trait_interface_with_foreign(
+    item: Item,
+    all_args: proc_macro::TokenStream,
+) -> syn::Result<bool> {
+    match ExportItem::new(item, all_args)? {
+        ExportItem::Trait {
+            trait_kind,
+            callback_interface_only,
+            ..
+        } => Ok(trait_kind.has_foreign() && !callback_interface_only),
+        _ => Ok(false),
+    }
+}
+
 /// Rewrite Self type alias usage in an impl block to the type itself.
 ///
 /// For example,
@@ -214,8 +228,17 @@ pub fn rewrite_self_type(item: &mut Item) {
 }
 
 /// Alter the tokens wrapped with the `[uniffi::export]` if needed
-pub fn alter_input(item: &Item) -> TokenStream {
+pub fn alter_input(item: &Item, all_args: proc_macro::TokenStream) -> TokenStream {
     match item {
+        // Like all remote types, we don't emit the duplicate definition itself, just its ffi/metadata etc
+        Item::Trait(_)
+            if matches!(
+                syn::parse::<attributes::ExportTraitArgs>(all_args),
+                Ok(args) if args.remote.is_some()
+            ) =>
+        {
+            quote! {}
+        }
         Item::Trait(item_trait) => alter_trait(item_trait),
         _ => quote! { #item },
     }
