@@ -15,6 +15,11 @@ git = "https://github.com/FirefoxGraphics/wpf-gpu-raster"
 rev = "99979da091fd58fba8477e7fcdf5ec0727102916"
 replace-with = "vendored-sources"
 
+[source."git+https://github.com/bendk/uniffi-rs.git?rev=8b51cc85ad68cededb43e68dc180628f84940efe"]
+git = "https://github.com/bendk/uniffi-rs.git"
+rev = "8b51cc85ad68cededb43e68dc180628f84940efe"
+replace-with = "vendored-sources"
+
 [source."git+https://github.com/franziskuskiefer/cose-rust?rev=43c22248d136c8b38fe42ea709d08da6355cf04b"]
 git = "https://github.com/franziskuskiefer/cose-rust"
 rev = "43c22248d136c8b38fe42ea709d08da6355cf04b"

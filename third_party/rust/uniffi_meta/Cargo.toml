@@ -21,7 +21,7 @@ autotests = false
 autobenches = false
 description = "uniffi_meta"
 homepage = "https://mozilla.github.io/uniffi-rs"
-readme = "README.md"
+readme = "../README.md"
 keywords = [
     "ffi",
     "bindgen",
@@ -36,14 +36,14 @@ rustdoc-args = ["--generate-link-to-definition"]
 name = "uniffi_meta"
 path = "src/lib.rs"
 
-[dependencies.anyhow]
-version = "1"
-
-[dependencies.siphasher]
-version = "1"
+[dependencies]
+anyhow = "1"
+siphasher = "1"
 
 [dependencies.uniffi_internal_macros]
 version = "0.32.2"
+path = "../uniffi_internal_macros"
 
 [dependencies.uniffi_pipeline]
 version = "0.32.2"
+path = "../uniffi_pipeline"

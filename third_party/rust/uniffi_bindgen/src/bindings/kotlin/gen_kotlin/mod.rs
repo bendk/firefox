@@ -10,6 +10,7 @@ use std::fmt::Debug;
 use askama::Template;
 use heck::{ToLowerCamelCase, ToShoutySnakeCase, ToUpperCamelCase};
 use serde::{Deserialize, Serialize};
+use uniffi_meta::crate_name;
 
 use crate::{
     anyhow, bail, interface::ffi::ExternalFfiMetadata, interface::*, to_askama_error, Context,
@@ -118,8 +119,7 @@ impl Config {
     // Get the package name for an external type
     fn external_package_name(&self, module_path: &str, namespace: Option<&str>) -> String {
         // config overrides are keyed by the crate name, default fallback is the namespace.
-        let crate_name = module_path.split("::").next().unwrap();
-        match self.external_packages.get(crate_name) {
+        match self.external_packages.get(crate_name(module_path)) {
             Some(name) => name.clone(),
             // If the module path is not in `external_packages`, we need to fall back to a default
             // with the namespace, which we hopefully have.  This is quite fragile, but it's
@@ -348,31 +348,33 @@ impl<'a> KotlinWrapper<'a> {
     }
 
     pub fn initialization_fns(&self, ci: &ComponentInterface) -> Vec<String> {
-        let init_fns = self
-            .ci
-            .iter_local_types()
-            .map(|t| KotlinCodeOracle.find(t))
-            .filter_map(|ct| ct.initialization_fn())
-            .map(|fn_name| format!("{fn_name}(this)"));
+        let mut init_fns = vec!["uniffiEnsureInitialized()".to_string()];
+        init_fns.extend(
+            self.ci
+                .iter_local_types()
+                .map(|t| KotlinCodeOracle.find(t))
+                .filter_map(|ct| ct.initialization_fn())
+                .map(|fn_name| format!("{fn_name}(this)")),
+        );
 
         // Also call global initialization function for any external type we use.
         // For example, we need to make sure that all callback interface vtables are registered
         // (#2343).
-        let extern_module_init_fns = self
-            .ci
-            .iter_external_types()
-            .filter_map(|ty| ty.crate_name())
-            .map(|crate_name| {
-                let namespace = ci.namespace_for_module_path(crate_name).unwrap();
-                let package_name = self
-                    .config
-                    .external_package_name(crate_name, Some(namespace));
-                format!("{package_name}.uniffiEnsureInitialized()")
-            })
-            // Collect into a btree set to de-dup and order
-            .collect::<BTreeSet<_>>();
-
-        init_fns.chain(extern_module_init_fns).collect()
+        init_fns.extend(
+            self.ci
+                .iter_external_types()
+                .filter_map(|ty| ty.crate_name())
+                .map(|crate_name| {
+                    let namespace = ci.namespace_for_module_path(crate_name).unwrap();
+                    let package_name = self
+                        .config
+                        .external_package_name(crate_name, Some(namespace));
+                    format!("{package_name}.uniffiEnsureInitialized()")
+                })
+                // Collect into a btree set to de-dup and order
+                .collect::<BTreeSet<_>>(),
+        );
+        init_fns
     }
 
     pub fn imports(&self) -> Vec<ImportRequirement> {
@@ -1056,7 +1058,11 @@ mod filters {
         _: &dyn askama::Values,
         spaces: &i32,
     ) -> Result<String, askama::Error> {
-        let middle = textwrap::indent(&textwrap::dedent(docstring.as_ref()), " * ");
+        let escaped = docstring
+            .as_ref()
+            .replace("*/", "*\\/")
+            .replace("/*", "/\\*");
+        let middle = textwrap::indent(&textwrap::dedent(&escaped), " * ");
         let wrapped = format!("/**\n{middle}\n */");
 
         let spaces = usize::try_from(*spaces).unwrap_or_default();

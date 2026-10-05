@@ -16,6 +16,7 @@ use crate::Result;
 #[derive(Default)]
 pub struct BindgenPaths {
     layers: Vec<Box<dyn BindgenPathsLayer>>,
+    build_script_mode: bool,
 }
 
 impl BindgenPaths {
@@ -23,9 +24,13 @@ impl BindgenPaths {
     /// Add a layer that finds paths using `cargo metadata`
     ///
     /// Requires the `cargo-metadata` feature.
-    pub fn add_cargo_metadata_layer(&mut self, no_deps: bool) -> Result<()> {
+    pub fn add_cargo_metadata_layer(&mut self, options: CargoMetadataOptions) -> Result<()> {
+        let mut cmd = cargo_metadata::MetadataCommand::new();
+        if options.no_deps {
+            cmd.no_deps();
+        }
         self.add_layer(
-            crate::cargo_metadata::CrateConfigSupplier::from_cargo_metadata_command(no_deps)?,
+            crate::cargo_metadata::CrateConfigSupplier::from_cargo_metadata_command(cmd, options)?,
         );
         Ok(())
     }
@@ -49,6 +54,11 @@ impl BindgenPaths {
         self.layers
             .iter()
             .find_map(|l| l.get_config_path(crate_name))
+            .inspect(|p| {
+                if self.build_script_mode {
+                    println!("cargo::rerun-if-changed={p}");
+                }
+            })
     }
 
     /// Get the UDL path for a crate
@@ -56,6 +66,18 @@ impl BindgenPaths {
         self.layers
             .iter()
             .find_map(|l| l.get_udl_path(crate_name, udl_name))
+            .inspect(|p| {
+                if self.build_script_mode {
+                    println!("cargo::rerun-if-changed={p}");
+                }
+            })
+    }
+
+    /// Get the name of the cdylib for a crate
+    pub fn get_cdylib_name(&self, crate_name: &str) -> Option<String> {
+        self.layers
+            .iter()
+            .find_map(|l| l.get_cdylib_name(crate_name))
     }
 
     /// Get the UDL source for a crate
@@ -65,6 +87,43 @@ impl BindgenPaths {
             None => bail!("UDL file {udl_name:?} not found for crate {crate_name:?}"),
         }
     }
+
+    /// Get crate sources that should be parsed
+    ///
+    /// Given a source crate, this returns [SourceCrate] info for crates that:
+    /// * Are dependencies of `source_crate` either directly or indirectly
+    /// * Have a direct dependency on `uniffi`.
+    ///
+    /// This list includes the source crate itself.
+    pub fn get_source_crates(&self, source_crate: &str) -> Option<Vec<SourceCrate>> {
+        self.layers
+            .iter()
+            .find_map(|l| l.get_source_crates(source_crate))
+    }
+
+    pub fn set_build_script_mode(&mut self, mode: bool) {
+        self.build_script_mode = mode;
+        for layer in self.layers.iter_mut() {
+            layer.set_build_script_mode(mode);
+        }
+    }
+}
+
+#[cfg(feature = "cargo-metadata")]
+#[derive(Debug, Clone, Default)]
+pub struct CargoMetadataOptions {
+    pub no_deps: bool,
+    pub no_default_features: bool,
+    pub all_features: bool,
+    pub features: Vec<String>,
+}
+
+#[derive(Debug)]
+pub struct SourceCrate {
+    pub crate_name: String,
+    pub package_name: String,
+    pub src_path: Utf8PathBuf,
+    pub features: Vec<String>,
 }
 
 /// Trait for finding crate roots and UDL paths.
@@ -92,4 +151,27 @@ pub trait BindgenPathsLayer {
         self.get_crate_root(crate_name)
             .map(|root| root.join("src").join(format!("{udl_name}.udl")))
     }
+
+    /// Get the name of the cdylib for a crate
+    fn get_cdylib_name(&self, _source_crate: &str) -> Option<String> {
+        None
+    }
+
+    /// Get a list of default crate names
+    ///
+    /// This is used when the `uniffi_bindgen` source is a `Cargo.toml` file
+    /// and no single crate is specified with `--crate`.
+    fn get_source_crates(&self, _source_crate: &str) -> Option<Vec<SourceCrate>> {
+        None
+    }
+
+    /// Enable/disable build-script mode
+    ///
+    /// When in build-script mode, print out `cargo::rerun-if-changed={path}` for each path read.
+    /// This tells cargo to re-build the scaffolding when those files change.
+    ///
+    /// BindgenPathsLayer impls only need to print out lines for paths read internally, not paths
+    /// returned by `get_udl_path()` or `get_config_path()`  The `BindgenPaths` struct handles
+    /// those.
+    fn set_build_script_mode(&mut self, _mode: bool) {}
 }

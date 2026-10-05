@@ -22,7 +22,7 @@ autobenches = false
 description = "a multi-language bindings generator for rust"
 homepage = "https://mozilla.github.io/uniffi-rs"
 documentation = "https://mozilla.github.io/uniffi-rs"
-readme = "README.md"
+readme = "../README.md"
 keywords = [
     "ffi",
     "bindgen",
@@ -49,11 +49,15 @@ cli = [
     "dep:clap",
     "dep:camino",
 ]
-default = ["cargo-metadata"]
+default = [
+    "cargo-metadata",
+    "macro-scaffolding",
+]
 ffi-trace = [
     "uniffi_core/ffi-trace",
     "uniffi_bindgen?/ffi-trace",
 ]
+macro-scaffolding = ["uniffi_macros/scaffolding"]
 scaffolding-ffi-buffer-fns = [
     "uniffi_core/scaffolding-ffi-buffer-fns",
     "uniffi_macros/scaffolding-ffi-buffer-fns",
@@ -84,8 +88,8 @@ required-features = ["cli"]
 name = "custom_types"
 path = "tests/custom_types.rs"
 
-[dependencies.anyhow]
-version = "1"
+[dependencies]
+anyhow = "1"
 
 [dependencies.camino]
 version = "1.0.8"
@@ -111,21 +115,26 @@ default-features = false
 
 [dependencies.uniffi_bindgen]
 version = "=0.32.2"
+path = "../uniffi_bindgen"
 optional = true
 default-features = false
 
 [dependencies.uniffi_build]
 version = "=0.32.2"
+path = "../uniffi_build"
 optional = true
 
 [dependencies.uniffi_core]
 version = "=0.32.2"
+path = "../uniffi_core"
 
 [dependencies.uniffi_macros]
 version = "=0.32.2"
+path = "../uniffi_macros"
 
 [dependencies.uniffi_pipeline]
 version = "=0.32.2"
+path = "../uniffi_pipeline"
 
-[dev-dependencies.trybuild]
-version = "1"
+[dev-dependencies]
+trybuild = "1"

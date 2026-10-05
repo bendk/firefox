@@ -22,7 +22,7 @@ autobenches = false
 description = "udl parsing for the uniffi project"
 homepage = "https://mozilla.github.io/uniffi-rs"
 documentation = "https://mozilla.github.io/uniffi-rs"
-readme = "README.md"
+readme = "../README.md"
 keywords = [
     "ffi",
     "bindgen",
@@ -37,8 +37,8 @@ rustdoc-args = ["--generate-link-to-definition"]
 name = "uniffi_udl"
 path = "src/lib.rs"
 
-[dependencies.anyhow]
-version = "1"
+[dependencies]
+anyhow = "1"
 
 [dependencies.textwrap]
 version = "0.16"
@@ -47,6 +47,8 @@ default-features = false
 
 [dependencies.uniffi_meta]
 version = "=0.32.2"
+path = "../uniffi_meta"
 
 [dependencies.weedle2]
 version = "5.0.0"
+path = "../weedle2"

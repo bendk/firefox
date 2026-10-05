@@ -14,6 +14,7 @@ use crate::{
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{spanned::Spanned, FnArg, Ident, Pat, Receiver, ReturnType, Type};
+use uniffi_meta::PassBy;
 
 /// Syntactic check for `&[u8]`. Matches the bare identifier `u8` only —
 /// fully-qualified paths like `&[::std::primitive::u8]` or user-defined
@@ -158,6 +159,16 @@ impl FnSignature {
             ));
         }
 
+        if is_async && args.iter().any(|arg| arg.pass_by.is_mut_ref()) {
+            return Err(syn::Error::new(
+                span,
+                "`&mut [u8]` arguments are not supported in async functions: \
+                 Rust may resume on another thread after the foreign caller has \
+                 continued and freed or moved the buffer. Use a synchronous \
+                 function, or take `Vec<u8>` / `&[u8]` instead.",
+            ));
+        }
+
         if !is_async && export_fn_args.async_runtime.is_some() {
             return Err(syn::Error::new(
                 export_fn_args.async_runtime.span(),
@@ -222,12 +233,21 @@ impl FnSignature {
             let ty = &arg.ty;
             match &arg.ref_type {
                 None => quote! { uniffi_args.#idx },
+                Some(ref_type) if arg.pass_by.is_mut_ref() => quote! {
+                    <#ty as ::std::borrow::BorrowMut<#ref_type>>::borrow_mut(&mut uniffi_args.#idx)
+                },
                 Some(ref_type) => quote! {
                     <#ty as ::std::borrow::Borrow<#ref_type>>::borrow(&uniffi_args.#idx)
                 },
             }
         });
         quote! { #(#args),* }
+    }
+
+    pub fn require_receiver(&self) -> syn::Result<ReceiverArg> {
+        self.receiver
+            .clone()
+            .ok_or_else(|| syn::Error::new(self.span, "Expected receiver argument"))
     }
 
     /// Parameters expressions for each of our arguments
@@ -285,7 +305,7 @@ impl FnSignature {
             // Use param_lifts to calculate this instead of sig.inputs to avoid counting any self
             // params
             self.args.len(),
-            "UniFFI limits functions to 256 arguments",
+            "UniFFI limits functions to u32::MAX arguments",
         )?;
         let arg_metadata_calls = self
             .args
@@ -303,7 +323,7 @@ impl FnSignature {
                     .concat_str(#name)
                     #orig_name
                     .concat_bool(#is_async)
-                    .concat_value(#args_len)
+                    .concat_u32(#args_len)
                     #(#arg_metadata_calls)*
                     .concat(#type_id_meta)
                     .concat_long_str(#docstring)
@@ -320,7 +340,7 @@ impl FnSignature {
                         .concat_str(#name)
                         #orig_name
                         .concat_bool(#is_async)
-                        .concat_value(#args_len)
+                        .concat_u32(#args_len)
                         #(#arg_metadata_calls)*
                         .concat(#type_id_meta)
                         .concat_long_str(#docstring)
@@ -337,7 +357,7 @@ impl FnSignature {
                         .concat_str(#name)
                         #orig_name
                         .concat_bool(#is_async)
-                        .concat_value(#args_len)
+                        .concat_u32(#args_len)
                         #(#arg_metadata_calls)*
                         .concat(#type_id_meta)
                         .concat_long_str(#docstring)
@@ -355,7 +375,7 @@ impl FnSignature {
                         .concat_str(#name)
                         #orig_name
                         .concat_bool(#is_async)
-                        .concat_value(#args_len)
+                        .concat_u32(#args_len)
                         #(#arg_metadata_calls)*
                         .concat(#type_id_meta)
                         .concat_long_str(#docstring)
@@ -433,6 +453,12 @@ impl FnSignature {
             }
         }
     }
+
+    /// True if any argument is a `&mut [u8]`. Used to decide whether the
+    /// lifted argument tuple must be bound as `mut` (so `BorrowMut` works).
+    pub fn has_mut_ref_bytes(&self) -> bool {
+        self.args.iter().any(|arg| arg.pass_by.is_mut_ref())
+    }
 }
 
 pub(crate) struct Arg {
@@ -465,6 +491,7 @@ impl Arg {
     }
 }
 
+#[derive(Clone)]
 pub(crate) enum ReceiverArg {
     Ref,
     Arc,
@@ -491,6 +518,9 @@ pub(crate) struct NamedArg {
     pub(crate) name: String,
     pub(crate) ty: TokenStream,
     pub(crate) ref_type: Option<Type>,
+    /// How the argument is passed. `MutRef` is only used for `&mut [u8]`, and
+    /// any borrow implies `ref_type` is `Some(_)`.
+    pub(crate) pass_by: PassBy,
     pub(crate) default: Option<DefaultValue>,
 }
 
@@ -499,7 +529,10 @@ impl NamedArg {
         Ok(match ty {
             Type::Reference(r) => {
                 let inner = &r.elem;
-                let ty = if is_u8_slice(inner) {
+                let is_mut_u8_slice = r.mutability.is_some() && is_u8_slice(inner);
+                let ty = if is_mut_u8_slice {
+                    quote! { ::uniffi::ForeignBytesMut }
+                } else if is_u8_slice(inner) {
                     quote! { ::uniffi::ForeignBytes }
                 } else {
                     ffiops::lift_ref_type(inner)
@@ -508,6 +541,11 @@ impl NamedArg {
                     name: ident_to_string(&ident),
                     ty,
                     ref_type: Some(*inner.clone()),
+                    pass_by: if is_mut_u8_slice {
+                        PassBy::MutRef
+                    } else {
+                        PassBy::ref_()
+                    },
                     default: defaults.remove(&ident),
                     ident,
                 }
@@ -516,6 +554,7 @@ impl NamedArg {
                 name: ident_to_string(&ident),
                 ty: quote! { #ty },
                 ref_type: None,
+                pass_by: PassBy::Value,
                 default: defaults.remove(&ident),
                 ident,
             },
@@ -533,11 +572,15 @@ impl NamedArg {
         let name = &self.name;
         let type_id_meta = ffiops::type_id_meta(&self.ty);
         let default_calls = default_value_metadata_calls(&self.default)?;
-        let by_ref = self.ref_type.is_some();
+        // Encoded as two bools for wire-format compatibility: any borrow sets
+        // `by_ref`, and `&mut [u8]` additionally sets `by_mut_ref`.
+        let by_ref = self.pass_by.is_borrowed();
+        let by_mut_ref = self.pass_by.is_mut_ref();
         Ok(quote! {
             .concat_str(#name)
             .concat(#type_id_meta)
             .concat_bool(#by_ref)
+            .concat_bool(#by_mut_ref)
             #default_calls
         })
     }

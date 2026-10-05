@@ -462,7 +462,7 @@ impl<'a> MetadataReader<'a> {
     }
 
     fn read_fields(&mut self) -> Result<Vec<FieldMetadata>> {
-        let len = self.read_u8()?;
+        let len = self.read_u32()?;
         (0..len)
             .map(|_| {
                 let name = self.read_string()?;
@@ -481,7 +481,7 @@ impl<'a> MetadataReader<'a> {
     }
 
     fn read_variants(&mut self) -> Result<Vec<VariantMetadata>> {
-        let len = self.read_u8()?;
+        let len = self.read_u32()?;
         (0..len)
             .map(|_| {
                 Ok(VariantMetadata {
@@ -496,7 +496,7 @@ impl<'a> MetadataReader<'a> {
     }
 
     fn read_flat_variants(&mut self) -> Result<Vec<VariantMetadata>> {
-        let len = self.read_u8()?;
+        let len = self.read_u32()?;
         (0..len)
             .map(|_| {
                 Ok(VariantMetadata {
@@ -511,22 +511,33 @@ impl<'a> MetadataReader<'a> {
     }
 
     fn read_inputs(&mut self) -> Result<Vec<FnParamMetadata>> {
-        let len = self.read_u8()?;
+        let len = self.read_u32()?;
         (0..len)
             .map(|_| {
                 let name = self.read_string()?;
                 let ty = self.read_type()?;
-                let by_ref = self.read_bool()?;
+                let pass_by = self.read_pass_by()?;
                 let default = self.read_optional_default(&name, &ty)?;
                 Ok(FnParamMetadata {
                     name,
                     ty,
+                    pass_by,
                     default,
-                    by_ref,
                     optional: false,
                 })
             })
             .collect()
+    }
+
+    fn read_pass_by(&mut self) -> Result<PassBy> {
+        let by_ref = self.read_bool()?;
+        let by_mut_ref = self.read_bool()?;
+        Ok(match (by_ref, by_mut_ref) {
+            (false, false) => PassBy::Value,
+            (true, false) => PassBy::ref_(),
+            (true, true) => PassBy::MutRef,
+            (false, true) => bail!("Invalid pass_by combination: by_ref=false and by_mut_ref=true"),
+        })
     }
 
     fn calc_checksum(&self) -> Option<u16> {

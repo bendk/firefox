@@ -22,7 +22,7 @@ autobenches = false
 description = "a multi-language bindings generator for rust (convenience macros)"
 homepage = "https://mozilla.github.io/uniffi-rs"
 documentation = "https://mozilla.github.io/uniffi-rs"
-readme = "README.md"
+readme = "../README.md"
 keywords = [
     "ffi",
     "bindgen",
@@ -34,8 +34,8 @@ repository = "https://github.com/mozilla/uniffi-rs"
 rustdoc-args = ["--generate-link-to-definition"]
 
 [features]
-default = []
 nightly = []
+scaffolding = []
 scaffolding-ffi-buffer-fns = []
 trybuild = ["dep:uniffi_build"]
 wasm-unstable-single-threaded = []
@@ -45,20 +45,13 @@ name = "uniffi_macros"
 path = "src/lib.rs"
 proc-macro = true
 
-[dependencies.camino]
-version = "1.0.8"
-
-[dependencies.fs-err]
-version = "3.3.0"
-
-[dependencies.once_cell]
-version = "1.10.0"
-
-[dependencies.proc-macro2]
-version = "1.0"
-
-[dependencies.quote]
-version = "1.0"
+[dependencies]
+camino = "1.0.8"
+fs-err = "3.3.0"
+once_cell = "1.10.0"
+proc-macro2 = "1.0"
+quote = "1.0"
+toml = ">=0.9, <2"
 
 [dependencies.serde]
 version = "1.0.136"
@@ -71,12 +64,11 @@ features = [
     "visit-mut",
 ]
 
-[dependencies.toml]
-version = ">=0.9, <2"
-
 [dependencies.uniffi_build]
 version = "=0.32.2"
+path = "../uniffi_build"
 optional = true
 
 [dependencies.uniffi_meta]
 version = "=0.32.2"
+path = "../uniffi_meta"

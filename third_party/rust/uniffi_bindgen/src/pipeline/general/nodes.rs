@@ -4,8 +4,10 @@
 
 use super::*;
 
+use_prev_node!(initial::ChecksumMode);
 use_prev_node!(initial::EnumShape);
 use_prev_node!(initial::ObjectImpl);
+use_prev_node!(initial::PassBy);
 use_prev_node!(initial::Radix);
 use_prev_node!(initial::TraitKind);
 use_prev_node!(initial::Type, types::map_type);
@@ -19,6 +21,7 @@ pub struct Root {
     pub cdylib: Option<String>,
     pub namespaces: IndexMap<String, Namespace>,
     pub builtin_types: BuiltinTypes,
+    pub checksum_mode: ChecksumMode,
 }
 
 /// Type nodes for builtin types
@@ -71,6 +74,7 @@ pub struct Namespace {
 pub struct Function {
     #[map_node(callable::function_callable(&self, context)?)]
     pub callable: Callable,
+    pub module_path: String,
     pub docstring: Option<String>,
 }
 
@@ -137,7 +141,10 @@ pub enum CallableKind {
     /// Toplevel function
     Function,
     /// Interface/Trait interface method
-    Method { self_type: TypeNode },
+    Method {
+        self_type: TypeNode,
+        takes_self_by_arc: bool,
+    },
     /// Interface constructor
     Constructor { self_type: TypeNode, primary: bool },
     /// Method inside a VTable or a CallbackInterface
@@ -146,6 +153,7 @@ pub enum CallableKind {
     /// Callables inside `Interface::methods` will still be `Callable::Method`.
     VTableMethod {
         self_type: TypeNode,
+        takes_self_by_arc: bool,
         for_callback_interface: bool,
     },
 }
@@ -177,16 +185,23 @@ pub struct Argument {
     pub name: String,
     pub orig_name: String,
     pub ty: TypeNode,
-    pub by_ref: bool,
+    pub pass_by: PassBy,
     pub optional: bool,
     pub default: Option<DefaultValue>,
 }
 
 impl Argument {
-    /// True for zero-copy `&[u8]` / `[ByRef] bytes` arguments, which take the
-    /// `ForeignBytes` FFI path instead of the owned `RustBuffer` path.
+    /// True for zero-copy borrowed bytes arguments — `&[u8]` / `[ByRef] bytes`
+    /// and their mutable counterparts — which take the `ForeignBytes` FFI path
+    /// instead of the owned `RustBuffer` path.
     pub fn is_borrowed_bytes(&self) -> bool {
-        self.by_ref && matches!(self.ty.ty, Type::Bytes)
+        self.pass_by.is_borrowed() && matches!(self.ty.ty, Type::Bytes)
+    }
+
+    /// True for zero-copy `&mut [u8]` / `[ByMutRef] bytes` arguments. Implies
+    /// `is_borrowed_bytes()`; drives foreign codegen only.
+    pub fn is_borrowed_bytes_mut(&self) -> bool {
+        self.pass_by.is_mut_ref() && matches!(self.ty.ty, Type::Bytes)
     }
 }
 
@@ -232,6 +247,7 @@ pub struct Record {
     pub fields_kind: FieldsKind,
     #[map_node(context.self_type()?)]
     pub self_type: TypeNode,
+    pub module_path: String,
     pub orig_name: String,
     #[map_node(rename::type_(&context.namespace_name()?, self.name, context)?)]
     pub name: String,
@@ -275,6 +291,8 @@ pub struct Enum {
     pub is_flat: bool,
     #[map_node(context.self_type()?)]
     pub self_type: TypeNode,
+    #[map_node(self.discr_type.is_some())]
+    pub discr_specified: bool,
     /// type, this will be a sized integer type that's large enough to store all the discriminant
     /// values. We try to mimic what `rustc` does, but there's no guarantee that this will be
     /// exactly the same type.
@@ -282,6 +300,7 @@ pub struct Enum {
     pub discr_type: TypeNode,
     #[map_node(enums::map_variants(&self.discr_type, self.variants, context)?)]
     pub variants: Vec<Variant>,
+    pub module_path: String,
     pub orig_name: String,
     #[map_node(rename::type_(&context.namespace_name()?, self.name, context)?)]
     pub name: String,
@@ -293,6 +312,7 @@ pub struct Enum {
     pub constructors: Vec<Constructor>,
     #[map_node(objects::methods(self.methods, context)?)]
     pub methods: Vec<Method>,
+    pub non_exhaustive: bool,
     pub docstring: Option<String>,
     #[map_node(false)]
     pub recursive: bool,
@@ -323,6 +343,7 @@ pub struct Interface {
     pub ffi_func_clone: RustFfiFunctionName,
     #[map_node(objects::ffi_free_name(&self.name, context)?)]
     pub ffi_func_free: RustFfiFunctionName,
+    pub module_path: String,
     pub orig_name: String,
     #[map_node(rename::type_(&context.namespace_name()?, self.name, context)?)]
     pub name: String,
@@ -346,6 +367,7 @@ pub struct CallbackInterface {
     pub vtable: VTable,
     #[map_node(context.self_type()?)]
     pub self_type: TypeNode,
+    pub module_path: String,
     pub orig_name: String,
     #[map_node(rename::type_(&context.namespace_name()?, self.name, context)?)]
     pub name: String,
@@ -391,6 +413,7 @@ pub struct ObjectTraitImpl {
 pub struct CustomType {
     #[map_node(context.self_type()?)]
     pub self_type: TypeNode,
+    pub module_path: String,
     pub orig_name: String,
     #[map_node(rename::type_(&context.namespace_name()?, self.name, context)?)]
     pub name: String,
@@ -450,6 +473,7 @@ pub struct TypeNode {
     pub canonical_name: String,
     pub id: u64,
     pub is_used_as_error: bool,
+    pub has_from_unexpected_callback_error_impl: bool,
     pub ffi_type: FfiType,
     pub ty: Type,
 }
@@ -617,6 +641,29 @@ pub struct UniffiTraitMethods {
     pub eq_ne: Option<Method>,
     pub hash_hash: Option<Method>,
     pub ord_cmp: Option<Method>,
+}
+
+impl TypeDefinition {
+    pub fn type_node(&self) -> &TypeNode {
+        match self {
+            Self::Interface(int) => &int.self_type,
+            Self::CallbackInterface(cbi) => &cbi.self_type,
+            Self::Record(rec) => &rec.self_type,
+            Self::Enum(en) => &en.self_type,
+            Self::Custom(custom) => &custom.self_type,
+            Self::Simple(type_node) => type_node,
+            Self::Box(boxed) => &boxed.self_type,
+            Self::Optional(opt) => &opt.self_type,
+            Self::Sequence(seq) => &seq.self_type,
+            Self::Map(map) => &map.self_type,
+            Self::Set(set) => &set.self_type,
+            Self::External(ext) => &ext.self_type,
+        }
+    }
+
+    pub fn self_type(&self) -> &Type {
+        &self.type_node().ty
+    }
 }
 
 impl FfiDefinition {

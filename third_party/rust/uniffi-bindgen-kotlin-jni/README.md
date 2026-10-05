@@ -1,0 +1,75 @@
+This is an experimental crate for generating JNI-based Kotlin bindings.
+
+# Usage
+
+## Rust crates
+
+Crates that export a UniFFI interface should stay mostly the same.
+
+If you're only targeting Kotlin, then you can add `default-features = false` to your `uniffi` dependencies.
+This disables the `macro-scaffolding` feature which speeds up compilation and reduces binary size.
+
+## Rust top-level library crate
+
+Create a single crate that depends on all UniFFI crates that you want to export.
+This crate will contain the JNI scaffolding and build the shared library.
+
+Add dependencies to your `Cargo.toml`
+
+```toml
+[dependencies]
+uniffi-bindgen-kotlin-jni-runtime = [version]
+
+[build-dependencies]
+uniffi-bindgen-kotlin-jni = [version]
+```
+
+Create a `build.rs` file that generates the scaffolding:
+
+```rs
+fn main() {
+    uniffi_bindgen_kotlin_jni::generate_scaffolding();
+}
+```
+
+Have your `lib.rs` file include the generated scaffolding:
+
+```rs
+include!(concat!(
+    env!("OUT_DIR"),
+    "/uniffi_bindgen_kotlin_jni.uniffi.rs"
+));
+```
+
+## Kotlin bindings
+
+Create a [bindgen binary](https://mozilla.github.io/uniffi-rs/latest/tutorial/foreign_language_bindings.html),
+except have it depend on `uniffi-bindgen-kotlin-jni`.
+The main function should call `uniffi_bindgen_kotlin_jni::main`.
+
+Run your executable and use the `bindings` subcommand to generate bindings.
+For example:
+
+`cargo run -p [bindgen-binary-crate] bindings src:[top-level-library-crate] [out-dir]`
+
+## File layout
+
+`uniffi_bindgen_kotlin_jni` generates source code that looks like this:
+
+* `uniffi/Uniffi.kt` -- shared FFI code
+* For each package:
+    * `path/to/package/Uniffi.kt` -- Generated user-facing code.  Import from this package.
+    * `path/to/package/uniffi/Uniffi.kt` -- Generated FFI code. 
+      This is public so that other generated code can use it, but it's not intended for end-users.
+
+## Differences from `uniffi-bindgen`
+
+Records and enums that store objects no longer implement the `Disposable` interface.
+All objects are freed automatically during normal garbage collections.
+See ADR-0008 for the reasoning.
+
+## Extra requirements compared to the normal macro code
+
+* The top-level Rust crate must depend on `uniffi-bindgen-kotlin-jni-runtime`
+* All the requirements from ../uniffi_parse_rs/README.md
+* Recursive types defined in UDL are not supported because we need to know which type is boxed in Rust.
