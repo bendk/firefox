@@ -16,6 +16,7 @@ uniffi_pipeline::use_prev_node!(general::FfiStructName);
 uniffi_pipeline::use_prev_node!(general::FfiType);
 uniffi_pipeline::use_prev_node!(general::HandleKind);
 uniffi_pipeline::use_prev_node!(general::ObjectImpl);
+uniffi_pipeline::use_prev_node!(general::PassBy);
 uniffi_pipeline::use_prev_node!(general::Radix);
 uniffi_pipeline::use_prev_node!(general::RustFfiFunctionName);
 uniffi_pipeline::use_prev_node!(general::TraitKind);
@@ -429,6 +430,7 @@ pub enum CallableKind {
     Function,
     Method {
         self_type: TypeNode,
+        takes_self_by_arc: bool,
     },
     Constructor {
         self_type: TypeNode,
@@ -436,6 +438,7 @@ pub enum CallableKind {
     },
     VTableMethod {
         self_type: TypeNode,
+        takes_self_by_arc: bool,
         for_callback_interface: bool,
     },
 }
@@ -446,7 +449,7 @@ pub enum CallableKind {
 pub struct Argument {
     pub name: String,
     pub ty: TypeNode,
-    pub by_ref: bool,
+    pub pass_by: PassBy,
     pub optional: bool,
     pub default: Option<DefaultValueNode>,
     pub ffi_value_class: String,

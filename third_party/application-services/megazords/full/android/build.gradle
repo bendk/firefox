@@ -27,6 +27,8 @@ android {
         }
     }
 
+    sourceSets.main.kotlin.srcDirs += "${gradle.mozconfig.topsrcdir}/toolkit/components/uniffi-bindgen-gecko-js/android/megazords/full/android/src/main"
+
     // Uncomment to include debug symbols in native library builds.
     // packagingOptions { doNotStrip "**/*.so" }
 }
@@ -182,7 +184,7 @@ if (!gradle.hasProperty("mozconfig")) {
 
     def generateUniffiBindings = tasks.register("generateUniffiBindings", GenerateUniffiBindings) {
         workingDirectory.set(project.rootDir)
-        // Use `--crate=uniffi` to get the shared `uniffi/Uniffi.kt` file 
+        // Use `--crate=uniffi` to get the shared `uniffi/Uniffi.kt` file
         crate.set("uniffi")
         outputDir.set(layout.buildDirectory.dir("generated/uniffi/"))
     }

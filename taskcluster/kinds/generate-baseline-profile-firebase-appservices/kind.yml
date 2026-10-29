@@ -1,0 +1,34 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - gecko_taskgraph.transforms.duplicate:transforms
+
+kind-dependencies:
+    - generate-baseline-profile-firebase
+    - instrumented-build-apk
+    - instrumented-build-apk-appservices
+
+tasks:
+    appservices-in-tree:
+        duplicate:
+            kinds:
+                - generate-baseline-profile-firebase
+            suffix: -appservices-in-tree
+            treeherder-symbol-suffix: -as
+            chain-from:
+                - instrumented-build-apk-appservices
+            exclude-labels:
+                - '-(beta|release)(-|$)'
+        attributes:
+            run_on_projects: []
+        task:
+            payload:
+                env:
+                    MOZ_APPSERVICES_IN_TREE: "1"
+            extra:
+                treeherder:
+                    tier: 3

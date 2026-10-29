@@ -1,4 +1,6 @@
 ffi_*
 uniffi_*
+Java_*
+JNI_*
 UNIFFI_META_* @DATA@
 full_megazord_get_version

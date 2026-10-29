@@ -8,3 +8,7 @@ mod uniffi_bindgen;
 pub fn main() -> anyhow::Result<()> {
     uniffi_bindgen::run_main()
 }
+
+pub fn uniffi_bindgen_kotlin_jni() -> anyhow::Result<()> {
+    uniffi_bindgen_kotlin_jni::main()
+}

@@ -9,6 +9,8 @@ transforms:
 
 kind-dependencies:
     - build-apk
+    - generate-baseline-profile-firebase
+    - generate-baseline-profile-firebase-appservices
 
 tasks:
     appservices-in-tree:
@@ -17,12 +19,16 @@ tasks:
                 - build-apk
             suffix: -appservices-in-tree
             treeherder-symbol-suffix: -as
+            chain-from:
+                - generate-baseline-profile-firebase-appservices
             exclude-labels:
-                - '-(beta|release|nightly)(-|$)'
+                - '-(beta|release)(-|$)'
         attributes:
             run_on_projects: []
         dependencies:
             build-fat-aar: build-fat-aar-android-geckoview-fat-aar-appservices/opt
+            generate-baseline-profile-firebase:
+                generate-baseline-profile-firebase-appservices
             toolchain-linux64-android-gradle-dependencies:
                 toolchain-linux64-android-gradle-dependencies-appservices
         task:

@@ -980,9 +980,17 @@ Update the product channel version in Ship-It.
 
 Generate instrumented apks used to generate Baseline Profile for Android apps.
 
+## instrumented-build-apk-appservices
+
+Copies of source-test tasks that build application-services in tree.
+
 ## generate-baseline-profile-firebase
 
 Run baseline profile generation for Android on Firebase TestLab.
+
+## generate-baseline-profile-firebase-appservices
+
+Copies of source-test tasks that build application-services in tree.
 
 ## dte-test
 

@@ -15,7 +15,6 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.PlacesReaderConnection
 import mozilla.appservices.places.PlacesWriterConnection
-import mozilla.appservices.places.uniffi.InternalException as UniffiInternalException
 import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.storage.Storage
@@ -25,6 +24,7 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.utils.NamedThreadFactory
 import mozilla.components.support.rusterrors.reportRustError
 import mozilla.components.support.utils.logElapsedTime
+import uniffi.InternalException as UniffiInternalException
 
 /** A base class for concrete implementations of PlacesStorages */
 abstract class PlacesStorage(

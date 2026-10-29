@@ -22,7 +22,7 @@ tasks:
             chain-from:
                 - build-apk-appservices
             exclude-labels:
-                - '-(beta|release|nightly)(-|$)'
+                - '-(beta|release)(-|$)'
         attributes:
             run_on_projects: []
         task:

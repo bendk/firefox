@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.withContext
 import mozilla.appservices.remotesettings.RemoteSettingsServer
-import mozilla.appservices.suggest.InternalException as UniffiInternalException
 import mozilla.appservices.suggest.SuggestApiException
 import mozilla.appservices.suggest.SuggestIngestionConstraints
 import mozilla.appservices.suggest.SuggestStore
@@ -23,6 +22,7 @@ import mozilla.components.feature.fxsuggest.facts.emitSuggestionQueryCountFact
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.remotesettings.RemoteSettingsService
 import mozilla.components.support.rusterrors.reportRustError
+import uniffi.InternalException as UniffiInternalException
 
 /**
  * A coroutine-aware wrapper around the synchronous [SuggestStore] interface.

@@ -8567,6 +8567,7 @@ version = "0.1.0"
 dependencies = [
  "embedded-uniffi-bindgen",
  "mozilla-central-workspace-hack",
+ "uniffi-bindgen-kotlin-jni",
 ]
 
 [[package]]

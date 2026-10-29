@@ -5,6 +5,7 @@
 import argparse
 import logging
 import os
+import shutil
 import subprocess
 import sys
 from collections import namedtuple
@@ -29,6 +30,7 @@ UniffiTargets = namedtuple(
         "library_path",
         "fixtures_library_path",
         "embedded_uniffi_bindgen_path",
+        "uniffi_bindgen_kotlin_jni_path",
         "megazord_path",
     ],
 )
@@ -104,6 +106,14 @@ def build_uniffi_targets(command_context):
         f"embedded-uniffi-bindgen{substs['HOST_BIN_SUFFIX']}",
     )
 
+    uniffi_bindgen_kotlin_jni_path = mozpath.join(
+        uniffi_objdir,
+        "dist",
+        "host",
+        "bin",
+        f"uniffi-bindgen-kotlin-jni{substs['HOST_BIN_SUFFIX']}",
+    )
+
     # Read the staticlib, not the cdylib: bindgen extracts the `UNIFFI_META_*`
     # statics from the archive.
     # Like "$uniffi_objdir/aarch64-apple-darwin/release-megazord/libmegazord.a".
@@ -120,16 +130,17 @@ def build_uniffi_targets(command_context):
         library_path=library_path,
         fixtures_library_path=fixtures_library_path,
         embedded_uniffi_bindgen_path=embedded_uniffi_bindgen_path,
+        uniffi_bindgen_kotlin_jni_path=uniffi_bindgen_kotlin_jni_path,
         megazord_path=megazord_path,
     )
 
 
 COMPONENT_MAPPING = {
+    "uniffi": "megazords/full",
     "mozilla/appservices/adsclient": "components/ads-client",
     "mozilla/appservices/autofill": "components/autofill",
     "mozilla/appservices/crashtest": "components/crashtest",
     "mozilla/appservices/db_crypto": "components/db-crypto",
-    "mozilla/appservices/errorsupport": "components/errorsupport",
     "mozilla/appservices/fxaclient": "components/fxaclient",
     "mozilla/appservices/init_rust_components": "components/init_rust_components",
     "mozilla/appservices/logins": "components/logins",
@@ -156,15 +167,12 @@ def generate_android(command_context, uniffi_targets):
         uniffi_objdir, "toolkit/components/uniffi-bindgen-gecko-js/android"
     )
 
+    shutil.rmtree(android_objdir)
     cmdline = [
-        uniffi_targets.embedded_uniffi_bindgen_path,
-        "generate",
-        "--no-format",
-        "--language",
-        "kotlin",
-        "--out-dir",
+        uniffi_targets.uniffi_bindgen_kotlin_jni_path,
+        "bindings",
+        "src:megazord",
         android_objdir,
-        uniffi_targets.megazord_path,
     ]
     subprocess.check_call(cmdline, cwd=command_context.topsrcdir)
 

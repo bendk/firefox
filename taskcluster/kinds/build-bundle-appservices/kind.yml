@@ -19,7 +19,7 @@ tasks:
             suffix: -appservices-in-tree
             treeherder-symbol-suffix: -as
             exclude-labels:
-                - '-(beta|release|nightly)(-|$)'
+                - '-(beta|release)(-|$)'
         attributes:
             run_on_projects: []
         dependencies:
