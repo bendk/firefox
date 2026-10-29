@@ -40,7 +40,7 @@ pub fn map_argument(input: general::Argument, context: &Context) -> Result<Argum
     Ok(Argument {
         name: input.name.to_lower_camel_case(),
         ty,
-        by_ref: input.by_ref,
+        pass_by: input.pass_by,
         optional: input.optional,
         default: input.default.map_node(context)?,
         ffi_value_class,

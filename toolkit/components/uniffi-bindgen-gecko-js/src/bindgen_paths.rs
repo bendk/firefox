@@ -3,11 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 use anyhow::Result;
-use uniffi_bindgen::BindgenPaths;
+use uniffi_bindgen::{BindgenPaths, CargoMetadataOptions};
 
 // Generate a BindgenPaths to use for the pipeline
 pub fn gecko_js_bindgen_paths() -> Result<BindgenPaths> {
     let mut paths = BindgenPaths::default();
-    paths.add_cargo_metadata_layer(false)?;
+    paths.add_cargo_metadata_layer(CargoMetadataOptions {
+        no_deps: true,
+        ..CargoMetadataOptions::default()
+    })?;
     Ok(paths)
 }

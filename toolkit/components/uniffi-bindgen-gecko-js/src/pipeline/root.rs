@@ -154,7 +154,7 @@ impl RootBuilder {
                             name: "uniffi_ptr".to_string(),
                             ffi_value_class: ffi_types::ffi_value_class(&ty)?,
                             ty,
-                            by_ref: true,
+                            pass_by: PassBy::ref_(),
                             optional: false,
                             default: None,
                         }]

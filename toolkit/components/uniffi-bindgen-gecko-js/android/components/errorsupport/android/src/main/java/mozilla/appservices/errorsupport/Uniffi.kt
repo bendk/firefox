@@ -1,0 +1,1 @@
+package mozilla.appservices.errorsupport

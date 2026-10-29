@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 HostRustProgram("embedded-uniffi-bindgen", output_category="uniffi-target")
+HostRustProgram("uniffi-bindgen-kotlin-jni", output_category="uniffi-target")
 
 with Files("**"):
     BUG_COMPONENT = ("Application Services", "General")

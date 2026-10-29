@@ -11,7 +11,7 @@ use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use uniffi_bindgen::{pipeline::initial, GlobalConfig};
+use uniffi_bindgen::{pipeline::initial, BindgenLoader, GlobalConfig};
 use uniffi_pipeline::PrintOptions;
 
 mod bindgen_paths;
@@ -197,9 +197,12 @@ fn root_and_pipeline(
 ) -> Result<(initial::Root, GeckoPipeline)> {
     let bindgen_paths = gecko_js_bindgen_paths()?;
     let config = GlobalConfig::default();
-    let root = initial::Root::from_library(&bindgen_paths, &config, &library_path, None)?;
+    let loader = BindgenLoader::new(bindgen_paths, config);
+    let metadata = loader.load_metadata(&library_path)?;
+    let root = loader.load_pipeline_initial_root(&library_path, metadata)?;
+    let fixtures_metadata = loader.load_metadata(&fixtures_library_path)?;
     let fixtures_root =
-        initial::Root::from_library(&bindgen_paths, &config, &fixtures_library_path, None)?;
+        loader.load_pipeline_initial_root(&fixtures_library_path, fixtures_metadata)?;
     let root = initial::Root {
         namespaces: root
             .namespaces
@@ -207,7 +210,14 @@ fn root_and_pipeline(
             .chain(fixtures_root.namespaces)
             .collect(),
         cdylib: None,
+        from_unexpected_callback_error_impls: root
+            .from_unexpected_callback_error_impls
+            .into_iter()
+            .chain(fixtures_root.from_unexpected_callback_error_impls)
+            .collect(),
+        checksum_mode: initial::ChecksumMode::Skip,
     };
+
     let pipeline = gecko_js_pipeline(toml::from_str(include_str!("../config.toml"))?);
     Ok((root, pipeline))
 }
